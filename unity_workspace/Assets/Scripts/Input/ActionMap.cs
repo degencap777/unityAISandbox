@@ -5,7 +5,7 @@ public class ActionMap : MonoBehaviour
 {
 
 	[SerializeField]
-	private List<Actionmapping> m_actionMappings = new List<Actionmapping>();
+	private List<ActionMapping> m_actionMappings = new List<ActionMapping>();
 
 	// -----------------------------------------------------------------------------------
 

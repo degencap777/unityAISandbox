@@ -1,13 +1,12 @@
 ﻿using System;
-using System.Collections.Generic;
 using UnityEngine;
 
 [Serializable]
-public class Actionmapping
+public class ActionMapping
 {
 
 	[SerializeField]
-	private BoundKeyState m_boundKey = new BoundKeyState();
+	private IBoundInputState m_boundInput = null;
 	
 	[SerializeField]
 	private AgentAction m_action = null;
@@ -16,13 +15,13 @@ public class Actionmapping
 
 	public void Update()
 	{
-		if (m_boundKey == null)
+		if (m_boundInput == null)
 		{
 			return;
 		}
 
-		m_boundKey.Update();
-		if (m_boundKey.ConditionsMet())
+		m_boundInput.Update();
+		if (m_boundInput.ConditionsMet())
 		{
 			m_action.Execute();
 		}

@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-public class BoundKeyState
+public class BoundKeyState : IBoundInputState
 {
 
 	[SerializeField]
