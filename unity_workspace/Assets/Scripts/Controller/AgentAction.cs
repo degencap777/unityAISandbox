@@ -1,12 +1,10 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-[Serializable]
-public abstract class InputAction
+public abstract class AgentAction : MonoBehaviour
 {
 
 	[SerializeField]
-	private AgentController m_agentController = null;
+	protected AgentController m_agentController = null;
 
 	// --------------------------------------------------------------------------------
 

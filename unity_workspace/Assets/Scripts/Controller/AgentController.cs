@@ -26,13 +26,15 @@ public class AgentController : MonoBehaviour
 
 	public void MoveForward(float value)
 	{
+		Debug.LogFormat("Move Forward: {0}", value);
 		// #SteveD >>> Todo >>> Cache all movement and rotation and apply at end of update
 	}
 
 	// --------------------------------------------------------------------------------
 
-	public void MoveSideward(float value)
+	public void MoveSideways(float value)
 	{
+		Debug.LogFormat("Move Sideways: {0}", value);
 		// #SteveD >>> Todo >>> Cache all movement and rotation and apply at end of update
 	}
 
@@ -40,6 +42,7 @@ public class AgentController : MonoBehaviour
 
 	public void Rotate(float value)
 	{
+		Debug.LogFormat("Rotate: {0}", value);
 		// #SteveD >>> Todo >>> Cache all movement and rotation and apply at end of update
 	}
 
