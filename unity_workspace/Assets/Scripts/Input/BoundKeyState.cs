@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-public class BoundKeyState : IBoundInputState
+public class BoundKeyState : BoundInputState
 {
 
 	[SerializeField]
@@ -21,7 +21,7 @@ public class BoundKeyState : IBoundInputState
 
 	// --------------------------------------------------------------------------------
 
-	public void Update()
+	public override void Update()
 	{
 		if (m_requiredKeyCode == KeyCode.None)
 		{
@@ -86,7 +86,7 @@ public class BoundKeyState : IBoundInputState
 
 	// --------------------------------------------------------------------------------
 	
-	public bool ConditionsMet()
+	public override bool ConditionsMet()
 	{
 		switch (m_requiredKeyState)
 		{

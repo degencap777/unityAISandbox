@@ -1,25 +1,29 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
+[Serializable]
 public class ActionMap : MonoBehaviour
 {
 
 	[SerializeField]
-	private List<ActionMapping> m_actionMappings = new List<ActionMapping>();
+	private List<KeyActionMapping> m_keyActionMappings = new List<KeyActionMapping>();
+
+	[SerializeField]
+	private List<AxisActionMapping> m_axisActionMappings = new List<AxisActionMapping>();
 
 	// -----------------------------------------------------------------------------------
 
 	public void Update()
 	{
-		int count = m_actionMappings.Count;
-		if (m_actionMappings == null || count == 0)
+		for (int i = 0; i < m_keyActionMappings.Count; ++i)
 		{
-			return;
+			m_keyActionMappings[i].Update();
 		}
 
-		for (int i = 0; i < count; ++i)
+		for (int i = 0; i < m_axisActionMappings.Count; ++i)
 		{
-			m_actionMappings[i].Update();
+			m_axisActionMappings[i].Update();
 		}
 	}
 

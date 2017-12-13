@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [Serializable]
-public class BoundAxisState : IBoundInputState
+public class BoundAxisState : BoundInputState
 {
 
 	[SerializeField]
@@ -13,14 +13,14 @@ public class BoundAxisState : IBoundInputState
 	
 	// --------------------------------------------------------------------------------
 
-	public void Update()
+	public override void Update()
 	{
 		;
 	}
 
 	// --------------------------------------------------------------------------------
 	
-	public bool ConditionsMet()
+	public override bool ConditionsMet()
 	{
 		float axis = Input.GetAxis(m_requiredAxis);
 		return (m_minimumThreshold > 0.0f && axis >= m_minimumThreshold) || 

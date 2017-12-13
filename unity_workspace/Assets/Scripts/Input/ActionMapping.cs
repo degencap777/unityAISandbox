@@ -1,12 +1,11 @@
 ﻿using System;
 using UnityEngine;
 
-[Serializable]
-public class ActionMapping
+public class ActionMapping<T> where T : BoundInputState
 {
 
 	[SerializeField]
-	private IBoundInputState m_boundInput = null;
+	private T m_boundInputState = null;
 	
 	[SerializeField]
 	private AgentAction m_action = null;
@@ -15,16 +14,30 @@ public class ActionMapping
 
 	public void Update()
 	{
-		if (m_boundInput == null)
+		if (m_boundInputState == null)
 		{
 			return;
 		}
 
-		m_boundInput.Update();
-		if (m_boundInput.ConditionsMet())
+		m_boundInputState.Update();
+		if (m_boundInputState.ConditionsMet())
 		{
 			m_action.Execute();
 		}
 	}
 
+}
+
+// ------------------------------------------------------------------------------------
+
+[Serializable]
+public class KeyActionMapping : ActionMapping<BoundKeyState>
+{
+}
+
+// ------------------------------------------------------------------------------------
+
+[Serializable]
+public class AxisActionMapping : ActionMapping<BoundAxisState>
+{
 }
