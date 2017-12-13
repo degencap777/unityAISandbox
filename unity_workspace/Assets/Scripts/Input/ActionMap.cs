@@ -6,9 +6,13 @@ using UnityEngine;
 public class ActionMap : MonoBehaviour
 {
 
+	[Serializable]
+	private class KeyActionMapping : ActionMapping<BoundKeyState> { }
 	[SerializeField]
 	private List<KeyActionMapping> m_keyActionMappings = new List<KeyActionMapping>();
 
+	[Serializable]
+	private class AxisActionMapping : ActionMapping<BoundAxisState> { }
 	[SerializeField]
 	private List<AxisActionMapping> m_axisActionMappings = new List<AxisActionMapping>();
 

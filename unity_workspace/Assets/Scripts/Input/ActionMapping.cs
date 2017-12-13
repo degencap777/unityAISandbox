@@ -1,6 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
+[Serializable]
 public class ActionMapping<T> where T : BoundInputState
 {
 
@@ -26,18 +27,4 @@ public class ActionMapping<T> where T : BoundInputState
 		}
 	}
 
-}
-
-// ------------------------------------------------------------------------------------
-
-[Serializable]
-public class KeyActionMapping : ActionMapping<BoundKeyState>
-{
-}
-
-// ------------------------------------------------------------------------------------
-
-[Serializable]
-public class AxisActionMapping : ActionMapping<BoundAxisState>
-{
 }

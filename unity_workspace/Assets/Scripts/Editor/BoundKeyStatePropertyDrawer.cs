@@ -35,7 +35,7 @@ public class BoundKeyStatePropertyDrawer : PropertyDrawer
 		keycodeProperty.intValue = (int)(KeyCode)EditorGUI.EnumPopup(new Rect(x + sectionWidth, y, sectionWidth - 2, h - 2), (KeyCode)keycodeProperty.intValue);
 
 		EditorGUI.LabelField(new Rect(x, y + h, sectionWidth - 2, h), "Key state(s)");
-		//keyStateProperty.intValue = EditorGUI.EnumMaskField(new Rect(x + sectionWidth, y + h, sectionWidth - 2, h - 2), GUIContent.none, keyStateProperty.intValue);
+		keyStateProperty.intValue = (int)(KeyState)EditorGUI.EnumMaskField(new Rect(x + sectionWidth, y + h, sectionWidth - 2, h - 2), GUIContent.none, (KeyState)keyStateProperty.intValue);
 
 		if (includesHeld)
 		{

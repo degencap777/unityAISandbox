@@ -8,7 +8,7 @@ public class BoundKeyState : BoundInputState
 	[SerializeField]
 	private KeyCode m_requiredKeyCode = KeyCode.None;
 
-	[SerializeField]
+	[SerializeField, EnumMaskField("")]
 	private KeyState m_requiredKeyState = KeyState.None;
 	
 	[SerializeField]
