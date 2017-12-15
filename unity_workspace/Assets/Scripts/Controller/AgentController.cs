@@ -50,11 +50,11 @@ public class AgentController : MonoBehaviour
 	{
 		if (value > 0.0f)
 		{
-			m_movementStep.z += value * m_moveForwardSpeed * Time.deltaTime;
+			m_movementStep += m_transform.forward * value * m_moveForwardSpeed * Time.deltaTime;
 		}
 		else
 		{
-			m_movementStep.z += value * m_moveBackwardSpeed * Time.deltaTime;
+			m_movementStep += m_transform.forward * value * m_moveBackwardSpeed * Time.deltaTime;
 		}
 	}
 
@@ -62,7 +62,7 @@ public class AgentController : MonoBehaviour
 
 	public void MoveSideways(float value)
 	{
-		m_movementStep.x += value * m_moveSidewaysSpeed * Time.deltaTime;
+		m_movementStep += m_transform.right * value * m_moveSidewaysSpeed * Time.deltaTime;
 	}
 
 	// --------------------------------------------------------------------------------
