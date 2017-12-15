@@ -8,14 +8,14 @@ public class AgentRotateAction : AgentAction
 
 	// --------------------------------------------------------------------------------
 
-	public override void Execute()
+	public override void Execute(float value)
 	{
 		if (m_agentController == null)
 		{
 			return;
 		}
 
-		m_agentController.Rotate(m_modifier);
+		m_agentController.Rotate(value * m_modifier);
 	}
 
 }

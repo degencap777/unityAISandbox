@@ -8,7 +8,7 @@ public class BoundKeyState : BoundInputState
 	[SerializeField]
 	private KeyCode m_requiredKeyCode = KeyCode.None;
 
-	[SerializeField, EnumMaskField("")]
+	[SerializeField]
 	private KeyState m_requiredKeyState = KeyState.None;
 	
 	[SerializeField]
@@ -102,4 +102,10 @@ public class BoundKeyState : BoundInputState
 		return false;
 	}
 
+	// --------------------------------------------------------------------------------
+
+	public override float GetValue()
+	{
+		return 1.0f;
+	}
 }

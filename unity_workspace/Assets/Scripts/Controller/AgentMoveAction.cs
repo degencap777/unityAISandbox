@@ -11,7 +11,7 @@ public class AgentMoveAction : AgentAction
 
 	// --------------------------------------------------------------------------------
 
-	public override void Execute()
+	public override void Execute(float value)
 	{
 		if (m_agentController == null)
 		{
@@ -21,11 +21,11 @@ public class AgentMoveAction : AgentAction
 		switch (m_direction)
 		{
 			case MovementDirection.Forward:
-				m_agentController.MoveForward(m_modifier);
+				m_agentController.MoveForward(value * m_modifier);
 				break;
 
 			case MovementDirection.Sideways:
-				m_agentController.MoveSideways(m_modifier);
+				m_agentController.MoveSideways(value * m_modifier);
 				break;
 		}
 	}

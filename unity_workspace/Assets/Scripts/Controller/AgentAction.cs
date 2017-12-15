@@ -8,6 +8,6 @@ public abstract class AgentAction : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	abstract public void Execute();
+	abstract public void Execute(float value);
 
 }

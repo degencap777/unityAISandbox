@@ -21,13 +21,13 @@ public class BoundAxisStatePropertyDrawer : PropertyDrawer
 		var sectionWidth = position.width / 2;
 		
 		SerializedProperty axisProperty = property.FindPropertyRelative("m_requiredAxis");
-		SerializedProperty minThresholdProperty = property.FindPropertyRelative("m_minimumThreshold");
+		SerializedProperty deadzoneProperty = property.FindPropertyRelative("m_deadZone");
 
 		EditorGUI.LabelField(new Rect(x, y, sectionWidth - 2, h), "Axis name");
 		axisProperty.stringValue = EditorGUI.TextField(new Rect(x + sectionWidth, y, sectionWidth - 2, h - 2), GUIContent.none, axisProperty.stringValue);
 
-		EditorGUI.LabelField(new Rect(x, y + h, sectionWidth - 2, h), "Minimum threshold");
-		minThresholdProperty.floatValue = EditorGUI.FloatField(new Rect(x + sectionWidth, y + h, sectionWidth - 2, h - 2), GUIContent.none, minThresholdProperty.floatValue);
+		EditorGUI.LabelField(new Rect(x, y + h, sectionWidth - 2, h), "Deadzone");
+		deadzoneProperty.floatValue = EditorGUI.FloatField(new Rect(x + sectionWidth, y + h, sectionWidth - 2, h - 2), GUIContent.none, deadzoneProperty.floatValue);
 
 		EditorGUI.indentLevel = indent;
 		EditorGUI.EndProperty();

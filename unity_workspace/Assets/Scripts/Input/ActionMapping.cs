@@ -23,7 +23,7 @@ public class ActionMapping<T> where T : BoundInputState
 		m_boundInputState.Update();
 		if (m_boundInputState.ConditionsMet())
 		{
-			m_action.Execute();
+			m_action.Execute(m_boundInputState.GetValue());
 		}
 	}
 

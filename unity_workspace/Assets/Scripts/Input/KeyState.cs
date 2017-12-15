@@ -1,6 +1,5 @@
 ﻿using System;
 
-[Flags]
 public enum KeyState
 {
 	None = 0,
