@@ -23,7 +23,7 @@ public class BoundAxisState : BoundInputState
 	}
 
 	// --------------------------------------------------------------------------------
-	
+
 	public override bool ConditionsMet()
 	{
 		return Mathf.Abs(m_currentValue) > m_deadZone;
