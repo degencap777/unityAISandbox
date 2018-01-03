@@ -23,19 +23,23 @@ public class FollowCamera : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	protected virtual Vector3 CalculateMovementStep()
-	{
-		return (m_target.position + m_offset) - m_transform.position;
-	}
-
-	// --------------------------------------------------------------------------------
-
 	private void Update()
 	{
 		if (m_transform != null)
 		{
-			m_transform.Translate(CalculateMovementStep(), Space.World);
+			Vector3 step = CalculateMovementStep();
+			if (step.sqrMagnitude > float.Epsilon)
+			{
+				m_transform.Translate(step, Space.World);
+			}
 		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual Vector3 CalculateMovementStep()
+	{
+		return (m_target.position + m_offset) - m_transform.position;
 	}
 
 }
