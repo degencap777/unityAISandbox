@@ -6,11 +6,11 @@ public class AgentController : MonoBehaviour
 
 	// movement
 	[SerializeField]
-	private float m_moveForwardSpeed = 10.0f;
+	private float m_moveForwardSpeed = 8.5f;
 	[SerializeField]
 	private float m_moveBackwardSpeed = 7.0f;
 	[SerializeField]
-	private float m_moveSidewaysSpeed = 6.0f;
+	private float m_moveSidewaysSpeed = 7.0f;
 	private Vector3 m_movementStep = Vector3.zero;
 	private Vector3 m_lastMovementStep = Vector3.zero;
 	private Vector3 m_appliedMovementStep = Vector3.zero;
@@ -24,16 +24,16 @@ public class AgentController : MonoBehaviour
 
 	// movement acceleration, deceleration
 	[SerializeField]
-	private float m_movementAccelerationFactor = 1.0f;
+	private float m_movementAccelerationFactor = 3.0f;
 	[SerializeField]
-	private float m_movementDecelerationFactor = 1.0f;
+	private float m_movementDecelerationFactor = 3.0f;
 	private float m_movementAcceleration = 0.0f;
 
 	// rotation acceleration, deceleration
 	[SerializeField]
-	private float m_rotationAccelerationFactor = 1.0f;
+	private float m_rotationAccelerationFactor = 100.0f;
 	[SerializeField]
-	private float m_rotationDecelerationFactor = 1.0f;
+	private float m_rotationDecelerationFactor = 100.0f;
 	private float m_rotationAcceleration = 0.0f;
 
 	// --------------------------------------------------------------------------------
@@ -52,7 +52,7 @@ public class AgentController : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	protected virtual void Update()
+	public void OnUpdate()
 	{
 		if (m_characterController != null)
 		{
