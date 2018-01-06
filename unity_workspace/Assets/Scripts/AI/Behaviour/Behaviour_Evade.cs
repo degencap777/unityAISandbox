@@ -8,32 +8,24 @@ public class Behaviour_Evade : Behaviour
 
 	[SerializeField]
 	private float m_evadeTriggerDistance = 23.0f;
-
+	
 	// --------------------------------------------------------------------------------
 
-	private Agent m_pursuant = null;
-	public Agent Pursuant
-	{
-		get { return m_pursuant; }
-		set { m_pursuant = value; }
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public Behaviour_Evade(Agent owner)
-		: base(owner)
+	public Behaviour_Evade(WorkingMemory workingMemory)
+		: base(workingMemory)
 	{
 		m_goal = new Goal_Evade();
+		SetGoal();
 	}
 
 	// --------------------------------------------------------------------------------
 
-	public override void SetGoal()
+	protected override void SetGoal()
 	{
 		Goal_Evade evadeGoal = m_goal as Goal_Evade;
 		if (evadeGoal != null)
 		{
-			evadeGoal.Pursuant = m_pursuant;
+			evadeGoal.WorkingMemory = m_workingMemory;
 			evadeGoal.SuccessDistance = m_evadeSuccessDistance;
 			evadeGoal.ActivateDistance = m_evadeTriggerDistance;
 		}
@@ -43,7 +35,10 @@ public class Behaviour_Evade : Behaviour
 
 	public override void OnEnter()
 	{
-		;
+		if (m_workingMemory != null)
+		{
+			m_workingMemory.SortTargets();
+		}
 	}
 
 	// --------------------------------------------------------------------------------
@@ -57,7 +52,11 @@ public class Behaviour_Evade : Behaviour
 
 	public override void OnUpdate()
 	{
-		// #SteveD >>> todo
+		Agent target = GetHighestPriorityTarget();
+		if (target != null)
+		{
+			// #SteveD >>>> todo
+		}
 	}
 	
 }

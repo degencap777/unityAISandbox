@@ -3,22 +3,20 @@
 public abstract class Behaviour : ScriptableObject
 {
 
-	protected IGoal m_goal = null;
+	protected Goal m_goal = null;
+
+	protected WorkingMemory m_workingMemory = null;
 
 	// --------------------------------------------------------------------------------
 
-	protected Agent m_owner = null;
-
-	// --------------------------------------------------------------------------------
-
-	public Behaviour(Agent owner)
+	public Behaviour(WorkingMemory workingMemory)
 	{
-		m_owner = owner;
+		m_workingMemory = workingMemory;
 	}
 
 	// --------------------------------------------------------------------------------
 
-	public abstract void SetGoal();
+	protected abstract void SetGoal();
 	public abstract void OnEnter();
 	public abstract void OnUpdate();
 	public abstract void OnExit();
@@ -36,5 +34,14 @@ public abstract class Behaviour : ScriptableObject
 	{
 		return m_goal != null && m_goal.IsInvalidated();
 	}
-	
+
+	// --------------------------------------------------------------------------------
+
+	protected Agent GetHighestPriorityTarget()
+	{
+		return m_workingMemory != null ?
+			m_workingMemory.GetHighestPriorityTarget() :
+			null;
+	}
+
 }

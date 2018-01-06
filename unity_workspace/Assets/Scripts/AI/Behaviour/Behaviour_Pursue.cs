@@ -11,29 +11,21 @@ public class Behaviour_Pursue : Behaviour
 
 	// --------------------------------------------------------------------------------
 
-	private Agent m_target = null;
-	public Agent Target
-	{
-		get { return m_target; }
-		set { m_target = value; }
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public Behaviour_Pursue(Agent owner)
-		: base(owner)
+	public Behaviour_Pursue(WorkingMemory workingMemory)
+		: base(workingMemory)
 	{
 		m_goal = new Goal_Pursue();
+		SetGoal();
 	}
 
 	// --------------------------------------------------------------------------------
 
-	public override void SetGoal()
+	protected override void SetGoal()
 	{
 		Goal_Pursue pursueGoal = m_goal as Goal_Pursue;
 		if (pursueGoal != null)
 		{
-			pursueGoal.Target = m_target;
+			pursueGoal.WorkingMemory = m_workingMemory;
 			pursueGoal.SuccessDistance = m_pursueSuccessDistance;
 			pursueGoal.ActivateDistance = m_pursueTriggerDistance;
 		}
@@ -43,7 +35,10 @@ public class Behaviour_Pursue : Behaviour
 
 	public override void OnEnter()
 	{
-		;
+		if (m_workingMemory != null)
+		{
+			m_workingMemory.SortTargets();
+		}
 	}
 
 	// --------------------------------------------------------------------------------
@@ -57,7 +52,11 @@ public class Behaviour_Pursue : Behaviour
 
 	public override void OnUpdate()
 	{
-		// #SteveD >>> todo
+		Agent target = GetHighestPriorityTarget();
+		if (target != null)
+		{
+			// #SteveD >>>> todo
+		}
 	}
 	
 }

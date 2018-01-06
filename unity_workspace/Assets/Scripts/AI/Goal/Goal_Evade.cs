@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-public class Goal_Evade : ScriptableObject, IGoal
+public class Goal_Evade : Goal
 {
 
 	private float m_successDistance = 25.0f;
@@ -19,32 +19,31 @@ public class Goal_Evade : ScriptableObject, IGoal
 		get { return m_activateDistance; }
 		set { m_activateDistance = value; }
 	}
-
-	// --------------------------------------------------------------------------------
-
-	private Agent m_pursuant = null;
-	public Agent Pursuant
-	{
-		get { return m_pursuant; }
-		set { m_pursuant = value; }
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public bool IsAchieved()
-	{
-		// #SteveD >>> todo
-
-		return false;
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public bool IsInvalidated()
-	{
-		// #SteveD >>> todo
-
-		return false;
-	}
 	
+	// --------------------------------------------------------------------------------
+
+	public override bool IsAchieved()
+	{
+		Agent target = GetHighestPriorityTarget();
+		if (target != null)
+		{
+			// #SteveD >>>> todo
+		}
+
+		return false;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public override bool IsInvalidated()
+	{
+		Agent target = GetHighestPriorityTarget();
+		if (target != null)
+		{
+			// #SteveD >>>> todo
+		}
+
+		return false;
+	}
+
 }
