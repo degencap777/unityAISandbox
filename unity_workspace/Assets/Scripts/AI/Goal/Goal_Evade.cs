@@ -4,30 +4,26 @@ using UnityEngine;
 public class Goal_Evade : Goal
 {
 
-	private float m_successDistance = 25.0f;
-	public float SuccessDistance
+	private float m_successDistanceSquared = 25.0f;
+	public float SuccessDistanceSquared
 	{
-		get { return m_successDistance; }
-		set { m_successDistance = value; }
+		get { return m_successDistanceSquared; }
+		set { m_successDistanceSquared = value; }
 	}
 
-	// --------------------------------------------------------------------------------
-
-	private float m_activateDistance = 23.0f;
-	public float ActivateDistance
-	{
-		get { return m_activateDistance; }
-		set { m_activateDistance = value; }
-	}
-	
 	// --------------------------------------------------------------------------------
 
 	public override bool IsAchieved()
 	{
+		Agent owner = GetOwner();
 		Agent target = GetHighestPriorityTarget();
-		if (target != null)
+
+		if (owner != null && target != null)
 		{
-			// #SteveD >>>> todo
+			Vector3 ownerPosition = owner.transform.position;
+			Vector3 targetPosition = target.transform.position;
+			Vector3 toTarget = targetPosition - ownerPosition;
+			return toTarget.sqrMagnitude >= m_successDistanceSquared;
 		}
 
 		return false;
@@ -37,13 +33,7 @@ public class Goal_Evade : Goal
 
 	public override bool IsInvalidated()
 	{
-		Agent target = GetHighestPriorityTarget();
-		if (target != null)
-		{
-			// #SteveD >>>> todo
-		}
-
-		return false;
+		return GetHighestPriorityTarget() == null;
 	}
 
 }

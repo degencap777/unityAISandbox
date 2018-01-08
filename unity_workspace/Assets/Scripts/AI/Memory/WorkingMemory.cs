@@ -9,6 +9,7 @@ public class WorkingMemory
 	// --------------------------------------------------------------------------------
 
 	private List<TargetPriority> m_targets = new List<TargetPriority>();
+	private List<Agent> m_allies = new List<Agent>();
 
 	// --------------------------------------------------------------------------------
 

@@ -17,6 +17,15 @@ public abstract class Goal : ScriptableObject
 
 	// --------------------------------------------------------------------------------
 
+	protected Agent GetOwner()
+	{
+		return m_workingMemory != null ?
+			m_workingMemory.Owner :
+			null;
+	}
+
+	// --------------------------------------------------------------------------------
+
 	protected Agent GetHighestPriorityTarget()
 	{
 		return m_workingMemory != null ?

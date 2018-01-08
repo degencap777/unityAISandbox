@@ -4,10 +4,8 @@ public class Behaviour_Pursue : Behaviour
 {
 
 	[SerializeField]
-	private float m_pursueSuccessDistance = 5.0f;
-
-	[SerializeField]
-	private float m_pursueTriggerDistance = 10.0f;
+	private float m_successDistance = 2.0f;
+	private float m_successDistanceSquared = 4.0f;
 
 	// --------------------------------------------------------------------------------
 
@@ -16,6 +14,8 @@ public class Behaviour_Pursue : Behaviour
 	{
 		m_goal = new Goal_Pursue();
 		SetGoal();
+
+		m_successDistanceSquared = m_successDistance * m_successDistance;
 	}
 
 	// --------------------------------------------------------------------------------
@@ -26,8 +26,7 @@ public class Behaviour_Pursue : Behaviour
 		if (pursueGoal != null)
 		{
 			pursueGoal.WorkingMemory = m_workingMemory;
-			pursueGoal.SuccessDistance = m_pursueSuccessDistance;
-			pursueGoal.ActivateDistance = m_pursueTriggerDistance;
+			pursueGoal.SuccessDistanceSquared = m_successDistance;
 		}
 	}
 

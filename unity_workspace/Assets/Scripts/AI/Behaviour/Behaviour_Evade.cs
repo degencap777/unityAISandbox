@@ -4,10 +4,8 @@ public class Behaviour_Evade : Behaviour
 {
 
 	[SerializeField]
-	private float m_evadeSuccessDistance = 25.0f;
-
-	[SerializeField]
-	private float m_evadeTriggerDistance = 23.0f;
+	private float m_successDistance = 5.0f;
+	private float m_successDistanceSquared = 25.0f;
 	
 	// --------------------------------------------------------------------------------
 
@@ -16,6 +14,8 @@ public class Behaviour_Evade : Behaviour
 	{
 		m_goal = new Goal_Evade();
 		SetGoal();
+
+		m_successDistanceSquared = m_successDistance * m_successDistance;
 	}
 
 	// --------------------------------------------------------------------------------
@@ -26,8 +26,7 @@ public class Behaviour_Evade : Behaviour
 		if (evadeGoal != null)
 		{
 			evadeGoal.WorkingMemory = m_workingMemory;
-			evadeGoal.SuccessDistance = m_evadeSuccessDistance;
-			evadeGoal.ActivateDistance = m_evadeTriggerDistance;
+			evadeGoal.SuccessDistanceSquared = m_successDistanceSquared;
 		}
 	}
 
@@ -55,7 +54,7 @@ public class Behaviour_Evade : Behaviour
 		Agent target = GetHighestPriorityTarget();
 		if (target != null)
 		{
-			// #SteveD >>>> todo
+			// #SteveD >>> todo
 		}
 	}
 	
