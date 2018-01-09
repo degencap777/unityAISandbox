@@ -15,14 +15,17 @@ public class Goal_Evade : Goal
 
 	public override bool IsAchieved()
 	{
-		Agent owner = GetOwner();
-		Agent target = GetHighestPriorityTarget();
+		if (m_workingMemory == null)
+		{
+			return false;
+		}
+
+		Agent owner = m_workingMemory.Owner;
+		Agent target = m_workingMemory.GetHighestPriorityTarget();
 
 		if (owner != null && target != null)
 		{
-			Vector3 ownerPosition = owner.transform.position;
-			Vector3 targetPosition = target.transform.position;
-			Vector3 toTarget = targetPosition - ownerPosition;
+			Vector3 toTarget = target.transform.position - owner.transform.position;
 			return toTarget.sqrMagnitude >= m_successDistanceSquared;
 		}
 
@@ -33,7 +36,7 @@ public class Goal_Evade : Goal
 
 	public override bool IsInvalidated()
 	{
-		return GetHighestPriorityTarget() == null;
+		return m_workingMemory == null || m_workingMemory.GetHighestPriorityTarget() == null;
 	}
 
 }

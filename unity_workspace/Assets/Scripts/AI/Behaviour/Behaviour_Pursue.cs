@@ -12,15 +12,15 @@ public class Behaviour_Pursue : Behaviour
 	public Behaviour_Pursue(WorkingMemory workingMemory)
 		: base(workingMemory)
 	{
-		m_goal = new Goal_Pursue();
-		SetGoal();
-
 		m_successDistanceSquared = m_successDistance * m_successDistance;
+
+		m_goal = new Goal_Pursue();
+		SetUpGoal();
 	}
 
 	// --------------------------------------------------------------------------------
 
-	protected override void SetGoal()
+	protected override void SetUpGoal()
 	{
 		Goal_Pursue pursueGoal = m_goal as Goal_Pursue;
 		if (pursueGoal != null)
@@ -51,10 +51,20 @@ public class Behaviour_Pursue : Behaviour
 
 	public override void OnUpdate()
 	{
-		Agent target = GetHighestPriorityTarget();
-		if (target != null)
+		if (m_workingMemory == null)
 		{
-			// #SteveD >>>> todo
+			return;
+		}
+
+		Agent owner = m_workingMemory.Owner;
+		Agent target = m_workingMemory.GetHighestPriorityTarget();
+
+		if (owner != null && target != null)
+		{
+			Vector3 toTarget = target.transform.position - owner.transform.position;
+
+			// #SteveD >>> todo
+
 		}
 	}
 	

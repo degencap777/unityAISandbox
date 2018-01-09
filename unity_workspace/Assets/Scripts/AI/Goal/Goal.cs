@@ -14,23 +14,5 @@ public abstract class Goal : ScriptableObject
 
 	public abstract bool IsAchieved();
 	public abstract bool IsInvalidated();
-
-	// --------------------------------------------------------------------------------
-
-	protected Agent GetOwner()
-	{
-		return m_workingMemory != null ?
-			m_workingMemory.Owner :
-			null;
-	}
-
-	// --------------------------------------------------------------------------------
-
-	protected Agent GetHighestPriorityTarget()
-	{
-		return m_workingMemory != null ?
-			m_workingMemory.GetHighestPriorityTarget() :
-			null;
-	}
-
+	
 }

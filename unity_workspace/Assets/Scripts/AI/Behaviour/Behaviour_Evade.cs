@@ -12,15 +12,15 @@ public class Behaviour_Evade : Behaviour
 	public Behaviour_Evade(WorkingMemory workingMemory)
 		: base(workingMemory)
 	{
-		m_goal = new Goal_Evade();
-		SetGoal();
-
 		m_successDistanceSquared = m_successDistance * m_successDistance;
+
+		m_goal = new Goal_Evade();
+		SetUpGoal();
 	}
 
 	// --------------------------------------------------------------------------------
 
-	protected override void SetGoal()
+	protected override void SetUpGoal()
 	{
 		Goal_Evade evadeGoal = m_goal as Goal_Evade;
 		if (evadeGoal != null)
@@ -51,10 +51,20 @@ public class Behaviour_Evade : Behaviour
 
 	public override void OnUpdate()
 	{
-		Agent target = GetHighestPriorityTarget();
-		if (target != null)
+		if (m_workingMemory == null)
 		{
+			return;
+		}
+
+		Agent owner = m_workingMemory.Owner;
+		Agent target = m_workingMemory.GetHighestPriorityTarget();
+
+		if (owner != null && target != null)
+		{
+			Vector3 toTarget = target.transform.position - owner.transform.position;
+
 			// #SteveD >>> todo
+
 		}
 	}
 	

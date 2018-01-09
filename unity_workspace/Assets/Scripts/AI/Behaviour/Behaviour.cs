@@ -16,7 +16,7 @@ public abstract class Behaviour : ScriptableObject
 
 	// --------------------------------------------------------------------------------
 
-	protected abstract void SetGoal();
+	protected abstract void SetUpGoal();
 	public abstract void OnEnter();
 	public abstract void OnUpdate();
 	public abstract void OnExit();
@@ -32,16 +32,7 @@ public abstract class Behaviour : ScriptableObject
 
 	public bool IsGoalInvalidated()
 	{
-		return m_goal != null && m_goal.IsInvalidated();
+		return m_goal == null || m_goal.IsInvalidated();
 	}
-
-	// --------------------------------------------------------------------------------
-
-	protected Agent GetHighestPriorityTarget()
-	{
-		return m_workingMemory != null ?
-			m_workingMemory.GetHighestPriorityTarget() :
-			null;
-	}
-
+	
 }
