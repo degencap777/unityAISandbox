@@ -1,29 +1,30 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class Behaviour_Pursue : Behaviour
 {
 
-	public override Goal AchievesGoal { get { return Goal.CloseDown; } }
+	public override BehaviourId BehaviourId { get { return BehaviourId.Pursue; } }
+	public override GoalFlags AchievedGoals { get { return GoalFlags.CloseDown; } }
+	public override GoalFlags PrerequisiteGoals { get { return GoalFlags.None; } }
 
 	// --------------------------------------------------------------------------------
 
 	[SerializeField]
 	private float m_successDistance = 2.0f;
 	private float m_successDistanceSquared = 4.0f;
-
-	private float m_toTargetSquared = float.MaxValue;
-
+	
 	// --------------------------------------------------------------------------------
 
 	// cache
 	private Agent m_cachedTarget = null;
+	private float m_toTargetSquared = float.MaxValue;
 
 	// --------------------------------------------------------------------------------
 
-	public Behaviour_Pursue(Agent owner, Memory memory)
-		: base(owner, memory)
+	public override void Initialise(Agent owner, WorkingMemory workingMemory)
 	{
+		base.Initialise(owner, workingMemory);
+
 		m_successDistanceSquared = m_successDistance * m_successDistance;
 	}
 
@@ -31,11 +32,10 @@ public class Behaviour_Pursue : Behaviour
 
 	public override void OnEnter()
 	{
-		if (m_memory != null && m_memory.WorkingMemory != null)
+		if (m_workingMemory != null)
 		{
-			m_memory.WorkingMemory.SortTargets();
-
-			m_cachedTarget = m_memory.WorkingMemory.GetHighestPriorityTarget();
+			m_workingMemory.SortTargets();
+			m_cachedTarget = m_workingMemory.GetHighestPriorityTarget();
 		}
 	}
 
@@ -50,6 +50,9 @@ public class Behaviour_Pursue : Behaviour
 
 	public override void OnUpdate()
 	{
+
+		// #SteveD >>> periodically poll for highest priority target in case it changes
+
 		if (m_owner != null && m_owner.AgentController != null)// && m_cachedTarget != null)
 		{
 			//Vector3 toTarget = m_cachedTarget.transform.position - m_owner.transform.position;

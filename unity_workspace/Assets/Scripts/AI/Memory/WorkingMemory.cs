@@ -1,7 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class WorkingMemory
+public class WorkingMemory : MonoBehaviour
 {
 
 	private List<TargetPriority> m_targets = new List<TargetPriority>();
@@ -9,8 +9,16 @@ public class WorkingMemory
 
 	// --------------------------------------------------------------------------------
 
-	public WorkingMemory()
+	public void Initialise()
 	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void OnUpdate()
+	{
+		;
 	}
 
 	// --------------------------------------------------------------------------------

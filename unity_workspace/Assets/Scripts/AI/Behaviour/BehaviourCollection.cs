@@ -1,44 +1,50 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class BehaviourCollection
+public class BehaviourCollection : MonoBehaviour
 {
 
-	private enum BehaviourId { Pursue, Evade }
-
-	// #SteveD >>> make this a bitflag instead of a list
 	[SerializeField]
-	private List<BehaviourId> m_availableBehaviours = new List<BehaviourId>();
+	private BehaviourId m_initialBehaviour = BehaviourId.None;
 
-	private List<Behaviour> m_behaviours = new List<Behaviour>();
-	private int m_currentBehaviourIndex = 0;
-
-	// --------------------------------------------------------------------------------
-
-	private bool IsCurrentBehaviourIndexValid()
-	{
-		return m_currentBehaviourIndex >= 0 && m_currentBehaviourIndex < m_behaviours.Count;
-	}
+	private Dictionary<BehaviourId, Behaviour> m_behaviours = new Dictionary<BehaviourId, Behaviour>();
+	private Behaviour m_currentBehaviour = null;
 
 	// --------------------------------------------------------------------------------
-
-	public BehaviourCollection()
+	
+	protected void Awake()
 	{
-	}
+		var allBehaviours = gameObject.GetComponentsInChildren<Behaviour>();
+		Behaviour currentBehaviour = null;
 
-	// --------------------------------------------------------------------------------
-
-	public void Initialise(Agent owner, Memory memory)
-	{
-		// #SteveD >>> set up using m_availableBehaviours
-		m_behaviours.Add(new Behaviour_Pursue(owner, memory));
-		m_behaviours.Add(new Behaviour_Evade(owner, memory));
-
-		if (IsCurrentBehaviourIndexValid())
+		for (int i = 0; i < allBehaviours.Length; ++i)
 		{
-			m_behaviours[m_currentBehaviourIndex].OnEnter();
+			currentBehaviour = allBehaviours[i];
+			if (m_behaviours.ContainsKey(currentBehaviour.BehaviourId))
+			{
+				Debug.LogErrorFormat("[BehaviourCollecion] Attempting to add duplicate behaviour to BehaviourCollection {0}\n",
+					currentBehaviour.BehaviourId);
+			}
+			else
+			{
+				m_behaviours.Add(currentBehaviour.BehaviourId, currentBehaviour);
+			}
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Initialise(Agent owner, WorkingMemory memory)
+	{
+		foreach (Behaviour behaviour in m_behaviours.Values)
+		{
+			behaviour.Initialise(owner, memory);
+		}
+
+		m_behaviours.TryGetValue(m_initialBehaviour, out m_currentBehaviour);
+		if (m_currentBehaviour != null)
+		{
+			m_currentBehaviour.OnEnter();
 		}
 	}
 
@@ -46,9 +52,9 @@ public class BehaviourCollection
 	
 	public void OnUpdate()
 	{
-		if (IsCurrentBehaviourIndexValid())
+		if (m_currentBehaviour != null)
 		{
-			m_behaviours[m_currentBehaviourIndex].OnUpdate();
+			m_currentBehaviour.OnUpdate();
 		}
 	}
 

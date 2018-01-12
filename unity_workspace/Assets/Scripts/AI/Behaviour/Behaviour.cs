@@ -1,23 +1,23 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using UnityEngine;
 
-public abstract class Behaviour
+public abstract class Behaviour : MonoBehaviour
 {
 
 	protected Agent m_owner = null;
-	protected Memory m_memory = null;
+	protected WorkingMemory m_workingMemory = null;
+
+	// --------------------------------------------------------------------------------
+
+	public abstract BehaviourId BehaviourId { get; }
+	public abstract GoalFlags AchievedGoals { get; }
+	public abstract GoalFlags PrerequisiteGoals { get ; }
 	
 	// --------------------------------------------------------------------------------
 
-	public abstract Goal AchievesGoal { get; }
-	public virtual List<Goal> PrerequisiteGoals { get { return null; } }
-	
-	// --------------------------------------------------------------------------------
-
-	public Behaviour(Agent owner, Memory memory)
+	public virtual void Initialise(Agent owner, WorkingMemory workingMemory)
 	{
 		m_owner = owner;
-		m_memory = memory;
+		m_workingMemory = workingMemory;
 	}
 
 	// --------------------------------------------------------------------------------

@@ -2,6 +2,7 @@
 
 public class TargetPriority : IComparable
 {
+
 	private Agent m_target = null;
 	public Agent Target { get { return m_target; } }
 
