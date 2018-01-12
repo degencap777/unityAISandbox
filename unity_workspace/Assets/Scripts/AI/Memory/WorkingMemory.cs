@@ -1,21 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 public class WorkingMemory
 {
-
-	private Agent m_owner = null;
-	public Agent Owner { get { return m_owner; } }
-
-	// --------------------------------------------------------------------------------
 
 	private List<TargetPriority> m_targets = new List<TargetPriority>();
 	private List<Agent> m_allies = new List<Agent>();
 
 	// --------------------------------------------------------------------------------
 
-	public WorkingMemory(Agent owner)
+	public WorkingMemory()
 	{
-		m_owner = owner;
 	}
 
 	// --------------------------------------------------------------------------------

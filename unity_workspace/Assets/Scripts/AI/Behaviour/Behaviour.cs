@@ -1,38 +1,32 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
 
-public abstract class Behaviour : ScriptableObject
+public abstract class Behaviour
 {
 
-	protected Goal m_goal = null;
-
-	protected WorkingMemory m_workingMemory = null;
-
+	protected Agent m_owner = null;
+	protected Memory m_memory = null;
+	
 	// --------------------------------------------------------------------------------
 
-	public Behaviour(WorkingMemory workingMemory)
+	public abstract Goal AchievesGoal { get; }
+	public virtual List<Goal> PrerequisiteGoals { get { return null; } }
+	
+	// --------------------------------------------------------------------------------
+
+	public Behaviour(Agent owner, Memory memory)
 	{
-		m_workingMemory = workingMemory;
+		m_owner = owner;
+		m_memory = memory;
 	}
 
 	// --------------------------------------------------------------------------------
-
-	protected abstract void SetUpGoal();
+	
 	public abstract void OnEnter();
 	public abstract void OnUpdate();
 	public abstract void OnExit();
 
-	// --------------------------------------------------------------------------------
-
-	public bool IsGoalAchieved()
-	{
-		return m_goal != null && m_goal.IsAchieved();
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public bool IsGoalInvalidated()
-	{
-		return m_goal == null || m_goal.IsInvalidated();
-	}
+	public abstract bool IsGoalAchieved();
+	public abstract bool IsGoalInvalidated();
 	
 }

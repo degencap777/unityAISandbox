@@ -4,6 +4,7 @@ public class Agent : MonoBehaviour
 {
 
 	private AgentController m_agentController;
+	public AgentController AgentController { get { return m_agentController; } }
 	
 	// --------------------------------------------------------------------------------
 

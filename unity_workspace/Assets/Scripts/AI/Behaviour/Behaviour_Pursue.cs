@@ -1,42 +1,41 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class Behaviour_Pursue : Behaviour
 {
+
+	public override Goal AchievesGoal { get { return Goal.CloseDown; } }
+
+	// --------------------------------------------------------------------------------
 
 	[SerializeField]
 	private float m_successDistance = 2.0f;
 	private float m_successDistanceSquared = 4.0f;
 
+	private float m_toTargetSquared = float.MaxValue;
+
 	// --------------------------------------------------------------------------------
 
-	public Behaviour_Pursue(WorkingMemory workingMemory)
-		: base(workingMemory)
+	// cache
+	private Agent m_cachedTarget = null;
+
+	// --------------------------------------------------------------------------------
+
+	public Behaviour_Pursue(Agent owner, Memory memory)
+		: base(owner, memory)
 	{
 		m_successDistanceSquared = m_successDistance * m_successDistance;
-
-		m_goal = new Goal_Pursue();
-		SetUpGoal();
-	}
-
-	// --------------------------------------------------------------------------------
-
-	protected override void SetUpGoal()
-	{
-		Goal_Pursue pursueGoal = m_goal as Goal_Pursue;
-		if (pursueGoal != null)
-		{
-			pursueGoal.WorkingMemory = m_workingMemory;
-			pursueGoal.SuccessDistanceSquared = m_successDistance;
-		}
 	}
 
 	// --------------------------------------------------------------------------------
 
 	public override void OnEnter()
 	{
-		if (m_workingMemory != null)
+		if (m_memory != null && m_memory.WorkingMemory != null)
 		{
-			m_workingMemory.SortTargets();
+			m_memory.WorkingMemory.SortTargets();
+
+			m_cachedTarget = m_memory.WorkingMemory.GetHighestPriorityTarget();
 		}
 	}
 
@@ -51,21 +50,30 @@ public class Behaviour_Pursue : Behaviour
 
 	public override void OnUpdate()
 	{
-		if (m_workingMemory == null)
+		if (m_owner != null && m_owner.AgentController != null)// && m_cachedTarget != null)
 		{
-			return;
-		}
+			//Vector3 toTarget = m_cachedTarget.transform.position - m_owner.transform.position;
+			//m_toTargetSquared = toTarget.sqrMagnitude;
 
-		Agent owner = m_workingMemory.Owner;
-		Agent target = m_workingMemory.GetHighestPriorityTarget();
 
-		if (owner != null && target != null)
-		{
-			Vector3 toTarget = target.transform.position - owner.transform.position;
-
-			// #SteveD >>> todo
+			// #SteveD >>> pursue target
+			m_owner.AgentController.Rotate(1.0f);
 
 		}
 	}
-	
+
+	// --------------------------------------------------------------------------------
+
+	public override bool IsGoalAchieved()
+	{
+		return m_toTargetSquared <= m_successDistanceSquared;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public override bool IsGoalInvalidated()
+	{
+		return m_owner == null || m_cachedTarget == null;
+	}
+
 }
