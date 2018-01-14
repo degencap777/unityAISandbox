@@ -6,6 +6,11 @@ public class AIBrain : MonoBehaviour
 	[SerializeField]
 	private Agent m_owner = null;
 
+	// #SteveD >>> temporary until AI can percieve Agents
+	[SerializeField]
+	private Agent m_player = null;
+	// -------
+
 	private WorkingMemory m_workingMemory = null;
 	private BehaviourCollection m_behaviours = null;
 
@@ -23,12 +28,19 @@ public class AIBrain : MonoBehaviour
 	{
 		if (m_workingMemory != null)
 		{
-			m_workingMemory.Initialise();
+			m_workingMemory.OnStart();
+
+			// #SteveD >>> temporary until AI can percieve Agents
+			if (m_player != null)
+			{
+				m_workingMemory.AddTarget(m_player);
+			}
+			// -------
 		}
 
 		if (m_behaviours != null)
 		{
-			m_behaviours.Initialise(m_owner, m_workingMemory);
+			m_behaviours.OnStart(m_owner, m_workingMemory);
 		}
 	}
 

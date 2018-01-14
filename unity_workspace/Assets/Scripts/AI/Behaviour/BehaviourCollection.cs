@@ -34,11 +34,11 @@ public class BehaviourCollection : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public void Initialise(Agent owner, WorkingMemory memory)
+	public void OnStart(Agent owner, WorkingMemory memory)
 	{
 		foreach (Behaviour behaviour in m_behaviours.Values)
 		{
-			behaviour.Initialise(owner, memory);
+			behaviour.OnStart(owner, memory);
 		}
 
 		m_behaviours.TryGetValue(m_initialBehaviour, out m_currentBehaviour);
@@ -55,6 +55,29 @@ public class BehaviourCollection : MonoBehaviour
 		if (m_currentBehaviour != null)
 		{
 			m_currentBehaviour.OnUpdate();
+
+			// #SteveD >>> testing >>> remove this once behaviour swapping logic is in
+			if (m_currentBehaviour.IsGoalAchieved())
+			{
+				Behaviour nextBehaviour = null;
+				switch (m_currentBehaviour.BehaviourId)
+				{
+					case BehaviourId.Pursue:
+						m_behaviours.TryGetValue(BehaviourId.Evade, out nextBehaviour);
+						break;
+					case BehaviourId.Evade:
+						m_behaviours.TryGetValue(BehaviourId.Pursue, out nextBehaviour);
+						break;
+				}
+
+				if (nextBehaviour != null)
+				{
+					m_currentBehaviour.OnExit();
+					m_currentBehaviour = nextBehaviour;
+					m_currentBehaviour.OnEnter();
+				}
+			}
+			// -------
 		}
 	}
 

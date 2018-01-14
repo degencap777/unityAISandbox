@@ -4,12 +4,12 @@ using UnityEngine;
 public class WorkingMemory : MonoBehaviour
 {
 
-	private List<TargetPriority> m_targets = new List<TargetPriority>();
+	private List<AgentPriority> m_targets = new List<AgentPriority>();
 	private List<Agent> m_allies = new List<Agent>();
 
 	// --------------------------------------------------------------------------------
 
-	public void Initialise()
+	public void OnStart()
 	{
 		;
 	}
@@ -19,6 +19,41 @@ public class WorkingMemory : MonoBehaviour
 	public void OnUpdate()
 	{
 		;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void AddTarget(Agent target)
+	{
+		AgentPriority agentPriority = AgentPriority.Pool.Get();
+		agentPriority.Target = target;
+		agentPriority.Priority = 1.0f;
+
+		m_targets.Add(agentPriority);
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void RemoveTarget(Agent target)
+	{
+		// find
+		int index = -1;
+		for (int i = 0; i < m_targets.Count; ++i)
+		{
+			if (m_targets[i].Target == target)
+			{
+				index = i;
+				break;
+			}
+		}
+
+		// return to pool
+		if (index >= 0 && index < m_targets.Count)
+		{
+			AgentPriority agentPriority = m_targets[index];
+			m_targets.RemoveAt(index);
+			AgentPriority.Pool.Return(agentPriority);
+		}
 	}
 
 	// --------------------------------------------------------------------------------
