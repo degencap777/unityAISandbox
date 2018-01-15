@@ -114,21 +114,53 @@ public class ResponseCurveEditor : Editor
 
 				// start drawing lines
 				GL.Begin(GL.LINES);
-				
-				// #SteveD >>> cache inner rect values
+				// axis colour
+				GL.Color(Color.white);
+
+				float xMin = 10.0f;
+				float xMax = layoutRectangle.width - 10.0f;
+				float yMin = 10.0f;
+				float yMax = layoutRectangle.height - 10.0f;
 
 				// x axis
-				// #SteveD >>> fix this
-				GL.Vertex3(layoutRectangle.x, layoutRectangle.y - layoutRectangle.height, 0);
-				GL.Vertex3(layoutRectangle.x + (layoutRectangle.width - 50), layoutRectangle.y - layoutRectangle.height, 0);
+				GL.Vertex3(xMin, yMin, 0.0f);
+				GL.Vertex3(xMin, yMax, 0.0f);
 
 				// y axis
-				// ...
-				
-				// #SteveD >>> todo >>> draw graph
-				// - if 0 edges, draw solid line at 0.0f
-				// - if 1 edge, draw solid line at this edge value
-				// - draw lines connecting edges
+				GL.Vertex3(xMin, yMax, 0.0f);
+				GL.Vertex3(xMax, yMax, 0.0f);
+
+				// graph colour
+				GL.Color(Color.green);
+
+				if (m_responseCurve.m_edges.Count == 0)
+				{
+					GL.Vertex3(xMin, yMax - 1.0f, 0.0f);
+					GL.Vertex3(xMax, yMax - 1.0f, 0.0f);
+				}
+				else if (m_responseCurve.m_edges.Count == 1)
+				{
+					float halfY = yMin + ((yMax - yMin) * 0.5f);
+					GL.Vertex3(xMin, halfY, 0.0f);
+					GL.Vertex3(xMax, halfY, 0.0f);
+				}
+				else
+				{
+					float xStep = (xMax - xMin) / (m_responseCurve.m_edges.Count - 1);
+					float currentX = xMin;
+
+					float yDiff = yMax - yMin;
+
+					float maxEdgeValue = 0.0f;
+					m_responseCurve.m_edges.ForEach(edge => maxEdgeValue = edge > maxEdgeValue ? edge : maxEdgeValue);
+
+					for (int i = 1; i < m_responseCurve.m_edges.Count; ++i)
+					{
+						GL.Vertex3(currentX, yMax - ((m_responseCurve.m_edges[i - 1] / maxEdgeValue) * yDiff), 0.0f);
+						currentX += xStep;
+						GL.Vertex3(currentX, yMax - ((m_responseCurve.m_edges[i] / maxEdgeValue) * yDiff), 0.0f);
+					}
+				}
 
 				// end drawing lines
 				GL.End();
@@ -137,6 +169,7 @@ public class ResponseCurveEditor : Editor
 				GL.PopMatrix();
 				GUI.EndClip();
 			}
+			GUILayout.EndHorizontal();
 		}
 
 		serializedObject.ApplyModifiedProperties();
