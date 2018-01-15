@@ -36,7 +36,7 @@ public class Behaviour_Evade : Behaviour
 	private bool m_evading = false;
 	private float m_triggerDistanceSquared = 0.0f;
 	private float m_successDistanceSquared = 0.0f;
-	private float m_toTargetSquared = float.MaxValue;
+	private float m_targetToOwnerSquared = float.MaxValue;
 
 	// --------------------------------------------------------------------------------
 
@@ -115,14 +115,18 @@ public class Behaviour_Evade : Behaviour
 		}
 
 		// vector away from target
-		Vector3 toTarget = m_cachedTargetTransform.position - m_ownerTransform.position;
-		m_toTargetSquared = toTarget.sqrMagnitude;
+		Vector3 targetToOwner = m_ownerTransform.position - m_cachedTargetTransform.position;
+		m_targetToOwnerSquared = targetToOwner.sqrMagnitude;
 
-		if (m_evading || m_toTargetSquared <= m_triggerDistanceSquared)
+		if (m_evading || m_targetToOwnerSquared <= m_triggerDistanceSquared)
 		{
-			// evade
-			float escapeAngle = Vector3.SignedAngle(-m_ownerTransform.forward, toTarget, k_vectorUp);
-			float absEscapeAngle = Mathf.Abs(escapeAngle);
+			 // escape angle (shortest)
+			float escapeAngle = Vector3.Angle(m_ownerTransform.forward, targetToOwner);
+			float absEscapeAngle = escapeAngle;
+			if (Vector3.Cross(m_ownerTransform.forward, targetToOwner).y < 0)
+			{
+				escapeAngle = -escapeAngle;
+			}
 
 			// rotate away from target
 			if (absEscapeAngle >= m_isFacingAwayAngle)
@@ -137,7 +141,7 @@ public class Behaviour_Evade : Behaviour
 			}
 
 			// deactivate if reached success distance
-			m_evading = m_toTargetSquared <= m_successDistanceSquared;
+			m_evading = m_targetToOwnerSquared <= m_successDistanceSquared;
 		}
 	}
 
@@ -145,7 +149,7 @@ public class Behaviour_Evade : Behaviour
 
 	public override bool IsGoalAchieved()
 	{
-		return m_toTargetSquared >= m_successDistanceSquared;
+		return m_targetToOwnerSquared >= m_successDistanceSquared;
 	}
 
 	// --------------------------------------------------------------------------------

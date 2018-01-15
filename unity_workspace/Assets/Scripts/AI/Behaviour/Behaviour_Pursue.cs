@@ -118,9 +118,14 @@ public class Behaviour_Pursue : Behaviour
 		Vector3 toTarget = m_cachedTargetTransform.position - m_ownerTransform.position;
 		m_toTargetSquared = toTarget.sqrMagnitude;
 
-		float angleToTarget = Vector3.SignedAngle(m_ownerTransform.forward, toTarget, k_vectorUp);
-		float absAngleToTarget = Mathf.Abs(angleToTarget);
-
+		// angle to target (shortest)
+		float angleToTarget = Vector3.Angle(m_ownerTransform.forward, toTarget);
+		float absAngleToTarget = angleToTarget;
+		if (Vector3.Cross(m_ownerTransform.forward, toTarget).y < 0)
+		{
+			angleToTarget = -angleToTarget;
+		}
+		
 		// rotate to target
 		if (absAngleToTarget >= m_isFacingAngle)
 		{
