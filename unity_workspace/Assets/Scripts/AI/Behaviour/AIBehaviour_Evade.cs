@@ -11,8 +11,8 @@ public class AIBehaviour_Evade : AIBehaviour
 
 	[SerializeField]
 	private float m_triggerDistance = 5.0f;
-	
-	[SerializeField] 
+
+	[SerializeField]
 	private float m_successDistance = 6.0f;
 
 	[SerializeField]
@@ -26,10 +26,12 @@ public class AIBehaviour_Evade : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	private bool m_active = false;
+	public bool Active { get { return m_active; } }
+
 	private Agent m_cachedTarget = null;
 	private Transform m_cachedTargetTransform = null;
-
-	private bool m_evading = false;
+	
 	private float m_triggerDistanceSquared = 0.0f;
 	private float m_successDistanceSquared = 0.0f;
 	private float m_targetToOwnerSquared = float.MaxValue;
@@ -56,15 +58,11 @@ public class AIBehaviour_Evade : AIBehaviour
 
 	public override void OnEnter()
 	{
+		CacheTarget();
 		if (m_workingMemory != null)
 		{
-			m_workingMemory.SortTargets();
-
-			m_cachedTarget = m_workingMemory.GetHighestPriorityTarget();
-			if (m_cachedTarget != null)
-			{
-				m_cachedTargetTransform = m_cachedTarget.transform;
-			}
+			m_workingMemory.OnTargetsChanged -= OnWorkingMemoryTargetsChanged;
+			m_workingMemory.OnTargetsChanged += OnWorkingMemoryTargetsChanged;
 		}
 	}
 
@@ -72,7 +70,10 @@ public class AIBehaviour_Evade : AIBehaviour
 
 	public override void OnExit()
 	{
-		;
+		if (m_workingMemory != null)
+		{
+			m_workingMemory.OnTargetsChanged -= OnWorkingMemoryTargetsChanged;
+		}
 	}
 
 	// --------------------------------------------------------------------------------
@@ -90,19 +91,7 @@ public class AIBehaviour_Evade : AIBehaviour
 			Debug.LogError("[Behaviour_Pursue] Unable to update >>> owner transform is null\n");
 			return;
 		}
-
-		if (m_cachedTarget == null)
-		{
-			Debug.LogError("[Behaviour_Pursue] Unable to update >>> cached target is null\n");
-			return;
-		}
-
-		if (m_cachedTargetTransform == null)
-		{
-			Debug.LogError("[Behaviour_Pursue] Unable to update >>> cached target transform is null\n");
-			return;
-		}
-
+		
 		AgentController controller = m_owner.AgentController;
 		if (controller == null)
 		{
@@ -110,13 +99,18 @@ public class AIBehaviour_Evade : AIBehaviour
 			return;
 		}
 
+		if (m_cachedTarget == null || m_cachedTargetTransform == null)
+		{
+			return;
+		}
+
 		// vector away from target
 		Vector3 targetToOwner = m_ownerTransform.position - m_cachedTargetTransform.position;
 		m_targetToOwnerSquared = targetToOwner.sqrMagnitude;
 
-		if (m_evading || m_targetToOwnerSquared <= m_triggerDistanceSquared)
+		if (m_active || m_targetToOwnerSquared <= m_triggerDistanceSquared)
 		{
-			 // escape angle (shortest)
+			// escape angle (shortest)
 			float escapeAngle = Vector3.Angle(m_ownerTransform.forward, targetToOwner);
 			float absEscapeAngle = escapeAngle;
 			if (Vector3.Cross(m_ownerTransform.forward, targetToOwner).y < 0)
@@ -137,7 +131,7 @@ public class AIBehaviour_Evade : AIBehaviour
 			}
 
 			// deactivate if reached success distance
-			m_evading = m_targetToOwnerSquared <= m_successDistanceSquared;
+			m_active = m_targetToOwnerSquared <= m_successDistanceSquared;
 		}
 	}
 
@@ -157,6 +151,28 @@ public class AIBehaviour_Evade : AIBehaviour
 			m_owner.AgentController == null ||
 			m_cachedTarget == null ||
 			m_cachedTargetTransform == null;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void CacheTarget()
+	{
+		if (m_workingMemory != null)
+		{
+			m_workingMemory.SortTargets();
+			m_cachedTarget = m_workingMemory.GetHighestPriorityTarget();
+			if (m_cachedTarget != null)
+			{
+				m_cachedTargetTransform = m_cachedTarget.transform;
+			}
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void OnWorkingMemoryTargetsChanged()
+	{
+		CacheTarget();
 	}
 
 }

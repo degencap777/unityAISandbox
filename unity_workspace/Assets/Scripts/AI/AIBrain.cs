@@ -59,4 +59,15 @@ public class AIBrain : MonoBehaviour
 		}
 	}
 
+	// --------------------------------------------------------------------------------
+
+	public void ClearWorkingMemory()
+	{
+		if (m_workingMemory != null)
+		{
+			m_workingMemory.ClearTargets();
+			m_workingMemory.ClearAllies();
+		}
+	}
+
 }

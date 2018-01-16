@@ -1,6 +1,10 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+// #SteveD >>> custom inspector:
+//	- list of all available behaviours
+//	- highlight current behaviour
+
 public class AIBehaviourCollection : MonoBehaviour
 {
 

@@ -29,7 +29,9 @@ public class AIBehaviour_Pursue : AIBehaviour
 	private Agent m_cachedTarget = null;
 	private Transform m_cachedTargetTransform = null;
 
-	private bool m_pursuing = false;
+	private bool m_active = false;
+	public bool Active { get { return m_active; } }
+
 	private float m_successDistanceSquared = 0.0f;
 	private float m_triggerDistanceSquared = 0.0f;
 	private float m_toTargetSquared = float.MaxValue;
@@ -56,15 +58,11 @@ public class AIBehaviour_Pursue : AIBehaviour
 
 	public override void OnEnter()
 	{
+		CacheTarget();
 		if (m_workingMemory != null)
 		{
-			m_workingMemory.SortTargets();
-			
-			m_cachedTarget = m_workingMemory.GetHighestPriorityTarget();
-			if (m_cachedTarget != null)
-			{
-				m_cachedTargetTransform = m_cachedTarget.transform;
-			}
+			m_workingMemory.OnTargetsChanged -= OnWorkingMemoryTargetsChanged;
+			m_workingMemory.OnTargetsChanged += OnWorkingMemoryTargetsChanged;
 		}
 	}
 
@@ -72,7 +70,10 @@ public class AIBehaviour_Pursue : AIBehaviour
 
 	public override void OnExit()
 	{
-		;
+		if (m_workingMemory != null)
+		{
+			m_workingMemory.OnTargetsChanged -= OnWorkingMemoryTargetsChanged;
+		}
 	}
 
 	// --------------------------------------------------------------------------------
@@ -91,22 +92,15 @@ public class AIBehaviour_Pursue : AIBehaviour
 			return;
 		}
 		
-		if (m_cachedTarget == null)
-		{
-			Debug.LogError("[Behaviour_Pursue] Unable to update >>> cached target is null\n");
-			return;
-		}
-
-		if (m_cachedTargetTransform == null)
-		{
-			Debug.LogError("[Behaviour_Pursue] Unable to update >>> cached target transform is null\n");
-			return;
-		}
-		
 		AgentController controller = m_owner.AgentController;
 		if (controller == null)
 		{
 			Debug.LogError("[Behaviour_Pursue] Unable to update >>> owner AgentController is null\n");
+			return;
+		}
+
+		if (m_cachedTarget == null || m_cachedTargetTransform == null)
+		{
 			return;
 		}
 
@@ -129,7 +123,7 @@ public class AIBehaviour_Pursue : AIBehaviour
 		}
 
 		// only move toward target if out of range
-		if (m_pursuing || m_toTargetSquared >= m_triggerDistanceSquared)
+		if (m_active || m_toTargetSquared >= m_triggerDistanceSquared)
 		{
 			// move to target
 			if (absAngleToTarget <= m_minimumAngleForMovement)
@@ -138,7 +132,7 @@ public class AIBehaviour_Pursue : AIBehaviour
 			}
 			
 			// deactivate if reached success distance
-			m_pursuing = m_toTargetSquared >= m_successDistanceSquared;
+			m_active = m_toTargetSquared >= m_successDistanceSquared;
 		}
 	}
 
@@ -158,6 +152,28 @@ public class AIBehaviour_Pursue : AIBehaviour
 			m_owner.AgentController == null ||
 			m_cachedTarget == null ||
 			m_cachedTargetTransform == null;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void CacheTarget()
+	{
+		if (m_workingMemory != null)
+		{
+			m_workingMemory.SortTargets();
+			m_cachedTarget = m_workingMemory.GetHighestPriorityTarget();
+			if (m_cachedTarget != null)
+			{
+				m_cachedTargetTransform = m_cachedTarget.transform;
+			}
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void OnWorkingMemoryTargetsChanged()
+	{
+		CacheTarget();
 	}
 
 }
