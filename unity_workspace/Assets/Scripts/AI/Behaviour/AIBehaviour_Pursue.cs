@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-public class Behaviour_Pursue : Behaviour
+public class AIBehaviour_Pursue : AIBehaviour
 {
 
-	public override BehaviourId BehaviourId { get { return BehaviourId.Pursue; } }
+	public override AIBehaviourId BehaviourId { get { return AIBehaviourId.Pursue; } }
 	public override GoalFlags AchievedGoals { get { return GoalFlags.CloseDown; } }
 	public override GoalFlags PrerequisiteGoals { get { return GoalFlags.None; } }
 

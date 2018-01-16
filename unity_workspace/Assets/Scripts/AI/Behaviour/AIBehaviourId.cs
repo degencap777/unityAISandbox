@@ -1,6 +1,6 @@
 ﻿
 
-public enum BehaviourId : uint
+public enum AIBehaviourId : uint
 {
 	None = 0,
 	Pursue,

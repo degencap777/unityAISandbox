@@ -12,14 +12,14 @@ public class AIBrain : MonoBehaviour
 	// -------
 
 	private WorkingMemory m_workingMemory = null;
-	private BehaviourCollection m_behaviours = null;
+	private AIBehaviourCollection m_behaviours = null;
 
 	// --------------------------------------------------------------------------------
 	
 	protected virtual void Awake()
 	{
 		m_workingMemory = GetComponentInChildren<WorkingMemory>();
-		m_behaviours = GetComponentInChildren<BehaviourCollection>();
+		m_behaviours = GetComponentInChildren<AIBehaviourCollection>();
 	}
 
 	// --------------------------------------------------------------------------------

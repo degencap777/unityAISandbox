@@ -1,9 +1,9 @@
 ﻿using UnityEngine;
 
-public class Behaviour_Evade : Behaviour
+public class AIBehaviour_Evade : AIBehaviour
 {
 
-	public override BehaviourId BehaviourId { get { return BehaviourId.Evade; } }
+	public override AIBehaviourId BehaviourId { get { return AIBehaviourId.Evade; } }
 	public override GoalFlags AchievedGoals { get { return GoalFlags.Escape; } }
 	public override GoalFlags PrerequisiteGoals { get { return GoalFlags.None; } }
 

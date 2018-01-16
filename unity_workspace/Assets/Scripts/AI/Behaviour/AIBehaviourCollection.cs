@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class BehaviourCollection : MonoBehaviour
+public class AIBehaviourCollection : MonoBehaviour
 {
 
 	[SerializeField]
-	private BehaviourId m_initialBehaviour = BehaviourId.None;
+	private AIBehaviourId m_initialBehaviour = AIBehaviourId.None;
 
-	private Dictionary<BehaviourId, Behaviour> m_behaviours = new Dictionary<BehaviourId, Behaviour>();
-	private Behaviour m_currentBehaviour = null;
+	private Dictionary<AIBehaviourId, AIBehaviour> m_behaviours = new Dictionary<AIBehaviourId, AIBehaviour>();
+	private AIBehaviour m_currentBehaviour = null;
 
 	// --------------------------------------------------------------------------------
 	
 	protected void Awake()
 	{
-		var allBehaviours = gameObject.GetComponentsInChildren<Behaviour>();
-		Behaviour currentBehaviour = null;
+		var allBehaviours = gameObject.GetComponentsInChildren<AIBehaviour>();
+		AIBehaviour currentBehaviour = null;
 
 		for (int i = 0; i < allBehaviours.Length; ++i)
 		{
@@ -36,7 +36,7 @@ public class BehaviourCollection : MonoBehaviour
 
 	public void OnStart(Agent owner, WorkingMemory memory)
 	{
-		foreach (Behaviour behaviour in m_behaviours.Values)
+		foreach (AIBehaviour behaviour in m_behaviours.Values)
 		{
 			behaviour.OnStart(owner, memory);
 		}

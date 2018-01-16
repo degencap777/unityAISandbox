@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public abstract class Behaviour : MonoBehaviour
+public abstract class AIBehaviour : MonoBehaviour
 {
 
 	protected Agent m_owner = null;
@@ -10,7 +10,7 @@ public abstract class Behaviour : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public abstract BehaviourId BehaviourId { get; }
+	public abstract AIBehaviourId BehaviourId { get; }
 	public abstract GoalFlags AchievedGoals { get; }
 	public abstract GoalFlags PrerequisiteGoals { get ; }
 	
