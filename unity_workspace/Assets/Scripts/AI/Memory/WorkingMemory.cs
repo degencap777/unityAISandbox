@@ -34,6 +34,13 @@ public class WorkingMemory : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	public void AddAlly(Agent ally)
+	{
+		m_allies.Add(ally);
+	}
+
+	// --------------------------------------------------------------------------------
+
 	public void RemoveTarget(Agent target)
 	{
 		// find

@@ -7,6 +7,7 @@ public class ActionMapping<T> where T : BoundInputState
 
 	[SerializeField]
 	private string m_name = string.Empty;
+	public string Name { get { return m_name; } }
 
 	[SerializeField]
 	private T m_boundInputState = null;

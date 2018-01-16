@@ -93,7 +93,9 @@ public class ResponseCurveEditor : Editor
 
 			// curve container rectangle
 			GUILayout.BeginHorizontal(EditorStyles.helpBox);
-			Rect layoutRectangle = GUILayoutUtility.GetRect(100.0f, 140.0f);
+
+			float width = EditorGUIUtility.currentViewWidth * 0.75f;
+			Rect layoutRectangle = GUILayoutUtility.GetRect(width, width);
 
 			if (Event.current.type == EventType.Repaint)
 			{
@@ -148,7 +150,6 @@ public class ResponseCurveEditor : Editor
 				{
 					float xStep = (xMax - xMin) / (m_responseCurve.m_edges.Count - 1);
 					float currentX = xMin;
-
 					float yDiff = yMax - yMin;
 
 					float maxEdgeValue = 0.0f;

@@ -55,29 +55,6 @@ public class BehaviourCollection : MonoBehaviour
 		if (m_currentBehaviour != null)
 		{
 			m_currentBehaviour.OnUpdate();
-
-			// #SteveD >>> testing >>> remove this once behaviour swapping logic is in
-			if (m_currentBehaviour.IsGoalAchieved())
-			{
-				Behaviour nextBehaviour = null;
-				switch (m_currentBehaviour.BehaviourId)
-				{
-					case BehaviourId.Pursue:
-						m_behaviours.TryGetValue(BehaviourId.Evade, out nextBehaviour);
-						break;
-					case BehaviourId.Evade:
-						m_behaviours.TryGetValue(BehaviourId.Pursue, out nextBehaviour);
-						break;
-				}
-
-				if (nextBehaviour != null)
-				{
-					m_currentBehaviour.OnExit();
-					m_currentBehaviour = nextBehaviour;
-					m_currentBehaviour.OnEnter();
-				}
-			}
-			// -------
 		}
 	}
 

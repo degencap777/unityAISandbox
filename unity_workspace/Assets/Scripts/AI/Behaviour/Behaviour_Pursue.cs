@@ -3,10 +3,6 @@
 public class Behaviour_Pursue : Behaviour
 {
 
-	private static readonly Vector3 k_vectorUp = new Vector3(0.0f, 1.0f, 0.0f);
-
-	// --------------------------------------------------------------------------------
-
 	public override BehaviourId BehaviourId { get { return BehaviourId.Pursue; } }
 	public override GoalFlags AchievedGoals { get { return GoalFlags.CloseDown; } }
 	public override GoalFlags PrerequisiteGoals { get { return GoalFlags.None; } }

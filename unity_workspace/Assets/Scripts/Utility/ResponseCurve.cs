@@ -1,8 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-// #SteveD >>> needs testing
-
 public class ResponseCurve : MonoBehaviour
 {
 
@@ -33,12 +31,10 @@ public class ResponseCurve : MonoBehaviour
 		}
 
 		// calculate bucket
-		float bucketWidth = 1.0f / m_edges.Count - 1;
+		float bucketWidth = 1.0f / (m_edges.Count - 1);
 		// calculate bucket min edge
 		int minEdge = Mathf.FloorToInt(normalisedPosition / bucketWidth);
-		// calculate bucket min edge position
-		float minPosition = minEdge * bucketWidth;
-
+		
 		// calculate min, max and diff values
 		float min = m_edges[minEdge];
 		float max = m_edges[minEdge + 1];
@@ -53,12 +49,16 @@ public class ResponseCurve : MonoBehaviour
 
 	public float GetValueNormalised(float normalisedPosition)
 	{
-		return GetValue(normalisedPosition) / GetMaxValue();
+		float maxValue = GetMaxValue();
+
+		return maxValue == 0.0f ? 
+			0.0f : 
+			GetValue(normalisedPosition) / maxValue;
 	}
 	
 	// --------------------------------------------------------------------------------
 
-	public float GetMaxValue()
+	private float GetMaxValue()
 	{
 		float maxValue = m_edges.Count > 0 ? m_edges[0] : 0.0f;
 		for (int i = 1; i < m_edges.Count; ++i)
