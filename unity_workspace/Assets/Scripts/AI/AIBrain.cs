@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class AIBrain : MonoBehaviour
 {
@@ -6,10 +7,10 @@ public class AIBrain : MonoBehaviour
 	[SerializeField]
 	private Agent m_owner = null;
 
-	// #SteveD >>> temporary until AI can percieve Agents
 	[SerializeField]
-	private Agent m_player = null;
-	// -------
+	private List<Agent> m_initialTargets = new List<Agent>();
+	
+	// --------------------------------------------------------------------------------
 
 	private WorkingMemory m_workingMemory = null;
 	private AIBehaviourCollection m_behaviours = null;
@@ -29,13 +30,10 @@ public class AIBrain : MonoBehaviour
 		if (m_workingMemory != null)
 		{
 			m_workingMemory.OnStart();
-
-			// #SteveD >>> temporary until AI can percieve Agents
-			if (m_player != null)
+			for (int i = 0; i < m_initialTargets.Count; ++i)
 			{
-				m_workingMemory.AddTarget(m_player);
+				m_workingMemory.AddTarget(m_initialTargets[i]);
 			}
-			// -------
 		}
 
 		if (m_behaviours != null)
@@ -56,17 +54,6 @@ public class AIBrain : MonoBehaviour
 		if (m_behaviours != null)
 		{
 			m_behaviours.OnUpdate();
-		}
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public void ClearWorkingMemory()
-	{
-		if (m_workingMemory != null)
-		{
-			m_workingMemory.ClearTargets();
-			m_workingMemory.ClearAllies();
 		}
 	}
 

@@ -9,9 +9,9 @@ public class WorkingMemory : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public delegate void ContractChanged();
-	public event ContractChanged OnTargetsChanged;
-	public event ContractChanged OnAlliesChanged;
+	public delegate void WorkingMemoryChanged(WorkingMemory sender);
+	public event WorkingMemoryChanged OnTargetsChanged;
+	public event WorkingMemoryChanged OnAlliesChanged;
 
 	// --------------------------------------------------------------------------------
 
@@ -45,7 +45,8 @@ public class WorkingMemory : MonoBehaviour
 		agentPriority.Priority = 1.0f;
 
 		m_targets.Add(agentPriority);
-		TargetsChanged();
+
+		NotifyTargetsChanged();
 	}
 
 	// --------------------------------------------------------------------------------
@@ -59,7 +60,8 @@ public class WorkingMemory : MonoBehaviour
 		}
 
 		m_allies.Add(ally);
-		AlliesChanged();
+
+		NotifyAlliesChanged();
 	}
 
 	// --------------------------------------------------------------------------------
@@ -84,7 +86,7 @@ public class WorkingMemory : MonoBehaviour
 			m_targets.RemoveAt(index);
 			AgentPriority.Pool.Return(agentPriority);
 
-			TargetsChanged();
+			NotifyTargetsChanged();
 		}
 	}
 
@@ -93,7 +95,8 @@ public class WorkingMemory : MonoBehaviour
 	public void RemoveAlly(Agent ally)
 	{
 		m_allies.Remove(ally);
-		AlliesChanged();
+
+		NotifyAlliesChanged();
 	}
 
 	// --------------------------------------------------------------------------------
@@ -111,40 +114,24 @@ public class WorkingMemory : MonoBehaviour
 			m_targets[0].Target :
 			null;
 	}
-
+	
 	// --------------------------------------------------------------------------------
 
-	public void ClearTargets()
-	{
-		m_targets.Clear();
-		TargetsChanged();
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public void ClearAllies()
-	{
-		m_allies.Clear();
-		AlliesChanged();
-	}
-
-	// --------------------------------------------------------------------------------
-
-	private void TargetsChanged()
+	private void NotifyTargetsChanged()
 	{
 		if (OnTargetsChanged != null)
 		{
-			OnTargetsChanged();
+			OnTargetsChanged(this);
 		}
 	}
 
 	// --------------------------------------------------------------------------------
 
-	private void AlliesChanged()
+	private void NotifyAlliesChanged()
 	{
 		if (OnAlliesChanged != null)
 		{
-			OnAlliesChanged();
+			OnAlliesChanged(this);
 		}
 	}
 

@@ -136,6 +136,8 @@ public class AgentController : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+#if UNITY_EDITOR
+
 	protected virtual void OnDrawGizmos()
 	{
 		if (m_transform == null)
@@ -159,5 +161,7 @@ public class AgentController : MonoBehaviour
 
 		Gizmos.color = originalColor;
 	}
+
+#endif // UNITY_EDITOR
 
 }

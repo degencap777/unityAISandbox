@@ -68,16 +68,6 @@ public class AIBehaviour_Pursue : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public override void OnExit()
-	{
-		if (m_workingMemory != null)
-		{
-			m_workingMemory.OnTargetsChanged -= OnWorkingMemoryTargetsChanged;
-		}
-	}
-
-	// --------------------------------------------------------------------------------
-
 	public override void OnUpdate()
 	{
 		if (m_owner == null)
@@ -138,6 +128,23 @@ public class AIBehaviour_Pursue : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	public override void OnExit()
+	{
+		if (m_workingMemory != null)
+		{
+			m_workingMemory.OnTargetsChanged -= OnWorkingMemoryTargetsChanged;
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public override void Reset()
+	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
 	public override bool IsGoalAchieved()
 	{
 		return m_toTargetSquared <= m_successDistanceSquared;
@@ -171,7 +178,7 @@ public class AIBehaviour_Pursue : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	private void OnWorkingMemoryTargetsChanged()
+	private void OnWorkingMemoryTargetsChanged(WorkingMemory sender)
 	{
 		CacheTarget();
 	}

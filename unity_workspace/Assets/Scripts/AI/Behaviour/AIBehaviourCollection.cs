@@ -1,17 +1,16 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-// #SteveD >>> custom inspector:
-//	- list of all available behaviours
-//	- highlight current behaviour
-
 public class AIBehaviourCollection : MonoBehaviour
 {
 
 	[SerializeField]
 	private AIBehaviourId m_initialBehaviour = AIBehaviourId.None;
 
+	[SerializeField, HideInInspector]
 	private Dictionary<AIBehaviourId, AIBehaviour> m_behaviours = new Dictionary<AIBehaviourId, AIBehaviour>();
+
+	[SerializeField, HideInInspector]
 	private AIBehaviour m_currentBehaviour = null;
 
 	// --------------------------------------------------------------------------------
@@ -61,5 +60,50 @@ public class AIBehaviourCollection : MonoBehaviour
 			m_currentBehaviour.OnUpdate();
 		}
 	}
+
+	// --------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------
+
+#if UNITY_EDITOR
+
+	public Dictionary<AIBehaviourId, AIBehaviour> Editor_Behaviours { get { return m_behaviours; } }
+	public AIBehaviour Editor_CurrentBehaviour { get { return m_currentBehaviour; } }
+
+	// --------------------------------------------------------------------------------
+
+	public void Editor_ResetCurrentBehaviour()
+	{
+		if (m_currentBehaviour != null)
+		{
+			m_currentBehaviour.Reset();
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Editor_ResetCollection()
+	{
+		// exit current behaviour
+		if (m_currentBehaviour != null)
+		{
+			m_currentBehaviour.OnExit();
+		}
+
+		// reset all behaviours
+		foreach (var behaviour in m_behaviours.Values)
+		{
+			behaviour.Reset();
+		}
+
+		// reset to starting behaviour
+		m_behaviours.TryGetValue(m_initialBehaviour, out m_currentBehaviour);
+		if (m_currentBehaviour != null)
+		{
+			// enter current behaviour
+			m_currentBehaviour.OnEnter();
+		}
+	}
+
+#endif // UNITY_EDITOR
 
 }

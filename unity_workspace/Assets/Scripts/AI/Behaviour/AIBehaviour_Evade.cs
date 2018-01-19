@@ -65,17 +65,7 @@ public class AIBehaviour_Evade : AIBehaviour
 			m_workingMemory.OnTargetsChanged += OnWorkingMemoryTargetsChanged;
 		}
 	}
-
-	// --------------------------------------------------------------------------------
-
-	public override void OnExit()
-	{
-		if (m_workingMemory != null)
-		{
-			m_workingMemory.OnTargetsChanged -= OnWorkingMemoryTargetsChanged;
-		}
-	}
-
+	
 	// --------------------------------------------------------------------------------
 
 	public override void OnUpdate()
@@ -91,7 +81,7 @@ public class AIBehaviour_Evade : AIBehaviour
 			Debug.LogError("[Behaviour_Pursue] Unable to update >>> owner transform is null\n");
 			return;
 		}
-		
+
 		AgentController controller = m_owner.AgentController;
 		if (controller == null)
 		{
@@ -137,6 +127,23 @@ public class AIBehaviour_Evade : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	public override void OnExit()
+	{
+		if (m_workingMemory != null)
+		{
+			m_workingMemory.OnTargetsChanged -= OnWorkingMemoryTargetsChanged;
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public override void Reset()
+	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
 	public override bool IsGoalAchieved()
 	{
 		return m_targetToOwnerSquared >= m_successDistanceSquared;
@@ -170,7 +177,7 @@ public class AIBehaviour_Evade : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	private void OnWorkingMemoryTargetsChanged()
+	private void OnWorkingMemoryTargetsChanged(WorkingMemory sender)
 	{
 		CacheTarget();
 	}

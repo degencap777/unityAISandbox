@@ -26,10 +26,18 @@ public abstract class AIBehaviour : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	public virtual void OnDestroy()
+	{
+		OnExit();
+	}
+
+	// --------------------------------------------------------------------------------
+
 	protected abstract void OnValidate();
 	public abstract void OnEnter();
 	public abstract void OnUpdate();
 	public abstract void OnExit();
+	public abstract void Reset();
 
 	public abstract bool IsGoalAchieved();
 	public abstract bool IsGoalInvalid();
