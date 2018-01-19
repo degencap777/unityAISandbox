@@ -35,15 +35,16 @@ public class BehaviourCollectionEditor : Editor
 				GUILayout.Space(6);
 				GUILayout.Label("Behaviours:", EditorStyles.boldLabel);
 
-				// cache current content colour
-				Color cachedColor = GUI.contentColor;
+				// cache current background colour
+				Color cachedColor = GUI.backgroundColor;
 				
 				// create a label style for behaviours
-				GUIStyle behaviourLabelStyle = new GUIStyle(GUI.skin.label)
+				GUIStyle behaviourTextFieldStyle = new GUIStyle(GUI.skin.textField)
 				{
 					fontStyle = FontStyle.Italic,
-					padding = new RectOffset(16, 0, 0, 0),
 				};
+
+				//EditorGUI.BeginDisabledGroup(true);
 
 				// list of all behaviours
 				foreach (var behaviour in m_collection.Editor_Behaviours.Values)
@@ -51,13 +52,15 @@ public class BehaviourCollectionEditor : Editor
 					// set content colour if this is our active behaviour
 					if (behaviour.BehaviourId == activeBehaviourId)
 					{
-						GUI.contentColor = Color.green;
+						GUI.backgroundColor = Color.green;
 					}
-					EditorGUILayout.LabelField(behaviour.BehaviourId.ToString(), behaviourLabelStyle);
+					EditorGUILayout.TextField(behaviour.BehaviourId.ToString(), behaviourTextFieldStyle);
 					
-					// reset content colour
-					GUI.contentColor = cachedColor;
+					// reset background colour
+					GUI.backgroundColor = cachedColor;
 				}
+
+				//EditorGUI.EndDisabledGroup();
 			}
 
 			GUILayout.Space(6);

@@ -4,7 +4,9 @@ using UnityEngine;
 public class WorkingMemory : MonoBehaviour
 {
 
+	[SerializeField, HideInInspector]
 	private List<AgentPriority> m_targets = new List<AgentPriority>();
+
 	private List<Agent> m_allies = new List<Agent>();
 
 	// --------------------------------------------------------------------------------
@@ -134,5 +136,44 @@ public class WorkingMemory : MonoBehaviour
 			OnAlliesChanged(this);
 		}
 	}
+
+#if UNITY_EDITOR
+
+	public List<AgentPriority> Editor_Targets { get { return m_targets; } }
+	public List<Agent> Editor_Allies { get { return m_allies; } }
+
+	// --------------------------------------------------------------------------------
+
+	public void Editor_ClearTargets()
+	{
+		if (m_targets.Count == 0)
+		{
+			return;
+		}
+
+		// return all objects to pool
+		for (int i = 0; i < m_targets.Count; ++i)
+		{
+			AgentPriority.Pool.Return(m_targets[i]);
+		}
+		// clear targets
+		m_targets.Clear();
+		// notify subscribers
+		NotifyTargetsChanged();
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Editor_ClearAllies()
+	{
+		// clear allies
+		m_allies.Clear();
+		// notify subscribers
+		NotifyAlliesChanged();
+	}
+
+	// --------------------------------------------------------------------------------
+
+#endif // UNITY_EDITOR
 
 }

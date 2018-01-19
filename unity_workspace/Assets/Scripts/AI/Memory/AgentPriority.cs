@@ -1,5 +1,7 @@
 ﻿using System;
+using UnityEngine;
 
+[Serializable]
 public class AgentPriority : IComparable, IPooledObject
 {
 
@@ -8,6 +10,7 @@ public class AgentPriority : IComparable, IPooledObject
 
 	// --------------------------------------------------------------------------------
 
+	[SerializeField, HideInInspector]
 	private Agent m_target = null;
 	public Agent Target 
 	{ 
@@ -17,6 +20,7 @@ public class AgentPriority : IComparable, IPooledObject
 
 	// --------------------------------------------------------------------------------
 
+	[SerializeField, HideInInspector]
 	private float m_priority = 1.0f;
 	public float Priority 
 	{ 
