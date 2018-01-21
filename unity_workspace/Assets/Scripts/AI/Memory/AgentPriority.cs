@@ -11,11 +11,11 @@ public class AgentPriority : IComparable, IPooledObject
 	// --------------------------------------------------------------------------------
 
 	[SerializeField, HideInInspector]
-	private Agent m_target = null;
-	public Agent Target 
+	private Agent m_agent = null;
+	public Agent Agent 
 	{ 
-		get { return m_target; } 
-		set { m_target = value; }
+		get { return m_agent; } 
+		set { m_agent = value; }
 	}
 
 	// --------------------------------------------------------------------------------
@@ -32,7 +32,7 @@ public class AgentPriority : IComparable, IPooledObject
 
 	public void UpdatePriority(float newPriority)
 	{
-		m_priority = newPriority;
+		m_priority = Mathf.Clamp(newPriority, 0.0f, 1.0f);
 	}
 
 	// --------------------------------------------------------------------------------
@@ -58,8 +58,8 @@ public class AgentPriority : IComparable, IPooledObject
 
 	public void Reset()
 	{
-		m_target = null;
-		m_priority = 0.0f;
+		m_agent = null;
+		UpdatePriority(0.0f);
 	}
 
 }

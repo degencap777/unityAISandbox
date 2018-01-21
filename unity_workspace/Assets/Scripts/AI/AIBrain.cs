@@ -9,7 +9,10 @@ public class AIBrain : MonoBehaviour
 
 	[SerializeField]
 	private List<Agent> m_initialTargets = new List<Agent>();
-	
+
+	[SerializeField]
+	private List<Agent> m_initialAllies = new List<Agent>();
+
 	// --------------------------------------------------------------------------------
 
 	private WorkingMemory m_workingMemory = null;
@@ -30,9 +33,15 @@ public class AIBrain : MonoBehaviour
 		if (m_workingMemory != null)
 		{
 			m_workingMemory.OnStart();
+			
 			for (int i = 0; i < m_initialTargets.Count; ++i)
 			{
 				m_workingMemory.AddTarget(m_initialTargets[i]);
+			}
+
+			for (int i = 0; i < m_initialAllies.Count; ++i)
+			{
+				m_workingMemory.AddAlly(m_initialAllies[i]);
 			}
 		}
 

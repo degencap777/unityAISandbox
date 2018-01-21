@@ -23,6 +23,8 @@ public class BehaviourCollectionEditor : Editor
 
 		if (m_collection != null)
 		{
+			float elementWidth = (Screen.width * 0.5f) - 12.0f;
+
 			// cache current behaviour Id
 			AIBehaviourId activeBehaviourId = AIBehaviourId.None;
 			if (m_collection.Editor_CurrentBehaviour != null)
@@ -38,14 +40,6 @@ public class BehaviourCollectionEditor : Editor
 				// cache current background colour
 				Color cachedColor = GUI.backgroundColor;
 				
-				// create a label style for behaviours
-				GUIStyle behaviourTextFieldStyle = new GUIStyle(GUI.skin.textField)
-				{
-					fontStyle = FontStyle.Italic,
-				};
-
-				//EditorGUI.BeginDisabledGroup(true);
-
 				// list of all behaviours
 				foreach (var behaviour in m_collection.Editor_Behaviours.Values)
 				{
@@ -54,13 +48,11 @@ public class BehaviourCollectionEditor : Editor
 					{
 						GUI.backgroundColor = Color.green;
 					}
-					EditorGUILayout.TextField(behaviour.BehaviourId.ToString(), behaviourTextFieldStyle);
+					EditorGUILayout.TextField(behaviour.BehaviourId.ToString(), GUILayout.Width(elementWidth));
 					
 					// reset background colour
 					GUI.backgroundColor = cachedColor;
 				}
-
-				//EditorGUI.EndDisabledGroup();
 			}
 
 			GUILayout.Space(6);
@@ -69,11 +61,11 @@ public class BehaviourCollectionEditor : Editor
 			EditorGUI.BeginDisabledGroup(Application.isPlaying == false);
 			GUILayout.BeginHorizontal();
 
-			if (GUILayout.Button("Reset Current Behaviour"))
+			if (GUILayout.Button("Reset Current Behaviour", GUILayout.Width(elementWidth)))
 			{
 				m_collection.Editor_ResetCurrentBehaviour();
 			}
-			if (GUILayout.Button("Hard Reset"))
+			if (GUILayout.Button("Hard Reset", GUILayout.Width(elementWidth)))
 			{
 				m_collection.Editor_ResetCollection();
 			}

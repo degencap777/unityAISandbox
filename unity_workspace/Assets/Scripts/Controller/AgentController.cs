@@ -38,6 +38,16 @@ public class AgentController : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	[Header("Debug utility")]
+
+	[SerializeField]
+	private bool m_movementFrozen = false;
+
+	[SerializeField, Range(0.01f, 2.5f)]
+	private float m_deltaTimeScalar = 1.0f;
+
+	// --------------------------------------------------------------------------------
+
 	// cached variables
 	private Transform m_transform = null;
 	private CharacterController m_characterController = null;
@@ -56,12 +66,14 @@ public class AgentController : MonoBehaviour
 	{
 		if (m_characterController != null)
 		{
+			float dt = GetScaledDeltaTime();
+
 			// movement acceleration
 			if (m_movementStep.sqrMagnitude > 0.0f)
 			{
 				if (m_movementAcceleration < 1.0f)
 				{
-					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration + Time.deltaTime * m_movementAccelerationFactor, 0.0f, 1.0f);
+					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration + dt * m_movementAccelerationFactor, 0.0f, 1.0f);
 				}
 				m_appliedMovementStep = m_movementStep * m_movementAcceleration;
 				m_lastMovementStep = m_movementStep;
@@ -71,13 +83,16 @@ public class AgentController : MonoBehaviour
 			{
 				if (m_movementAcceleration > 0.0f)
 				{
-					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration - Time.deltaTime * m_movementDecelerationFactor, 0.0f, 1.0f);
+					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration - dt * m_movementDecelerationFactor, 0.0f, 1.0f);
 					m_appliedMovementStep = m_lastMovementStep * m_movementAcceleration;
 				}
 			}
 
 			// move
-			m_characterController.Move(m_appliedMovementStep);
+			if (m_movementFrozen == false)
+			{
+				m_characterController.Move(m_appliedMovementStep);
+			}
 			m_movementStep.Set(0.0f, 0.0f, 0.0f);
 
 			// rotation acceleration
@@ -85,7 +100,7 @@ public class AgentController : MonoBehaviour
 			{
 				if (m_rotationAcceleration < 1.0f)
 				{
-					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration + Time.deltaTime * m_rotationAccelerationFactor, 0.0f, 1.0f);
+					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration + dt * m_rotationAccelerationFactor, 0.0f, 1.0f);
 				}
 				m_appliedRotationStep = m_rotationStep * m_rotationAcceleration;
 				m_lastRotationStep = m_rotationStep;
@@ -95,13 +110,16 @@ public class AgentController : MonoBehaviour
 			{
 				if (m_rotationAcceleration > 0.0f)
 				{
-					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration - Time.deltaTime * m_rotationDecelerationFactor, 0.0f, 1.0f);
+					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration - dt * m_rotationDecelerationFactor, 0.0f, 1.0f);
 					m_appliedRotationStep = m_lastRotationStep * m_rotationAcceleration;
 				}
 			}
 
 			// rotate
-			m_transform.Rotate(0.0f, m_appliedRotationStep, 0.0f);
+			if (m_movementFrozen == false)
+			{
+				m_transform.Rotate(0.0f, m_appliedRotationStep, 0.0f);
+			}
 			m_rotationStep = 0.0f;
 		}
 	}
@@ -110,13 +128,14 @@ public class AgentController : MonoBehaviour
 
 	public void MoveForward(float value)
 	{
+		float dt = GetScaledDeltaTime();
 		if (value > 0.0f)
 		{
-			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_moveForwardSpeed * Time.deltaTime;
+			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_moveForwardSpeed * dt;
 		}
 		else
 		{
-			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_moveBackwardSpeed * Time.deltaTime;
+			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_moveBackwardSpeed * dt;
 		}
 	}
 
@@ -124,14 +143,21 @@ public class AgentController : MonoBehaviour
 
 	public void MoveSideways(float value)
 	{
-		m_movementStep += m_transform.right * Mathf.Clamp(value, -1.0f, 1.0f) * m_moveSidewaysSpeed * Time.deltaTime;
+		m_movementStep += m_transform.right * Mathf.Clamp(value, -1.0f, 1.0f) * m_moveSidewaysSpeed * GetScaledDeltaTime();
 	}
 
 	// --------------------------------------------------------------------------------
 
 	public void Rotate(float value)
 	{
-		m_rotationStep += Mathf.Clamp(value, -1.0f, 1.0f) * m_rotationSpeed * Time.deltaTime;
+		m_rotationStep += Mathf.Clamp(value, -1.0f, 1.0f) * m_rotationSpeed * GetScaledDeltaTime();
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private float GetScaledDeltaTime()
+	{
+		return Time.deltaTime* m_deltaTimeScalar;
 	}
 
 	// --------------------------------------------------------------------------------
@@ -160,6 +186,13 @@ public class AgentController : MonoBehaviour
 		Gizmos.DrawLine(m_transform.position, m_transform.position + m_transform.up * 2.0f);
 
 		Gizmos.color = originalColor;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Editor_Freeze(bool frozen)
+	{
+		m_movementFrozen = frozen;
 	}
 
 #endif // UNITY_EDITOR

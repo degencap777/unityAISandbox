@@ -6,8 +6,10 @@ public class WorkingMemory : MonoBehaviour
 
 	[SerializeField, HideInInspector]
 	private List<AgentPriority> m_targets = new List<AgentPriority>();
+	private List<Agent> m_removeTargets = new List<Agent>();
 
 	private List<Agent> m_allies = new List<Agent>();
+	private List<Agent> m_removeAllies = new List<Agent>();
 
 	// --------------------------------------------------------------------------------
 
@@ -26,7 +28,7 @@ public class WorkingMemory : MonoBehaviour
 
 	public void OnUpdate()
 	{
-		;
+		RemoveInternal();
 	}
 
 	// --------------------------------------------------------------------------------
@@ -36,14 +38,14 @@ public class WorkingMemory : MonoBehaviour
 		// exit if we already have this target
 		for (int i = 0; i < m_targets.Count; ++i)
 		{
-			if (m_targets[i].Target == target)
+			if (m_targets[i].Agent == target)
 			{
 				return;
 			}
 		}
 
 		AgentPriority agentPriority = AgentPriority.Pool.Get();
-		agentPriority.Target = target;
+		agentPriority.Agent = target;
 		agentPriority.Priority = 1.0f;
 
 		m_targets.Add(agentPriority);
@@ -70,35 +72,77 @@ public class WorkingMemory : MonoBehaviour
 
 	public void RemoveTarget(Agent target)
 	{
-		// find
-		int index = -1;
-		for (int i = 0; i < m_targets.Count; ++i)
-		{
-			if (m_targets[i].Target == target)
-			{
-				index = i;
-				break;
-			}
-		}
-
-		// return to pool
-		if (index >= 0 && index < m_targets.Count)
-		{
-			AgentPriority agentPriority = m_targets[index];
-			m_targets.RemoveAt(index);
-			AgentPriority.Pool.Return(agentPriority);
-
-			NotifyTargetsChanged();
-		}
+		m_removeTargets.Add(target);
 	}
 
 	// --------------------------------------------------------------------------------
 
 	public void RemoveAlly(Agent ally)
 	{
-		m_allies.Remove(ally);
+		m_removeAllies.Add(ally);
+	}
 
-		NotifyAlliesChanged();
+	// --------------------------------------------------------------------------------
+
+	private void RemoveInternal()
+	{
+		RemoveTargetsInternal();
+		RemoveAlliesInternal();
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void RemoveTargetsInternal()
+	{
+		bool targetRemoved = false;
+		for (int r = 0; r < m_removeTargets.Count; ++r)
+		{
+			// find
+			int index = -1;
+			for (int t = 0; t < m_targets.Count; ++t)
+			{
+				if (m_targets[t].Agent == m_removeTargets[r])
+				{
+					index = t;
+					break;
+				}
+			}
+
+			targetRemoved |= (index > -1);
+
+			// remove and return to pool
+			if (index >= 0 && index < m_targets.Count)
+			{
+				AgentPriority agentPriority = m_targets[index];
+				m_targets.RemoveAt(index);
+				AgentPriority.Pool.Return(agentPriority);
+			}
+		}
+
+		// notify subscribers once all requested targets removed
+		if (targetRemoved)
+		{
+			NotifyTargetsChanged();
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void RemoveAlliesInternal()
+	{
+		bool allyRemoved = false;
+
+		// remove all allies requested
+		for (int i = 0; i < m_removeAllies.Count; ++i)
+		{
+			allyRemoved |= m_allies.Remove(m_removeAllies[i]);
+		}
+
+		// notify subscribers once all requested allies removed
+		if (allyRemoved)
+		{
+			NotifyAlliesChanged();
+		}
 	}
 
 	// --------------------------------------------------------------------------------
@@ -113,7 +157,7 @@ public class WorkingMemory : MonoBehaviour
 	public Agent GetHighestPriorityTarget()
 	{
 		return m_targets.Count > 0 ?
-			m_targets[0].Target :
+			m_targets[0].Agent :
 			null;
 	}
 	
