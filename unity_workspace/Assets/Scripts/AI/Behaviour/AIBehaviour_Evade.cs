@@ -46,9 +46,9 @@ public class AIBehaviour_Evade : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public override void OnStart(Agent owner, WorkingMemory workingMemory)
+	public override void OnStart()
 	{
-		base.OnStart(owner, workingMemory);
+		base.OnStart();
 
 		m_triggerDistanceSquared = m_triggerDistance * m_triggerDistance;
 		m_successDistanceSquared = m_successDistance * m_successDistance;
@@ -56,13 +56,13 @@ public class AIBehaviour_Evade : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public override void OnEnter()
+	public override void OnEnter(WorkingMemory workingMemory)
 	{
 		CacheTarget();
-		if (m_workingMemory != null)
+		if (workingMemory != null)
 		{
-			m_workingMemory.OnTargetsChanged -= OnWorkingMemoryTargetsChanged;
-			m_workingMemory.OnTargetsChanged += OnWorkingMemoryTargetsChanged;
+			workingMemory.OnTargetsChanged -= OnWorkingMemoryTargetsChanged;
+			workingMemory.OnTargetsChanged += OnWorkingMemoryTargetsChanged;
 		}
 	}
 	

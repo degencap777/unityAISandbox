@@ -18,8 +18,8 @@ public class SensoryTrigger : IPooledObject
 	private Agent m_actor = null;
 	public Agent Actor { get { return m_actor; } }
 
-	private Agent m_mark = null;
-	public Agent Mark { get { return m_mark; } }
+	private Agent m_agent = null;
+	public Agent Agent { get { return m_agent; } }
 
 	// --------------------------------------------------------------------------------
 
@@ -41,7 +41,7 @@ public class SensoryTrigger : IPooledObject
 		m_location.Set(0.0f, 0.0f, 0.0f);
 		m_range = 0.0f;
 		m_actor = null;
-		m_mark = null;
+		m_agent = null;
 	}
 	
 }

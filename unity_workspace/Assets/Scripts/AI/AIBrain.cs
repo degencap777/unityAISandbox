@@ -16,14 +16,25 @@ public class AIBrain : MonoBehaviour
 	// --------------------------------------------------------------------------------
 
 	private WorkingMemory m_workingMemory = null;
+	public WorkingMemory Memory_Working { get { return m_workingMemory; } }
+
 	private AIBehaviourCollection m_behaviours = null;
+	public AIBehaviourCollection Behaviours { get { return m_behaviours; } }
+
+	private Perception_Visual m_visualPerception = null;
+	public Perception_Visual VisualPerception { get { return m_visualPerception; } }
+
+	private Perception_Audible m_audiblePerception = null;
+	public Perception_Audible AudiblePerception { get { return m_audiblePerception; } }
 
 	// --------------------------------------------------------------------------------
-	
+
 	protected virtual void Awake()
 	{
 		m_workingMemory = GetComponentInChildren<WorkingMemory>();
 		m_behaviours = GetComponentInChildren<AIBehaviourCollection>();
+		m_visualPerception = GetComponentInChildren<Perception_Visual>();
+		m_audiblePerception = GetComponentInChildren<Perception_Audible>();
 	}
 
 	// --------------------------------------------------------------------------------
@@ -47,7 +58,7 @@ public class AIBrain : MonoBehaviour
 
 		if (m_behaviours != null)
 		{
-			m_behaviours.OnStart(m_owner, m_workingMemory);
+			m_behaviours.OnStart();
 		}
 	}
 

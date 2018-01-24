@@ -1,16 +1,14 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class AIBehaviourCollection : MonoBehaviour
+[DisallowMultipleComponent]
+public class AIBehaviourCollection : AIBrainComponent
 {
 
 	[SerializeField]
 	private AIBehaviourId m_initialBehaviour = AIBehaviourId.None;
 
-	[SerializeField, HideInInspector]
 	private Dictionary<AIBehaviourId, AIBehaviour> m_behaviours = new Dictionary<AIBehaviourId, AIBehaviour>();
-
-	[SerializeField, HideInInspector]
 	private AIBehaviour m_currentBehaviour = null;
 
 	// --------------------------------------------------------------------------------
@@ -37,7 +35,7 @@ public class AIBehaviourCollection : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public void OnStart(Agent owner, WorkingMemory memory)
+	public void OnStart()
 	{
 		foreach (AIBehaviour behaviour in m_behaviours.Values)
 		{

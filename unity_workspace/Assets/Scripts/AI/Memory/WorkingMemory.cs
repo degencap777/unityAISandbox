@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class WorkingMemory : MonoBehaviour
+public class WorkingMemory : AIBrainComponent
 {
 
-	[SerializeField, HideInInspector]
 	private List<AgentPriority> m_targets = new List<AgentPriority>();
 	private List<Agent> m_removeTargets = new List<Agent>();
 

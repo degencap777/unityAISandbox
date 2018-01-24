@@ -10,7 +10,6 @@ public class AgentPriority : IComparable, IPooledObject
 
 	// --------------------------------------------------------------------------------
 
-	[SerializeField, HideInInspector]
 	private Agent m_agent = null;
 	public Agent Agent 
 	{ 
@@ -20,7 +19,6 @@ public class AgentPriority : IComparable, IPooledObject
 
 	// --------------------------------------------------------------------------------
 
-	[SerializeField, HideInInspector]
 	private float m_priority = 1.0f;
 	public float Priority 
 	{ 
