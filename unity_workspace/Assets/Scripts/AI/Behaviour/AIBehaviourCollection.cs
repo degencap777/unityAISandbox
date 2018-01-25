@@ -13,8 +13,10 @@ public class AIBehaviourCollection : AIBrainComponent
 
 	// --------------------------------------------------------------------------------
 	
-	protected void Awake()
+	protected override void Awake()
 	{
+		base.Awake();
+
 		var allBehaviours = gameObject.GetComponentsInChildren<AIBehaviour>();
 		AIBehaviour currentBehaviour = null;
 
@@ -39,7 +41,7 @@ public class AIBehaviourCollection : AIBrainComponent
 	{
 		foreach (AIBehaviour behaviour in m_behaviours.Values)
 		{
-			behaviour.OnStart(owner, memory);
+			behaviour.OnStart();
 		}
 
 		m_behaviours.TryGetValue(m_initialBehaviour, out m_currentBehaviour);

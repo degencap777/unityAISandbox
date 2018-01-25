@@ -5,9 +5,6 @@ public class AIBrain : MonoBehaviour
 {
 
 	[SerializeField]
-	private Agent m_owner = null;
-
-	[SerializeField]
 	private List<Agent> m_initialTargets = new List<Agent>();
 
 	[SerializeField]
@@ -15,22 +12,27 @@ public class AIBrain : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	private Agent m_owner = null;
+	public Agent Owner { get { return m_owner; } }
+
 	private WorkingMemory m_workingMemory = null;
-	public WorkingMemory Memory_Working { get { return m_workingMemory; } }
+	// #SteveD >>> rename this accessor to avoid clash with class name
+	public WorkingMemory WorkingMemory { get { return m_workingMemory; } }
 
 	private AIBehaviourCollection m_behaviours = null;
 	public AIBehaviourCollection Behaviours { get { return m_behaviours; } }
 
 	private Perception_Visual m_visualPerception = null;
-	public Perception_Visual VisualPerception { get { return m_visualPerception; } }
+	public Perception_Visual Sight { get { return m_visualPerception; } }
 
 	private Perception_Audible m_audiblePerception = null;
-	public Perception_Audible AudiblePerception { get { return m_audiblePerception; } }
+	public Perception_Audible Hearing { get { return m_audiblePerception; } }
 
 	// --------------------------------------------------------------------------------
 
 	protected virtual void Awake()
 	{
+		m_owner = GetComponentInParent<Agent>();
 		m_workingMemory = GetComponentInChildren<WorkingMemory>();
 		m_behaviours = GetComponentInChildren<AIBehaviourCollection>();
 		m_visualPerception = GetComponentInChildren<Perception_Visual>();
