@@ -16,11 +16,8 @@ public abstract class AIBehaviour : AIBrainComponent
 
 	// --------------------------------------------------------------------------------
 
-	public abstract void OnStart();
 	protected abstract void OnValidate();
-
 	public abstract void OnEnter();
-	public abstract void OnUpdate();
 	public abstract void OnExit();
 	public abstract void Reset();
 

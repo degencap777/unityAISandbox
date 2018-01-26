@@ -4,6 +4,14 @@ using UnityEngine;
 public class WorkingMemory : AIBrainComponent
 {
 
+	[SerializeField]
+	private List<Agent> m_initialTargets = new List<Agent>();
+
+	[SerializeField]
+	private List<Agent> m_initialAllies = new List<Agent>();
+
+	// --------------------------------------------------------------------------------
+
 	private List<AgentPriority> m_targets = new List<AgentPriority>();
 	private List<Agent> m_removeTargets = new List<Agent>();
 
@@ -18,16 +26,18 @@ public class WorkingMemory : AIBrainComponent
 
 	// --------------------------------------------------------------------------------
 
-	public void OnStart()
+	public override void OnStart()
 	{
-		;
+		m_initialTargets.ForEach(target => AddTarget(target));
+		m_initialAllies.ForEach(ally => AddAlly(ally));
 	}
 
 	// --------------------------------------------------------------------------------
 
-	public void OnUpdate()
+	public override void OnUpdate()
 	{
-		RemoveInternal();
+		RemoveTargetsInternal();
+		RemoveAlliesInternal();
 	}
 
 	// --------------------------------------------------------------------------------
@@ -80,15 +90,7 @@ public class WorkingMemory : AIBrainComponent
 	{
 		m_removeAllies.Add(ally);
 	}
-
-	// --------------------------------------------------------------------------------
-
-	private void RemoveInternal()
-	{
-		RemoveTargetsInternal();
-		RemoveAlliesInternal();
-	}
-
+	
 	// --------------------------------------------------------------------------------
 
 	private void RemoveTargetsInternal()

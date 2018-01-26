@@ -3,27 +3,51 @@
 public abstract class Perception : AIBrainComponent
 {
 
-	public abstract Sense Sense { get; }
+	public abstract PerceptionType PerceptionType { get; }
 
 	// --------------------------------------------------------------------------------
 
-	protected abstract bool CanPercieve(SensoryTrigger trigger);
-
+	protected abstract bool CanPercieve(PerceptionTrigger trigger);
+	
 	// --------------------------------------------------------------------------------
 
-	public virtual bool Percieve(SensoryTrigger trigger)
+	protected override void Awake()
 	{
-		if (trigger.Sense != Sense)
+		base.Awake();
+
+		PerceptionTriggerDistributor perceptionManager = PerceptionTriggerDistributor.Instance;
+		if (perceptionManager != null)
+		{
+			perceptionManager.RegisterPerception(this);
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual void OnDestroy()
+	{
+		PerceptionTriggerDistributor perceptionManager = PerceptionTriggerDistributor.Instance;
+		if (perceptionManager != null)
+		{
+			perceptionManager.UnregisterPerception(this);
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public virtual bool Percieve(PerceptionTrigger trigger)
+	{
+		if (trigger.Perception != PerceptionType)
 		{
 			return false;
 		}
 
 		if (CanPercieve(trigger))
 		{
-			return false;
+			// #SteveD >>> react to trigger
 		}
 
-		return true;
+		return false;
 	}
 
 }

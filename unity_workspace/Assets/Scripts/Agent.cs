@@ -3,6 +3,9 @@
 public class Agent : MonoBehaviour
 {
 
+	private Transform m_transform = null;
+	public Transform Transform { get { return m_transform; } }
+
 	private AgentController m_agentController;
 	public AgentController AgentController { get { return m_agentController; } }
 	
@@ -10,6 +13,7 @@ public class Agent : MonoBehaviour
 
 	public virtual void Awake()
 	{
+		m_transform = GetComponent<Transform>();
 		m_agentController = GetComponent<AgentController>();
 	}
 

@@ -4,29 +4,22 @@ using UnityEngine;
 public class AIBrain : MonoBehaviour
 {
 
-	[SerializeField]
-	private List<Agent> m_initialTargets = new List<Agent>();
-
-	[SerializeField]
-	private List<Agent> m_initialAllies = new List<Agent>();
-
-	// --------------------------------------------------------------------------------
-
 	private Agent m_owner = null;
 	public Agent Owner { get { return m_owner; } }
 
 	private WorkingMemory m_workingMemory = null;
-	// #SteveD >>> rename this accessor to avoid clash with class name
-	public WorkingMemory WorkingMemory { get { return m_workingMemory; } }
+	public WorkingMemory WorkMemory { get { return m_workingMemory; } }
 
-	private AIBehaviourCollection m_behaviours = null;
-	public AIBehaviourCollection Behaviours { get { return m_behaviours; } }
+	private AIBehaviourController m_behaviourController = null;
+	public AIBehaviourController BehaviourController { get { return m_behaviourController; } }
 
 	private Perception_Visual m_visualPerception = null;
-	public Perception_Visual Sight { get { return m_visualPerception; } }
+	public Perception_Visual Visual { get { return m_visualPerception; } }
 
 	private Perception_Audible m_audiblePerception = null;
-	public Perception_Audible Hearing { get { return m_audiblePerception; } }
+	public Perception_Audible Audible { get { return m_audiblePerception; } }
+
+	private List<AIBrainComponent> m_brainComponents = new List<AIBrainComponent>();
 
 	// --------------------------------------------------------------------------------
 
@@ -34,33 +27,23 @@ public class AIBrain : MonoBehaviour
 	{
 		m_owner = GetComponentInParent<Agent>();
 		m_workingMemory = GetComponentInChildren<WorkingMemory>();
-		m_behaviours = GetComponentInChildren<AIBehaviourCollection>();
+		m_behaviourController = GetComponentInChildren<AIBehaviourController>();
 		m_visualPerception = GetComponentInChildren<Perception_Visual>();
 		m_audiblePerception = GetComponentInChildren<Perception_Audible>();
+
+		m_brainComponents.Add(m_workingMemory);
+		m_brainComponents.Add(m_behaviourController);
+		m_brainComponents.Add(m_visualPerception);
+		m_brainComponents.Add(m_audiblePerception);
 	}
 
 	// --------------------------------------------------------------------------------
 
 	protected virtual void Start()
 	{
-		if (m_workingMemory != null)
+		for (int i = 0; i < m_brainComponents.Count; ++i)
 		{
-			m_workingMemory.OnStart();
-			
-			for (int i = 0; i < m_initialTargets.Count; ++i)
-			{
-				m_workingMemory.AddTarget(m_initialTargets[i]);
-			}
-
-			for (int i = 0; i < m_initialAllies.Count; ++i)
-			{
-				m_workingMemory.AddAlly(m_initialAllies[i]);
-			}
-		}
-
-		if (m_behaviours != null)
-		{
-			m_behaviours.OnStart();
+			m_brainComponents[i].OnStart();
 		}
 	}
 
@@ -68,14 +51,9 @@ public class AIBrain : MonoBehaviour
 
 	protected virtual void Update()
 	{
-		if (m_workingMemory != null)
+		for (int i = 0; i < m_brainComponents.Count; ++i)
 		{
-			m_workingMemory.OnUpdate();
-		}
-
-		if (m_behaviours != null)
-		{
-			m_behaviours.OnUpdate();
+			m_brainComponents[i].OnUpdate();
 		}
 	}
 

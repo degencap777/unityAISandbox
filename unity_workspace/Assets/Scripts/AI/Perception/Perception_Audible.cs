@@ -4,16 +4,38 @@
 public class Perception_Audible : Perception
 {
 
-	public override Sense Sense { get { return Sense.Audible; } }
+	public override PerceptionType PerceptionType { get { return PerceptionType.Audible; } }
 
 	// --------------------------------------------------------------------------------
 
-	protected override bool CanPercieve(SensoryTrigger trigger)
+	public override void OnStart()
 	{
+		;
+	}
 
-		// #SteveD >>> check range, obstacles..
+	// --------------------------------------------------------------------------------
 
-		return false;
+	public override void OnUpdate()
+	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	protected override bool CanPercieve(PerceptionTrigger trigger)
+	{
+		// check if we're in range of the trigger
+		float rangeSquared = trigger.Range * trigger.Range;
+		float distanceSquared = (Owner.Transform.position - trigger.Location).sqrMagnitude;
+		if (distanceSquared > rangeSquared)
+		{
+			return false;
+		}
+
+		// #SteveD >>> do we need to handle objects inbetween owner and trigger?
+		//	>>> don't really want to employ further raycasts..
+
+		return true;
 	}
 
 }

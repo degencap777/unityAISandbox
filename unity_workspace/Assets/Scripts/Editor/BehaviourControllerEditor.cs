@@ -1,17 +1,17 @@
 ﻿using UnityEditor;
 using UnityEngine;
 
-[CustomEditor(typeof(AIBehaviourCollection), true)]
-public class BehaviourCollectionEditor : Editor
+[CustomEditor(typeof(AIBehaviourController), true)]
+public class BehaviourControllerEditor : Editor
 {
 
-	private AIBehaviourCollection m_collection = null;
+	private AIBehaviourController m_collection = null;
 	
 	// --------------------------------------------------------------------------------
 
 	public void OnEnable()
 	{
-		m_collection = target as AIBehaviourCollection;
+		m_collection = target as AIBehaviourController;
 	}
 
 	// --------------------------------------------------------------------------------

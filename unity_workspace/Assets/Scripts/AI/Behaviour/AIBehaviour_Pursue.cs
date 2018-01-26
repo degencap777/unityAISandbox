@@ -60,56 +60,49 @@ public class AIBehaviour_Pursue : AIBehaviour
 
 	public override void OnUpdate()
 	{
-		//if (Owner == null)
-		//{
-		//	Debug.LogError("[Behaviour_Pursue] Unable to update >>> owner is null\n");
-		//	return;
-		//}
-		//
-		//Transform ownerTransform = Owner.transform;
-		//if (ownerTransform == null)
-		//{
-		//	Debug.LogError("[Behaviour_Pursue] Unable to update >>> owner transform is null\n");
-		//	return;
-		//}
-		//
-		//AgentController controller = Owner.AgentController;
-		//if (controller == null)
-		//{
-		//	Debug.LogError("[Behaviour_Pursue] Unable to update >>> owner AgentController is null\n");
-		//	return;
-		//}
-		//
-		//// vector to target
-		//Vector3 toTarget = m_cachedTargetTransform.position - ownerTransform.position;
-		//m_toTargetSquared = toTarget.sqrMagnitude;
-		//
-		//// angle to target (shortest)
-		//float angleToTarget = Vector3.Angle(ownerTransform.forward, toTarget);
-		//float absAngleToTarget = angleToTarget;
-		//if (Vector3.Cross(ownerTransform.forward, toTarget).y < 0)
-		//{
-		//	angleToTarget = -angleToTarget;
-		//}
-		//
-		//// rotate to target
-		//if (absAngleToTarget >= m_isFacingAngle)
-		//{
-		//	controller.Rotate(angleToTarget * m_toTurnAngleScalar);
-		//}
-		//
-		//// only move toward target if out of range
-		//if (m_active || m_toTargetSquared >= m_triggerDistanceSquared)
-		//{
-		//	// move to target
-		//	if (absAngleToTarget <= m_minimumAngleForMovement)
-		//	{
-		//		controller.MoveForward(1.0f);
-		//	}
-		//	
-		//	// deactivate if reached success distance
-		//	m_active = m_toTargetSquared >= m_successDistanceSquared;
-		//}
+		/// validate owner
+		if (Owner == null || Owner.Transform == null || Owner.AgentController == null)
+		{
+			return;
+		}
+
+		// validate target
+		Agent target = WorkMemory.GetHighestPriorityTarget();
+		if (target == null || target.Transform == null)
+		{
+			return;
+		}
+				
+		// vector to target
+		Vector3 toTarget = target.Transform.position - Owner.Transform.position;
+		m_toTargetSquared = toTarget.sqrMagnitude;
+		
+		// angle to target (shortest)
+		float angleToTarget = Vector3.Angle(Owner.Transform.forward, toTarget);
+		float absAngleToTarget = angleToTarget;
+		if (Vector3.Cross(Owner.Transform.forward, toTarget).y < 0)
+		{
+			angleToTarget = -angleToTarget;
+		}
+		
+		// rotate to target
+		if (absAngleToTarget >= m_isFacingAngle)
+		{
+			Owner.AgentController.Rotate(angleToTarget * m_toTurnAngleScalar);
+		}
+		
+		// only move toward target if out of range
+		if (m_active || m_toTargetSquared >= m_triggerDistanceSquared)
+		{
+			// move to target
+			if (absAngleToTarget <= m_minimumAngleForMovement)
+			{
+				Owner.AgentController.MoveForward(1.0f);
+			}
+			
+			// deactivate if reached success distance
+			m_active = m_toTargetSquared >= m_successDistanceSquared;
+		}
 	}
 
 	// --------------------------------------------------------------------------------

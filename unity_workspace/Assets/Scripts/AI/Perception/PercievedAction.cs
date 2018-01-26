@@ -1,6 +1,6 @@
 ﻿
 
-public enum SensedAction : uint
+public enum PercievedAction : uint
 {
 	None,
 

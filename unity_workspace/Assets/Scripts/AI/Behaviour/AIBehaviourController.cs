@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class AIBehaviourCollection : AIBrainComponent
+public class AIBehaviourController : AIBrainComponent
 {
 
 	[SerializeField]
@@ -37,7 +37,7 @@ public class AIBehaviourCollection : AIBrainComponent
 
 	// --------------------------------------------------------------------------------
 
-	public void OnStart()
+	public override void OnStart()
 	{
 		foreach (AIBehaviour behaviour in m_behaviours.Values)
 		{
@@ -53,7 +53,7 @@ public class AIBehaviourCollection : AIBrainComponent
 
 	// --------------------------------------------------------------------------------
 	
-	public void OnUpdate()
+	public override void OnUpdate()
 	{
 		if (m_currentBehaviour != null)
 		{

@@ -60,62 +60,48 @@ public class AIBehaviour_Evade : AIBehaviour
 
 	public override void OnUpdate()
 	{
-		//if (Owner == null)
-		//{
-		//	Debug.LogError("[Behaviour_Pursue] Unable to update >>> owner is null\n");
-		//	return;
-		//}
-		//
-		//Transform ownerTransform = Owner.transform;
-		//if (ownerTransform == null)
-		//{
-		//	Debug.LogError("[Behaviour_Pursue] Unable to update >>> owner transform is null\n");
-		//	return;
-		//}
-		//
-		//AgentController controller = Owner.AgentController;
-		//if (controller == null)
-		//{
-		//	Debug.LogError("[Behaviour_Pursue] Unable to update >>> owner AgentController is null\n");
-		//	return;
-		//}
-		//
-		//Agent target = WorkingMemory.GetHighestPriorityTarget();
-		//Transform targetTransform = null;
-		//if (target != null)
-		//{
-		//	targetTransform = target.transform;
-		//}
-		//
-		//// vector away from target
-		//Vector3 targetToOwner = ownerTransform.position - targetTransform.position;
-		//m_targetToOwnerSquared = targetToOwner.sqrMagnitude;
-		//
-		//if (m_active || m_targetToOwnerSquared <= m_triggerDistanceSquared)
-		//{
-		//	// escape angle (shortest)
-		//	float escapeAngle = Vector3.Angle(ownerTransform.forward, targetToOwner);
-		//	float absEscapeAngle = escapeAngle;
-		//	if (Vector3.Cross(ownerTransform.forward, targetToOwner).y < 0)
-		//	{
-		//		escapeAngle = -escapeAngle;
-		//	}
-		//
-		//	// rotate away from target
-		//	if (absEscapeAngle >= m_isFacingAwayAngle)
-		//	{
-		//		controller.Rotate(escapeAngle * m_toTurnAngleScalar);
-		//	}
-		//
-		//	// move away from target
-		//	if (absEscapeAngle <= m_minimumAngleForMovement)
-		//	{
-		//		controller.MoveForward(1.0f);
-		//	}
-		//
-		//	// deactivate if reached success distance
-		//	m_active = m_targetToOwnerSquared <= m_successDistanceSquared;
-		//}
+		// validate owner
+		if (Owner == null || Owner.Transform == null || Owner.AgentController == null)
+		{
+			return;
+		}
+
+		// validate target
+		Agent target = WorkMemory.GetHighestPriorityTarget();
+		if (target == null || target.Transform == null)
+		{
+			return;
+		}
+		
+		// vector away from target
+		Vector3 targetToOwner = Owner.Transform.position - target.Transform.position;
+		m_targetToOwnerSquared = targetToOwner.sqrMagnitude;
+		
+		if (m_active || m_targetToOwnerSquared <= m_triggerDistanceSquared)
+		{
+			// escape angle (shortest)
+			float escapeAngle = Vector3.Angle(Owner.Transform.forward, targetToOwner);
+			float absEscapeAngle = escapeAngle;
+			if (Vector3.Cross(Owner.Transform.forward, targetToOwner).y < 0)
+			{
+				escapeAngle = -escapeAngle;
+			}
+		
+			// rotate away from target
+			if (absEscapeAngle >= m_isFacingAwayAngle)
+			{
+				Owner.AgentController.Rotate(escapeAngle * m_toTurnAngleScalar);
+			}
+		
+			// move away from target
+			if (absEscapeAngle <= m_minimumAngleForMovement)
+			{
+				Owner.AgentController.MoveForward(1.0f);
+			}
+		
+			// deactivate if reached success distance
+			m_active = m_targetToOwnerSquared <= m_successDistanceSquared;
+		}
 	}
 
 	// --------------------------------------------------------------------------------
