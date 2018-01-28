@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+﻿
 
 public abstract class AIBehaviour : AIBrainComponent
 {
