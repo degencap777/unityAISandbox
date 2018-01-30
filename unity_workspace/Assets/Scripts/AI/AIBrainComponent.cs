@@ -10,12 +10,12 @@ public abstract class AIBrainComponent : MonoBehaviour
 	protected Agent Owner { get { return m_brain != null ? m_brain.Owner : null; } }
 	protected WorkingMemory WorkMemory { get { return m_brain != null ? m_brain.WorkMemory : null; } }
 	protected AIBehaviourController BehaviourController { get { return m_brain != null ? m_brain.BehaviourController : null; } }
-	protected Perception_Visual Visual { get { return m_brain != null ? m_brain.Visual : null; } }
-	protected Perception_Audible Audible { get { return m_brain != null ? m_brain.Audible : null; } }
+	protected Perception_Visual Visual { get { return m_brain != null ? m_brain.VisualPerception : null; } }
+	protected Perception_Audible Audible { get { return m_brain != null ? m_brain.AudiblePerception : null; } }
 	
 	// --------------------------------------------------------------------------------
 
-	protected virtual void Awake()
+	private void Awake()
 	{
 		// --------------------------------
 		// AI Agent hierarchy
@@ -37,10 +37,13 @@ public abstract class AIBrainComponent : MonoBehaviour
 			m_brain = GetComponentInParent<AIBrain>();
 			parent = parent.parent;
 		}
+
+		OnAwake();
 	}
 
 	// --------------------------------------------------------------------------------
 
+	protected abstract void OnAwake();
 	public abstract void OnStart();
 	public abstract void OnUpdate();
 

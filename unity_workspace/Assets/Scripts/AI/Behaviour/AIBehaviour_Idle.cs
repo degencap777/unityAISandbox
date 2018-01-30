@@ -26,6 +26,13 @@ public class AIBehaviour_Idle : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	protected override void OnAwake()
+	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
 	public override void OnStart()
 	{
 		;

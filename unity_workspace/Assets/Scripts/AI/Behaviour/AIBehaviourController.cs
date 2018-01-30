@@ -13,10 +13,8 @@ public class AIBehaviourController : AIBrainComponent
 
 	// --------------------------------------------------------------------------------
 	
-	protected override void Awake()
+	protected override void OnAwake()
 	{
-		base.Awake();
-
 		var allBehaviours = gameObject.GetComponentsInChildren<AIBehaviour>();
 		AIBehaviour currentBehaviour = null;
 

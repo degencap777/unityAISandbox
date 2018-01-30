@@ -26,6 +26,13 @@ public class WorkingMemory : AIBrainComponent
 
 	// --------------------------------------------------------------------------------
 
+	protected override void OnAwake()
+	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
 	public override void OnStart()
 	{
 		m_initialTargets.ForEach(target => AddTarget(target));

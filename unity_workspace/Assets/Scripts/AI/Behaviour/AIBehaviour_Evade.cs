@@ -43,6 +43,13 @@ public class AIBehaviour_Evade : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	protected override void OnAwake()
+	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
 	public override void OnStart()
 	{
 		m_triggerDistanceSquared = m_triggerDistance * m_triggerDistance;

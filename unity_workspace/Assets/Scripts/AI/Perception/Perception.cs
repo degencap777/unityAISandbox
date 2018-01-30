@@ -11,10 +11,8 @@ public abstract class Perception : AIBrainComponent
 	
 	// --------------------------------------------------------------------------------
 
-	protected override void Awake()
+	protected override void OnAwake()
 	{
-		base.Awake();
-
 		PerceptionTriggerDistributor perceptionManager = PerceptionTriggerDistributor.Instance;
 		if (perceptionManager != null)
 		{

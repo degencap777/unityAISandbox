@@ -14,10 +14,10 @@ public class AIBrain : MonoBehaviour
 	public AIBehaviourController BehaviourController { get { return m_behaviourController; } }
 
 	private Perception_Visual m_visualPerception = null;
-	public Perception_Visual Visual { get { return m_visualPerception; } }
-
+	public Perception_Visual VisualPerception { get { return m_visualPerception; } }
+	
 	private Perception_Audible m_audiblePerception = null;
-	public Perception_Audible Audible { get { return m_audiblePerception; } }
+	public Perception_Audible AudiblePerception { get { return m_audiblePerception; } }
 
 	private List<AIBrainComponent> m_brainComponents = new List<AIBrainComponent>();
 

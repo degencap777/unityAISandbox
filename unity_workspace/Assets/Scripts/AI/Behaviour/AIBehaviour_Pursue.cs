@@ -43,6 +43,14 @@ public class AIBehaviour_Pursue : AIBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	protected override void OnAwake()
+	{
+		m_triggerDistanceSquared = m_triggerDistance * m_triggerDistance;
+		m_successDistanceSquared = m_successDistance * m_successDistance;
+	}
+	
+	// --------------------------------------------------------------------------------
+
 	public override void OnStart()
 	{
 		m_triggerDistanceSquared = m_triggerDistance * m_triggerDistance;
