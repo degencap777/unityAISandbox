@@ -1,10 +1,12 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [DisallowMultipleComponent]
 [RequireComponent(typeof(MeshCollider))]
-[RequireComponent(typeof(MeshFilter))]
 public class Perception_Visual : Perception
 {
+
+	private static readonly int k_maxViewTriggerSegmentAngle = 30;
 
 	// #SteveD >>> Implement OnTriggerEnter, OnTriggerExit
 
@@ -15,19 +17,21 @@ public class Perception_Visual : Perception
 	//				>>> ... then cast a ray to them
 	//				>>> If we're concerned with a location (ie. trigger has no Actor), just cast a ray
 
+	// #SteveD >>> once created using horizontal FOV, use vertical FOV too
+
 	[SerializeField]
 	private float m_horizontalFieldOfView = 60.0f;
 
-	[SerializeField]
-	private float m_verticalFieldOfView = 15.0f;
+	//[SerializeField]
+	//private float m_verticalFieldOfView = 15.0f;
 
-	[SerializeField]
+	[SerializeField, Range(1.0f, 180.0f)]
 	private float m_visionRange = 10.0f;
 
 	// --------------------------------------------------------------------------------
 
+	private Transform m_transform = null;
 	private MeshCollider m_meshCollider = null;
-	private MeshFilter m_meshFilter = null;
 
 	// --------------------------------------------------------------------------------
 
@@ -39,41 +43,80 @@ public class Perception_Visual : Perception
 	{
 		base.OnAwake();
 
+		m_transform = GetComponent<Transform>();
 		m_meshCollider = GetComponent<MeshCollider>();
-		m_meshFilter = GetComponent<MeshFilter>();
+		
+		BuildVisionTriggerMesh();
+	}
 
-		if (m_meshCollider != null && m_meshFilter != null)
+	// --------------------------------------------------------------------------------
+
+	private void BuildVisionTriggerMesh()
+	{
+		if (m_meshCollider != null && m_transform != null)
 		{
 			// #SteveD	>>> construct mesh based on m_horizontalFieldOfView, m_verticalFieldOfView and m_visionRange
+			//			>>> 30 - 45 degree segments!
+
+			// number of horizontal segments
+			int horizontalSegmentCount = (int)m_horizontalFieldOfView / k_maxViewTriggerSegmentAngle;
+			horizontalSegmentCount += (int)m_horizontalFieldOfView % k_maxViewTriggerSegmentAngle > 0 ? 1 : 0;
+
+			// angle between horizontal segments
+			float segmentAngle = m_horizontalFieldOfView / horizontalSegmentCount;
+
+			List<Vector3> vertices = new List<Vector3>() {
+				new Vector3 (0.0f, 0.0f, 0.0f),					// near bottom
+				new Vector3 (0.0f, transform.position.y, 0.0f), // near top
+			};
+
+			Vector3 leftEdge = Quaternion.Euler(0.0f, -m_horizontalFieldOfView * 0.5f, 0.0f) * 
+				new Vector3(0.0f, 0.0f, m_visionRange);
 			
-			Vector3[] vertices = {
-				new Vector3 (0.0f, 0.0f, 0.0f), // near bottom left
-				new Vector3 (2.0f, 0.0f, 0.0f), // near bottom right
-				new Vector3 (3.0f, 3.0f, 0.0f), // near top right
-				new Vector3 (0.0f, 4.0f, 0.0f), // near top left
-				new Vector3 (0.0f, 5.0f, 5.0f), // far top left
-				new Vector3 (6.0f, 6.0f, 6.0f), // far top right
-				new Vector3 (7.0f, 0.0f, 7.0f), // far bottom right
-				new Vector3 (0.0f, 0.0f, 8.0f), // far bottom left
+			for (int i = 0; i <= horizontalSegmentCount; ++i)
+			{
+				vertices.Add(leftEdge + new Vector3(0.0f, m_transform.position.y, 0.0f));
+				vertices.Add(leftEdge);
+				leftEdge = Quaternion.Euler(0.0f, segmentAngle, 0.0f) * leftEdge;
+			}
+
+			// clockwise winding order
+
+			// add left side quad
+			List<int> triangles = new List<int>() {
+				0, 1, 2,				// left
+				0, 2, 3,				// left
 			};
 
-			int[] triangles = {
-				0, 2, 1,	0, 3, 2, // front
-				2, 3, 4,	2, 4, 5, // top
-				1, 2, 5,	1, 5, 6, // right
-				0, 7, 4,	0, 4, 3, // left
-				5, 4, 7,	5, 7, 6, // back
-				0, 6, 7,	0, 1, 6, // bottom
-			};
+			// #SteveD >>> top triangle per segment
+			// #SteveD >>> bottom triangle per segment
+			// #SteveD >>> end quad per segment
 
-			Mesh mesh = m_meshFilter.mesh;
+			int vertexCount = vertices.Count - 1;
+			// add right side quad
+			triangles.AddRange(
+				new int[] { 
+					0, 1, vertexCount - 1,
+					0, 4, vertexCount 
+				}
+			);
+			
+			// get or create mesh
+			Mesh mesh = m_meshCollider.sharedMesh;
+			if (mesh == null)
+			{
+				mesh = new Mesh();
+			}
+
+			// set mesh data
 			mesh.Clear();
-			mesh.vertices = vertices;
-			mesh.triangles = triangles;
+			mesh.vertices = vertices.ToArray();
+			mesh.triangles = triangles.ToArray();
+			mesh.RecalculateBounds(); // #SteveD >>> is this required? research
 			m_meshCollider.sharedMesh = mesh;
 		}
 	}
-
+	
 	// --------------------------------------------------------------------------------
 
 	public override void OnStart()
