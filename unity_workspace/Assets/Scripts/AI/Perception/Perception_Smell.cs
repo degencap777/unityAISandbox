@@ -1,10 +1,11 @@
-﻿using UnityEngine;
+﻿
 
-[DisallowMultipleComponent]
-public class Perception_Audible : Perception
+public class Perception_Smell : Perception
 {
 
-	public override PerceptionType PerceptionType { get { return PerceptionType.Hearing; } }
+	// #SteveD >>> implement smell perception
+
+	public override PerceptionType PerceptionType { get { return PerceptionType.Smell; } }
 
 	// --------------------------------------------------------------------------------
 
@@ -12,7 +13,7 @@ public class Perception_Audible : Perception
 	{
 		;
 	}
-
+	
 	// --------------------------------------------------------------------------------
 
 	public override void OnUpdate()
@@ -24,9 +25,7 @@ public class Perception_Audible : Perception
 
 	protected override bool CanPercieve(PerceptionTrigger trigger)
 	{
-		float rangeSquared = trigger.Range * trigger.Range;
-		float distanceSquared = (Owner.Transform.position - trigger.Location).sqrMagnitude;
-		return distanceSquared <= rangeSquared;
+		return false;
 	}
 
 }

@@ -26,7 +26,7 @@ public class PerceptionTriggerDistributor : SingletonMonoBehaviour<PerceptionTri
 
 	// --------------------------------------------------------------------------------
 
-	public void PostTrigger(PerceptionTrigger trigger)
+	public void DistributeTrigger(PerceptionTrigger trigger)
 	{
 		m_triggers.Add(trigger);
 	}

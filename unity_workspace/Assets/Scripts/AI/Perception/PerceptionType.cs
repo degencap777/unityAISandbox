@@ -2,6 +2,8 @@
 
 public enum PerceptionType : uint
 {
-	Visual,
-	Audible,
+	Vision,
+	Hearing,
+	Smell,
+	Touch,
 }

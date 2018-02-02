@@ -8,7 +8,7 @@ public class PerceptionTrigger : IPooledObject
 
 	// --------------------------------------------------------------------------------
 
-	private PerceptionType m_perceptionType = PerceptionType.Audible;
+	private PerceptionType m_perceptionType = PerceptionType.Hearing;
 	public PerceptionType Perception
 	{
 		get { return m_perceptionType; }
@@ -61,7 +61,7 @@ public class PerceptionTrigger : IPooledObject
 
 	public void Reset()
 	{
-		m_perceptionType = PerceptionType.Audible;
+		m_perceptionType = PerceptionType.Hearing;
 		m_percievedAction = PercievedAction.None;
 		m_location.Set(0.0f, 0.0f, 0.0f);
 		m_range = 0.0f;

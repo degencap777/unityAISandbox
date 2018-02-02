@@ -12,13 +12,7 @@ public class AIBrain : MonoBehaviour
 
 	private AIBehaviourController m_behaviourController = null;
 	public AIBehaviourController BehaviourController { get { return m_behaviourController; } }
-
-	private Perception_Visual m_visualPerception = null;
-	public Perception_Visual VisualPerception { get { return m_visualPerception; } }
 	
-	private Perception_Audible m_audiblePerception = null;
-	public Perception_Audible AudiblePerception { get { return m_audiblePerception; } }
-
 	private List<AIBrainComponent> m_brainComponents = new List<AIBrainComponent>();
 
 	// --------------------------------------------------------------------------------
@@ -28,13 +22,14 @@ public class AIBrain : MonoBehaviour
 		m_owner = GetComponentInParent<Agent>();
 		m_workingMemory = GetComponentInChildren<WorkingMemory>();
 		m_behaviourController = GetComponentInChildren<AIBehaviourController>();
-		m_visualPerception = GetComponentInChildren<Perception_Visual>();
-		m_audiblePerception = GetComponentInChildren<Perception_Audible>();
-
+		
+		// add brain components
 		m_brainComponents.Add(m_workingMemory);
 		m_brainComponents.Add(m_behaviourController);
-		m_brainComponents.Add(m_visualPerception);
-		m_brainComponents.Add(m_audiblePerception);
+
+		// add all perception brain components
+		var perceptions = GetComponentsInChildren<Perception>(true);
+		m_brainComponents.AddRange(perceptions);
 	}
 
 	// --------------------------------------------------------------------------------

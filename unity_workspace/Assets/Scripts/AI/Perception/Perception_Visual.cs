@@ -18,7 +18,7 @@ public class Perception_Visual : Perception
 
 	// --------------------------------------------------------------------------------
 
-	public override PerceptionType PerceptionType { get { return PerceptionType.Visual; } }
+	public override PerceptionType PerceptionType { get { return PerceptionType.Vision; } }
 
 	// --------------------------------------------------------------------------------
 
@@ -31,8 +31,6 @@ public class Perception_Visual : Perception
 
 	protected override void OnAwake()
 	{
-		base.OnAwake();
-
 		m_transform = GetComponent<Transform>();
 	}
 
@@ -40,6 +38,8 @@ public class Perception_Visual : Perception
 
 	public override void OnStart()
 	{
+		base.OnStart();
+
 		CalculateVisionRangeSquared();
 	}
 
@@ -84,15 +84,23 @@ public class Perception_Visual : Perception
 			return false;
 		}
 
-		// #SteveD >>> if is beyond m_visionRange,
-		//	return false
+		// fail if out of horizontal FOV
+		Vector3 toEventHorizontal = toEvent;
+		toEventHorizontal.y = 0.0f;
+		if (Vector3.Angle(m_transform.forward, toEventHorizontal) > m_horizontalFieldOfView * 0.5f)
+		{
+			return false;
+		}
 
-		// #SteveD >>> if is out of horizontal fov,
-		//	return false
-
-		// #SteveD >>> if is out of vertical fov,
-		//	return false
-
+		// fail if out of vertical FOV
+		Vector3 toEventVertical = toEvent;
+		toEventVertical.x = 0.0f;
+		toEventVertical.z = 0.0f;
+		if (Vector3.Angle(m_transform.forward, toEventVertical) > m_verticalFieldOfView * 0.5f)
+		{
+			return false;
+		}
+		
 		// #SteveD >>> raycast to target
 		//		>>> exclude target
 		//		>>> exclude owner (always)
@@ -100,14 +108,7 @@ public class Perception_Visual : Perception
 
 		return false;
 	}
-
-	public bool CanSee(Vector3 position, GameObject excludeFromRaycast = null)
-	{
-		// refactor code in CanPercieve into here
-
-		return false;
-	}
-
+	
 	// --------------------------------------------------------------------------------
 
 	protected virtual void OnDrawGizmos()

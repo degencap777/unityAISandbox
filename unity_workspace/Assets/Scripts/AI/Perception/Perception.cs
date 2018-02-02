@@ -8,10 +8,10 @@ public abstract class Perception : AIBrainComponent
 	// --------------------------------------------------------------------------------
 
 	protected abstract bool CanPercieve(PerceptionTrigger trigger);
-	
-	// --------------------------------------------------------------------------------
 
-	protected override void OnAwake()
+	// --------------------------------------------------------------------------------
+	
+	public override void OnStart()
 	{
 		PerceptionTriggerDistributor perceptionManager = PerceptionTriggerDistributor.Instance;
 		if (perceptionManager != null)
@@ -42,7 +42,8 @@ public abstract class Perception : AIBrainComponent
 
 		if (CanPercieve(trigger))
 		{
-			// #SteveD >>> react to trigger
+			// #SteveD >>> process trigger >>> add to memories (working, historic)
+			return true;
 		}
 
 		return false;

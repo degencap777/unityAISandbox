@@ -4,15 +4,8 @@ public enum PercievedAction : uint
 {
 	None,
 
-	HostileAssaultMelee,
-	AllyAssaultMelee,
-	HostileAssaultProjectile,
-	AllyAssaultProjectile,
-
+	AssaultMelee,
+	AssaultProjectile,
 	Gunshot,
 	Explosion,
-
-	UnknownPresence,
-
-	// etc..
 }

@@ -4,7 +4,7 @@ public abstract class Test : MonoBehaviour
 {
 
 	[SerializeField]
-	private bool m_executeOnStart = false;
+	private KeyCode m_executeKey = KeyCode.None;
 
 	// --------------------------------------------------------------------------------
 
@@ -20,9 +20,9 @@ public abstract class Test : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	private void Start()
+	protected virtual void Update()
 	{
-		if (m_executeOnStart)
+		if (m_executeKey != KeyCode.None && Input.GetKeyUp(m_executeKey))
 		{
 			RunAndReset();
 		}
