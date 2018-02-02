@@ -7,7 +7,7 @@ public abstract class Perception : AIBrainComponent
 
 	// --------------------------------------------------------------------------------
 
-	protected abstract bool CanPercieve(PerceptionTrigger trigger);
+	protected abstract bool CanPercieve(PercievedEvent percievedEvent);
 
 	// --------------------------------------------------------------------------------
 	
@@ -35,14 +35,14 @@ public abstract class Perception : AIBrainComponent
 
 	public virtual bool Percieve(PerceptionTrigger trigger)
 	{
-		if (trigger.Perception != PerceptionType)
+		if (trigger.PerceptionType != PerceptionType)
 		{
 			return false;
 		}
 
-		if (CanPercieve(trigger))
+		if (CanPercieve(trigger.PercievedEvent))
 		{
-			// #SteveD >>> process trigger >>> add to memories (working, historic)
+			// #SteveD >>> process trigger.PercievedEvent >>> add to memories (working, historic)
 			return true;
 		}
 

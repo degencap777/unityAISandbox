@@ -1,53 +1,26 @@
 ﻿using UnityEngine;
 
 [DisallowMultipleComponent]
-public class Perception_Visual : Perception
+public class Perception_Vision : Perception
 {
 	
-	[SerializeField]
+	[SerializeField, Range(1.0f, 180.0f)]
 	private float m_horizontalFieldOfView = 65.0f;
 
-	[SerializeField]
-	private float m_verticalFieldOfView = 15.0f;
-
 	[SerializeField, Range(1.0f, 180.0f)]
-	private float m_visionRange = 10.0f;
-	private float m_visionRangeSquared = 100.0f;
-
+	private float m_verticalFieldOfView = 15.0f;
+	
 	private Transform m_transform = null;
 
 	// --------------------------------------------------------------------------------
 
 	public override PerceptionType PerceptionType { get { return PerceptionType.Vision; } }
-
-	// --------------------------------------------------------------------------------
-
-	public virtual void OnValidate()
-	{
-		CalculateVisionRangeSquared();
-	}
-
+	
 	// --------------------------------------------------------------------------------
 
 	protected override void OnAwake()
 	{
 		m_transform = GetComponent<Transform>();
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public override void OnStart()
-	{
-		base.OnStart();
-
-		CalculateVisionRangeSquared();
-	}
-
-	// --------------------------------------------------------------------------------
-
-	private void CalculateVisionRangeSquared()
-	{
-		m_visionRangeSquared = m_visionRange * m_visionRange;
 	}
 
 	// --------------------------------------------------------------------------------
@@ -59,27 +32,32 @@ public class Perception_Visual : Perception
 
 	// --------------------------------------------------------------------------------
 
-	protected override bool CanPercieve(PerceptionTrigger trigger)
+	protected override bool CanPercieve(PercievedEvent percievedEvent)
 	{
 		// validate
-		if (trigger == null || m_transform == false)
+		if (percievedEvent == null || m_transform == false)
 		{
 			return false;
 		}
 
+		// #SteveD >>> range check can be moved to calling code otherwise it will be duplicated on every perception
+		// #SteveD >>> modifiers on each perception could extend/reduce the range on the Perception trigger
+		// #SteveD >>> move range back to trigger from percieved action
+
 		// points of interest
 		Vector3 eyePosition = m_transform.position;
-		Vector3 eventPosition = trigger.Actor == null ? 
-			trigger.Location : 
-			trigger.Actor.Transform.position;
+		Vector3 eventPosition = percievedEvent.Actor == null ?
+			percievedEvent.Location :
+			percievedEvent.Actor.Transform.position;
 
 		// vector to event
 		Vector3 toEvent = eventPosition - eyePosition;
 		// distance squared to event
 		float toEventDistanceSquared = toEvent.sqrMagnitude;
 
-		// fail if out of vision range
-		if (toEventDistanceSquared > m_visionRangeSquared)
+		// fail if out of range
+		float eventRangeSquared = percievedEvent.Range * percievedEvent.Range;
+		if (toEventDistanceSquared > eventRangeSquared)
 		{
 			return false;
 		}

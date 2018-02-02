@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
 [DisallowMultipleComponent]
-public class Perception_Audible : Perception
+public class Perception_Hearing : Perception
 {
 
 	public override PerceptionType PerceptionType { get { return PerceptionType.Hearing; } }
@@ -22,10 +22,15 @@ public class Perception_Audible : Perception
 
 	// --------------------------------------------------------------------------------
 
-	protected override bool CanPercieve(PerceptionTrigger trigger)
+	protected override bool CanPercieve(PercievedEvent percievedEvent)
 	{
-		float rangeSquared = trigger.Range * trigger.Range;
-		float distanceSquared = (Owner.Transform.position - trigger.Location).sqrMagnitude;
+		if (percievedEvent == null)
+		{
+			return false;
+		}
+
+		float rangeSquared = percievedEvent.Range * percievedEvent.Range;
+		float distanceSquared = (Owner.Transform.position - percievedEvent.Location).sqrMagnitude;
 		return distanceSquared <= rangeSquared;
 	}
 

@@ -23,8 +23,13 @@ public class Perception_Smell : Perception
 
 	// --------------------------------------------------------------------------------
 
-	protected override bool CanPercieve(PerceptionTrigger trigger)
+	protected override bool CanPercieve(PercievedEvent percievedEvent)
 	{
+		if (percievedEvent == null)
+		{
+			return false;
+		}
+
 		return false;
 	}
 
