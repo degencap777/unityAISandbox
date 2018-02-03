@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[DisallowMultipleComponent]
 public class AIBehaviour_Evade : AIBehaviour
 {
 
@@ -68,28 +69,34 @@ public class AIBehaviour_Evade : AIBehaviour
 	public override void OnUpdate()
 	{
 		// validate owner
-		if (Owner == null || Owner.Transform == null || Owner.AgentController == null)
+		if (m_brain == null || m_brain.WorkingMemory == null)
+		{
+			return;
+		}
+
+		Agent owner = m_brain.Owner;
+		if (owner == null || owner.Transform == null || owner.AgentController == null)
 		{
 			return;
 		}
 
 		// validate target
-		Agent target = WorkMemory.GetHighestPriorityTarget();
+		Agent target = m_brain.WorkingMemory.GetHighestPriorityTarget();
 		if (target == null || target.Transform == null)
 		{
 			return;
 		}
 		
 		// vector away from target
-		Vector3 targetToOwner = Owner.Transform.position - target.Transform.position;
+		Vector3 targetToOwner = owner.Transform.position - target.Transform.position;
 		m_targetToOwnerSquared = targetToOwner.sqrMagnitude;
 		
 		if (m_active || m_targetToOwnerSquared <= m_triggerDistanceSquared)
 		{
 			// escape angle (shortest)
-			float escapeAngle = Vector3.Angle(Owner.Transform.forward, targetToOwner);
+			float escapeAngle = Vector3.Angle(owner.Transform.forward, targetToOwner);
 			float absEscapeAngle = escapeAngle;
-			if (Vector3.Cross(Owner.Transform.forward, targetToOwner).y < 0)
+			if (Vector3.Cross(owner.Transform.forward, targetToOwner).y < 0)
 			{
 				escapeAngle = -escapeAngle;
 			}
@@ -97,13 +104,13 @@ public class AIBehaviour_Evade : AIBehaviour
 			// rotate away from target
 			if (absEscapeAngle >= m_isFacingAwayAngle)
 			{
-				Owner.AgentController.Rotate(escapeAngle * m_toTurnAngleScalar);
+				owner.AgentController.Rotate(escapeAngle * m_toTurnAngleScalar);
 			}
 		
 			// move away from target
 			if (absEscapeAngle <= m_minimumAngleForMovement)
 			{
-				Owner.AgentController.MoveForward(1.0f);
+				owner.AgentController.MoveForward(1.0f);
 			}
 		
 			// deactivate if reached success distance

@@ -3,13 +3,7 @@
 public abstract class AIBrainComponent : MonoBehaviour
 {
 	
-	private AIBrain m_brain = null;
-
-	// --------------------------------------------------------------------------------
-	
-	protected Agent Owner { get { return m_brain != null ? m_brain.Owner : null; } }
-	protected WorkingMemory WorkMemory { get { return m_brain != null ? m_brain.WorkMemory : null; } }
-	protected AIBehaviourController BehaviourController { get { return m_brain != null ? m_brain.BehaviourController : null; } }
+	protected AIBrain m_brain = null;
 	
 	// --------------------------------------------------------------------------------
 
@@ -23,6 +17,8 @@ public abstract class AIBrainComponent : MonoBehaviour
 			m_brain = GetComponentInParent<AIBrain>();
 			parent = parent.parent;
 		}
+
+		Debug.Assert(m_brain != null, "[AIBrainComponent::Awake] GetComponent<AIBrain> failed\n");
 
 		OnAwake();
 	}

@@ -3,7 +3,8 @@
 public class PerceptionTrigger : IPooledObject
 {
 
-	private static ObjectPool<PerceptionTrigger> m_perceptionTriggerPool = new ObjectPool<PerceptionTrigger>(4, new PerceptionTrigger());
+	private static ObjectPool<PerceptionTrigger> m_perceptionTriggerPool = 
+		new ObjectPool<PerceptionTrigger>(32, new PerceptionTrigger());
 	public static ObjectPool<PerceptionTrigger> Pool { get { return m_perceptionTriggerPool; } }
 
 	// --------------------------------------------------------------------------------
@@ -15,18 +16,25 @@ public class PerceptionTrigger : IPooledObject
 		set { m_perceptionType = value; }
 	}
 
-	private PercievedEvent m_percievedEvent = null;
-	public PercievedEvent PercievedEvent
+	private PerceptionEvent m_percievedEvent = null;
+	public PerceptionEvent PerceptionEvent
 	{
 		get { return m_percievedEvent; }
 		set { m_percievedEvent = value; }
+	}
+
+	private float m_range = 0.0f;
+	public float Range
+	{
+		get { return m_range; }
+		set { m_range = value; }
 	}
 
 	// --------------------------------------------------------------------------------
 
 	public void ReleaseResources()
 	{
-		PercievedEvent.Pool.Return(m_percievedEvent);
+		PerceptionEvent.Pool.Return(m_percievedEvent);
 	}
 
 	// --------------------------------------------------------------------------------
@@ -35,6 +43,7 @@ public class PerceptionTrigger : IPooledObject
 	{
 		m_perceptionType = PerceptionType.Hearing;
 		m_percievedEvent = null;
+		m_range = 0.0f;
 	}
 	
 }

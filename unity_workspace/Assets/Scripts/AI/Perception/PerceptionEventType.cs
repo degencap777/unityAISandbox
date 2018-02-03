@@ -1,6 +1,6 @@
 ﻿
 
-public enum PercievedEventType : uint
+public enum PerceptionEventType : uint
 {
 	None,
 

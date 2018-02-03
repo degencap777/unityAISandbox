@@ -14,7 +14,10 @@ public class Agent : MonoBehaviour
 	public virtual void Awake()
 	{
 		m_transform = GetComponent<Transform>();
+		Debug.Assert(m_transform != null, "[Agent::Awake] GetComponent<Transform> failed\n");
+
 		m_agentController = GetComponent<AgentController>();
+		Debug.Assert(m_agentController != null, "[Agent::Awake] GetComponent<AgentController> failed\n");
 	}
 
 	// --------------------------------------------------------------------------------

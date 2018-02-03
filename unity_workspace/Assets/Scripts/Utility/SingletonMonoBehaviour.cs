@@ -6,7 +6,6 @@ public abstract class SingletonMonoBehaviourBase : MonoBehaviour
 }
 
 // ------------------------------------------------------------------------------------
-// ------------------------------------------------------------------------------------
 
 public abstract class SingletonMonoBehaviour<T> : SingletonMonoBehaviourBase where T : SingletonMonoBehaviour<T>
 {
@@ -21,6 +20,8 @@ public abstract class SingletonMonoBehaviour<T> : SingletonMonoBehaviourBase whe
 		if (m_instance == null)
 		{
 			m_instance = GetComponent<T>();
+			Debug.Assert(m_instance != null, "[SingletonMonoBehaviour::Awake] GetComponent<T> failed\n");
+
 			OnAwake();
 		}
 		else

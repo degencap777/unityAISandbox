@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class PercievedEvent : IPooledObject
+public class PerceptionEvent : IPooledObject
 {
 
-	private static ObjectPool<PercievedEvent> m_percievedEventPool = new ObjectPool<PercievedEvent>(4, new PercievedEvent());
-	public static ObjectPool<PercievedEvent> Pool { get { return m_percievedEventPool; } }
+	private static ObjectPool<PerceptionEvent> m_percievedEventPool = 
+		new ObjectPool<PerceptionEvent>(32, new PerceptionEvent());
+	public static ObjectPool<PerceptionEvent> Pool { get { return m_percievedEventPool; } }
 
 	// --------------------------------------------------------------------------------
 	
-	private PercievedEventType m_percievedEventType = PercievedEventType.None;
-	public PercievedEventType Action
+	private PerceptionEventType m_percievedEventType = PerceptionEventType.None;
+	public PerceptionEventType Action
 	{
 		get { return m_percievedEventType; }
 		set { m_percievedEventType = value; }
@@ -36,14 +36,7 @@ public class PercievedEvent : IPooledObject
 		get { return m_target; }
 		set { m_target = value; }
 	}
-
-	private float m_range = 0.0f;
-	public float Range
-	{
-		get { return m_range; }
-		set { m_range = value; }
-	}
-
+	
 	// --------------------------------------------------------------------------------
 
 	public void ReleaseResources()
@@ -53,13 +46,26 @@ public class PercievedEvent : IPooledObject
 
 	// --------------------------------------------------------------------------------
 
+	public PerceptionEvent Clone()
+	{
+		PerceptionEvent clonedEvent = Pool.Get();
+		if (clonedEvent != null)
+		{
+			clonedEvent.m_location = m_location;
+			clonedEvent.m_actor = m_actor;
+			clonedEvent.m_target = m_target;
+		}
+		return clonedEvent;
+	}
+
+	// --------------------------------------------------------------------------------
+
 	public void Reset()
 	{
-		m_percievedEventType = PercievedEventType.None;
+		m_percievedEventType = PerceptionEventType.None;
 		m_location.Set(0.0f, 0.0f, 0.0f);
 		m_actor = null;
 		m_target = null;
-		m_range = 0.0f;
 	}
 	
 }

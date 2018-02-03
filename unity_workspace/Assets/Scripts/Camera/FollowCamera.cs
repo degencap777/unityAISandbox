@@ -19,6 +19,7 @@ public class FollowCamera : MonoBehaviour
 	protected virtual void Awake()
 	{
 		m_transform = GetComponent<Transform>();
+		Debug.Assert(m_transform != null, "[FollowCamera::Awake] GetComponent<Transform> failed\n");
 	}
 
 	// --------------------------------------------------------------------------------

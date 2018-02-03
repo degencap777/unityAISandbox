@@ -1,18 +1,10 @@
-﻿
+﻿using UnityEngine;
 
+[DisallowMultipleComponent]
 public class Perception_Touch : Perception
 {
 
-	// #SteveD >>> implement touch perception
-
 	public override PerceptionType PerceptionType { get { return PerceptionType.Touch; } }
-
-	// --------------------------------------------------------------------------------
-
-	protected override void OnAwake()
-	{
-		;
-	}
 	
 	// --------------------------------------------------------------------------------
 
@@ -23,13 +15,12 @@ public class Perception_Touch : Perception
 
 	// --------------------------------------------------------------------------------
 
-	protected override bool CanPercieve(PercievedEvent percievedEvent)
+	protected override bool CanPercieve(PerceptionEvent percievedEvent)
 	{
 		if (percievedEvent == null)
 		{
 			return false;
 		}
-
 		return false;
 	}
 

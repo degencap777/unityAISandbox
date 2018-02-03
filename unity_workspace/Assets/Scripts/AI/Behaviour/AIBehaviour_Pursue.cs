@@ -68,27 +68,33 @@ public class AIBehaviour_Pursue : AIBehaviour
 
 	public override void OnUpdate()
 	{
-		/// validate owner
-		if (Owner == null || Owner.Transform == null || Owner.AgentController == null)
+		// validate owner
+		if (m_brain == null)
 		{
 			return;
 		}
 
+		Agent owner = m_brain.Owner;
+		if (owner == null || owner.Transform == null || owner.AgentController == null)
+		{
+			return;
+		}
+		
 		// validate target
-		Agent target = WorkMemory.GetHighestPriorityTarget();
+		Agent target = m_brain.WorkingMemory.GetHighestPriorityTarget();
 		if (target == null || target.Transform == null)
 		{
 			return;
 		}
-				
+
 		// vector to target
-		Vector3 toTarget = target.Transform.position - Owner.Transform.position;
+		Vector3 toTarget = target.Transform.position - owner.Transform.position;
 		m_toTargetSquared = toTarget.sqrMagnitude;
 		
 		// angle to target (shortest)
-		float angleToTarget = Vector3.Angle(Owner.Transform.forward, toTarget);
+		float angleToTarget = Vector3.Angle(owner.Transform.forward, toTarget);
 		float absAngleToTarget = angleToTarget;
-		if (Vector3.Cross(Owner.Transform.forward, toTarget).y < 0)
+		if (Vector3.Cross(owner.Transform.forward, toTarget).y < 0)
 		{
 			angleToTarget = -angleToTarget;
 		}
@@ -96,7 +102,7 @@ public class AIBehaviour_Pursue : AIBehaviour
 		// rotate to target
 		if (absAngleToTarget >= m_isFacingAngle)
 		{
-			Owner.AgentController.Rotate(angleToTarget * m_toTurnAngleScalar);
+			owner.AgentController.Rotate(angleToTarget * m_toTurnAngleScalar);
 		}
 		
 		// only move toward target if out of range
@@ -105,7 +111,7 @@ public class AIBehaviour_Pursue : AIBehaviour
 			// move to target
 			if (absAngleToTarget <= m_minimumAngleForMovement)
 			{
-				Owner.AgentController.MoveForward(1.0f);
+				owner.AgentController.MoveForward(1.0f);
 			}
 			
 			// deactivate if reached success distance

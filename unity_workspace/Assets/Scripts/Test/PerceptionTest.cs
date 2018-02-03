@@ -10,13 +10,13 @@ public class PerceptionTest : Test
 	private PerceptionType m_perceptionType = PerceptionType.Vision;
 
 	[SerializeField]
-	private PercievedEventType m_percievedEventType = PercievedEventType.None;
+	private PerceptionEventType m_percievedEventType = PerceptionEventType.None;
 
 	[SerializeField]
 	private Agent m_target = null;
 
 	[SerializeField]
-	private float m_range = 1.0f;
+	private float m_range = 10.0f;
 
 	// --------------------------------------------------------------------------------
 
@@ -32,15 +32,15 @@ public class PerceptionTest : Test
 		PerceptionTriggerDistributor distributor = PerceptionTriggerDistributor.Instance;
 		if (distributor != null)
 		{
-			PercievedEvent percievedEvent = PercievedEvent.Pool.Get();
+			PerceptionEvent percievedEvent = PerceptionEvent.Pool.Get();
 			percievedEvent.Actor = m_actor;
 			percievedEvent.Action = m_percievedEventType;
 			percievedEvent.Target = m_target;
-			percievedEvent.Range = m_range;
 
 			PerceptionTrigger trigger = PerceptionTrigger.Pool.Get();
 			trigger.PerceptionType = m_perceptionType;
-			trigger.PercievedEvent = percievedEvent;
+			trigger.Range = m_range;
+			trigger.PerceptionEvent = percievedEvent;
 			PerceptionTriggerDistributor.Instance.DistributeTrigger(trigger);
 		}
 	}

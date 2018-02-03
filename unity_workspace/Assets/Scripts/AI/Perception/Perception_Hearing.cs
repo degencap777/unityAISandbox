@@ -8,13 +8,6 @@ public class Perception_Hearing : Perception
 
 	// --------------------------------------------------------------------------------
 
-	protected override void OnAwake()
-	{
-		;
-	}
-
-	// --------------------------------------------------------------------------------
-
 	public override void OnUpdate()
 	{
 		;
@@ -22,16 +15,13 @@ public class Perception_Hearing : Perception
 
 	// --------------------------------------------------------------------------------
 
-	protected override bool CanPercieve(PercievedEvent percievedEvent)
+	protected override bool CanPercieve(PerceptionEvent percievedEvent)
 	{
 		if (percievedEvent == null)
 		{
 			return false;
 		}
-
-		float rangeSquared = percievedEvent.Range * percievedEvent.Range;
-		float distanceSquared = (Owner.Transform.position - percievedEvent.Location).sqrMagnitude;
-		return distanceSquared <= rangeSquared;
+		return true;
 	}
 
 }

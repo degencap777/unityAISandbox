@@ -1,7 +1,8 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class WorkingMemory : AIBrainComponent
+[DisallowMultipleComponent]
+public class WorkingMemory : AIBrainComponent, IAIMemory
 {
 
 	[SerializeField]
@@ -13,10 +14,10 @@ public class WorkingMemory : AIBrainComponent
 	// --------------------------------------------------------------------------------
 
 	private List<AgentPriority> m_targets = new List<AgentPriority>();
-	private List<Agent> m_removeTargets = new List<Agent>();
+	private List<Agent> m_expiredTargets = new List<Agent>();
 
 	private List<Agent> m_allies = new List<Agent>();
-	private List<Agent> m_removeAllies = new List<Agent>();
+	private List<Agent> m_expiredAllies = new List<Agent>();
 
 	// --------------------------------------------------------------------------------
 
@@ -43,10 +44,9 @@ public class WorkingMemory : AIBrainComponent
 
 	public override void OnUpdate()
 	{
-		RemoveTargetsInternal();
-		RemoveAlliesInternal();
+		;
 	}
-
+	
 	// --------------------------------------------------------------------------------
 
 	public void AddTarget(Agent target)
@@ -54,7 +54,8 @@ public class WorkingMemory : AIBrainComponent
 		// exit if we already have this target
 		for (int i = 0; i < m_targets.Count; ++i)
 		{
-			if (m_targets[i].Agent == target)
+			if (m_targets[i].Agent == target && 
+				m_expiredTargets.Contains(target) == false)
 			{
 				return;
 			}
@@ -74,7 +75,8 @@ public class WorkingMemory : AIBrainComponent
 	public void AddAlly(Agent ally)
 	{
 		// exit if we already have this ally
-		if (m_allies.Contains(ally))
+		if (m_allies.Contains(ally) && 
+			m_expiredAllies.Contains(ally) == false)
 		{
 			return;
 		}
@@ -88,28 +90,28 @@ public class WorkingMemory : AIBrainComponent
 
 	public void RemoveTarget(Agent target)
 	{
-		m_removeTargets.Add(target);
+		m_expiredTargets.Add(target);
 	}
 
 	// --------------------------------------------------------------------------------
 
 	public void RemoveAlly(Agent ally)
 	{
-		m_removeAllies.Add(ally);
+		m_expiredAllies.Add(ally);
 	}
 	
 	// --------------------------------------------------------------------------------
 
-	private void RemoveTargetsInternal()
+	public void RemoveExpiredTargets()
 	{
 		bool targetRemoved = false;
-		for (int r = 0; r < m_removeTargets.Count; ++r)
+		for (int r = 0; r < m_expiredTargets.Count; ++r)
 		{
 			// find
 			int index = -1;
 			for (int t = 0; t < m_targets.Count; ++t)
 			{
-				if (m_targets[t].Agent == m_removeTargets[r])
+				if (m_targets[t].Agent == m_expiredTargets[r])
 				{
 					index = t;
 					break;
@@ -136,14 +138,14 @@ public class WorkingMemory : AIBrainComponent
 
 	// --------------------------------------------------------------------------------
 
-	private void RemoveAlliesInternal()
+	public void RemoveExpiredAllies()
 	{
 		bool allyRemoved = false;
 
 		// remove all allies requested
-		for (int i = 0; i < m_removeAllies.Count; ++i)
+		for (int i = 0; i < m_expiredAllies.Count; ++i)
 		{
-			allyRemoved |= m_allies.Remove(m_removeAllies[i]);
+			allyRemoved |= m_allies.Remove(m_expiredAllies[i]);
 		}
 
 		// notify subscribers once all requested allies removed
@@ -189,6 +191,15 @@ public class WorkingMemory : AIBrainComponent
 		}
 	}
 
+	// --------------------------------------------------------------------------------
+
+	public void ProcessPerceptionEvent(PerceptionEvent percievedEvent)
+	{
+		// #SteveD >>> process
+	}
+
+	// --------------------------------------------------------------------------------
+	
 #if UNITY_EDITOR
 
 	public List<AgentPriority> Editor_Targets { get { return m_targets; } }
@@ -223,9 +234,7 @@ public class WorkingMemory : AIBrainComponent
 		// notify subscribers
 		NotifyAlliesChanged();
 	}
-
-	// --------------------------------------------------------------------------------
-
+	
 #endif // UNITY_EDITOR
 
 }

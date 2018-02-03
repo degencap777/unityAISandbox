@@ -5,7 +5,8 @@ using UnityEngine;
 public class AgentPriority : IComparable, IPooledObject
 {
 
-	private static ObjectPool<AgentPriority> m_agentPriorityPool = new ObjectPool<AgentPriority>(4, new AgentPriority());
+	private static ObjectPool<AgentPriority> m_agentPriorityPool = 
+		new ObjectPool<AgentPriority>(32, new AgentPriority());
 	public static ObjectPool<AgentPriority> Pool { get { return m_agentPriorityPool; } }
 
 	// --------------------------------------------------------------------------------

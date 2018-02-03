@@ -13,8 +13,7 @@ public interface IPooledObject
 public class ObjectPool<T> where T : IPooledObject
 {
 
-	private static readonly uint k_minInitialCapacity = 2;
-	private static readonly uint k_maxInitialCapacity = 128;
+	private static readonly uint k_minInitialCapacity = 1;
 
 	// --------------------------------------------------------------------------------
 
@@ -28,10 +27,6 @@ public class ObjectPool<T> where T : IPooledObject
 		{
 			poolSize = k_minInitialCapacity;
 		}
-		else if (poolSize > k_maxInitialCapacity)
-		{
-			poolSize = k_maxInitialCapacity;
-		}
 		IncreasePoolSize(poolSize);
 	}
 
@@ -43,6 +38,7 @@ public class ObjectPool<T> where T : IPooledObject
 		{
 			m_pool.Add(Activator.CreateInstance<T>());
 		}
+		Debug.LogFormat("[ObjectPool] {0} increased in size by {1}\n", ToString(), objectCount);
 	}
 
 	// --------------------------------------------------------------------------------
