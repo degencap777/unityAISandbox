@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatable
+public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatable
 {
 
 	private class UpdatableBucket
@@ -14,8 +14,7 @@ public abstract class DistributedUpdater<T> : MonoBehaviour where T : IDistribut
 
 	// --------------------------------------------------------------------------------
 
-	//[SerializeField, Range(0.0f, 1.0f)]
-	[SerializeField, Range(0.0f, 10.0f)] // #SteveD >>> for testing
+	[SerializeField, Range(0.0f, 10.0f)]
 	private float m_updateInterval = 0.5f;
 
 	[SerializeField, Range(1, 60)]
@@ -29,13 +28,9 @@ public abstract class DistributedUpdater<T> : MonoBehaviour where T : IDistribut
 	private int m_nextAddIndex = 0;
 
 	// --------------------------------------------------------------------------------
-
-	protected virtual void Update()
+	
+	protected virtual void OnUpdate()
 	{
-		// #SteveD	>>> requires an AIBrainManager to hold onto the DistributedUpdater<AIBrain> object
-		// #SteveD	>>> test this with m_updateInterval @ 9.0f, m_targetBucketCount @ 6 and 13 agents
-		//			>>> add a bunch of logging to Register and Update
-
 		if (m_updatableBuckets.Count == 0)
 		{
 			return;
@@ -49,8 +44,11 @@ public abstract class DistributedUpdater<T> : MonoBehaviour where T : IDistribut
 			if ((updateTime >= m_currentInterval && updateTime < endInterval) || 
 				((updateTime - m_updateInterval) >= m_currentInterval && (updateTime - m_updateInterval) < endInterval))
 			{
+				Debug.LogFormat("[DistributedUpdater] updating bucket at index {0} with {1} items. bucket update time: {2}",
+					i, m_updatableBuckets[i].m_updatables.Count, m_updatableBuckets[i].m_updateTime);
+
 				for (int j = 0; j < m_updatableBuckets[i].m_updatables.Count; ++j)
-				{
+				{				
 					m_updatableBuckets[i].m_updatables[j].DistributedUpdate();
 				}
 			}
@@ -61,7 +59,7 @@ public abstract class DistributedUpdater<T> : MonoBehaviour where T : IDistribut
 
 	// --------------------------------------------------------------------------------
 
-	public void RegisterUpdatable(T updatable)
+	public virtual void RegisterUpdatable(T updatable)
 	{
 		// check for reaching last bucket
 		if (m_nextAddIndex >= m_updatableBuckets.Count)
@@ -86,7 +84,7 @@ public abstract class DistributedUpdater<T> : MonoBehaviour where T : IDistribut
 
 	// --------------------------------------------------------------------------------
 
-	public void UnregisterUpdatable(T updatable)
+	public virtual void UnregisterUpdatable(T updatable)
 	{
 		for (int i = 0; i < m_updatableBuckets.Count; ++i)
 		{
@@ -115,6 +113,21 @@ public abstract class DistributedUpdater<T> : MonoBehaviour where T : IDistribut
 		for (int i = 0; i < m_updatableBuckets.Count; ++i)
 		{
 			m_updatableBuckets[i].m_updateTime = interval * i;
+		}
+
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void LogState()
+	{
+		Debug.LogFormat("[DistributedUpdater] update interval: {0}, buckets: {1}\n", 
+			m_updateInterval, m_updatableBuckets.Count);
+		
+		for (int i = 0; i < m_updatableBuckets.Count; ++i)
+		{
+			Debug.LogFormat(" >>> index: {0}, update time: {1}, bucket items: {2}\n", 
+				i, m_updatableBuckets[i].m_updateTime, m_updatableBuckets[i].m_updatables.Count);
 		}
 	}
 

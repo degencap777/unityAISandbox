@@ -44,6 +44,13 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 		{
 			m_brainComponents[i].OnStart();
 		}
+
+		AIBrainManager brainManager = AIBrainManager.Instance as AIBrainManager;
+		Debug.Assert(brainManager != null, "[AIBrain::Start] AIBrainManager instance is null");
+		if (brainManager != null)
+		{
+			brainManager.RegisterAIBrain(this);
+		}
 	}
 
 	// --------------------------------------------------------------------------------
@@ -61,9 +68,6 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 	public virtual void DistributedUpdate()
 	{
 		CleanMemories();
-
-		// #SteveD	>>> add check for entering/exiting in view in this DistributedUpdate
-		//			>>> Still need a design for this, does it even want to be done in AIBrain?
 	}
 
 	// --------------------------------------------------------------------------------
@@ -79,6 +83,17 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 		if (m_historicMemory != null)
 		{
 			m_historicMemory.RemoveExpiredMemories();
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual void OnDestroy()
+	{
+		AIBrainManager brainManager = AIBrainManager.Instance as AIBrainManager;
+		if (brainManager != null)
+		{
+			brainManager.UnregisterAIBrain(this);
 		}
 	}
 
