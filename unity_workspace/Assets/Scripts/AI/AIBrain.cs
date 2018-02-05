@@ -2,7 +2,7 @@
 using UnityEngine;
 
 [DisallowMultipleComponent]
-public class AIBrain : MonoBehaviour
+public class AIBrain : MonoBehaviour, IDistributedUpdatable
 {
 
 	private Agent m_owner = null;
@@ -48,24 +48,22 @@ public class AIBrain : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	protected virtual void Update()
+	public virtual void Update()
 	{
 		for (int i = 0; i < m_brainComponents.Count; ++i)
 		{
 			m_brainComponents[i].OnUpdate();
 		}
+	}
 
-		// #SteveD >>> only want to call CleanMemories periodically, on a few agents at a time. 
-		// requires a utility class somewhere (with which every brain will register itself) - AIBrainManager / AIBrainUtility
-		// that has a list of lists of agents that are processed in order (one sublist per update).
-		// number of lists = [member variable: seconds between CleanMemories] / (0.01666.. [1.0f / 60.0f])
-		// once we reach this number of lists, insert into list 0 again.
-		//
-		// must keep track of:
-		// 1. next list to insert into
-		// 2. next list to update
-		
+	// -------------------------------------------------------------------------------/
+
+	public virtual void DistributedUpdate()
+	{
 		CleanMemories();
+
+		// #SteveD	>>> add check for entering/exiting in view in this DistributedUpdate
+		//			>>> Still need a design for this, does it even want to be done in AIBrain?
 	}
 
 	// --------------------------------------------------------------------------------
