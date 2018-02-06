@@ -3,8 +3,6 @@
 public class AIBrainManager : SingletonMonoBehaviour<AIBrainManager>
 {
 	
-	// --------------------------------------------------------------------------------
-
 	private DistributedAIBrainUpdater m_brainUpdater = null;
 
 	// --------------------------------------------------------------------------------
@@ -15,6 +13,16 @@ public class AIBrainManager : SingletonMonoBehaviour<AIBrainManager>
 		Debug.Assert(m_brainUpdater != null, "[AIBrainManager::OnAwake] GetComponent<DistributedUpdater<AIBrain>> failed\n");
 	}
 
+	// --------------------------------------------------------------------------------
+
+	protected virtual void Update()
+	{
+		if (m_brainUpdater != null)
+		{
+			m_brainUpdater.OnUpdate();
+		}
+	}
+	
 	// --------------------------------------------------------------------------------
 
 	public void RegisterAIBrain(AIBrain brain)

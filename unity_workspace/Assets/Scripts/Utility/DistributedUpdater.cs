@@ -29,7 +29,7 @@ public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatab
 
 	// --------------------------------------------------------------------------------
 	
-	protected virtual void OnUpdate()
+	public virtual void OnUpdate()
 	{
 		if (m_updatableBuckets.Count == 0)
 		{
@@ -44,8 +44,8 @@ public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatab
 			if ((updateTime >= m_currentInterval && updateTime < endInterval) || 
 				((updateTime - m_updateInterval) >= m_currentInterval && (updateTime - m_updateInterval) < endInterval))
 			{
-				Debug.LogFormat("[DistributedUpdater] updating bucket at index {0} with {1} items. bucket update time: {2}",
-					i, m_updatableBuckets[i].m_updatables.Count, m_updatableBuckets[i].m_updateTime);
+				//Debug.LogFormat("[DistributedUpdater] updating bucket {0}, update time: {1}, start interval: {2}, end interval: {3}",
+				//	i, m_updatableBuckets[i].m_updateTime, m_currentInterval, endInterval);
 
 				for (int j = 0; j < m_updatableBuckets[i].m_updatables.Count; ++j)
 				{				
@@ -55,6 +55,10 @@ public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatab
 		}
 
 		m_currentInterval = endInterval;
+		if (m_currentInterval >= m_updateInterval)
+		{
+			m_currentInterval -= endInterval;
+		}
 	}
 
 	// --------------------------------------------------------------------------------
@@ -80,6 +84,8 @@ public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatab
 		// add
 		m_updatableBuckets[m_nextAddIndex].m_updatables.Add(updatable);
 		++m_nextAddIndex;
+
+		//LogState();
 	}
 
 	// --------------------------------------------------------------------------------
@@ -115,6 +121,7 @@ public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatab
 			m_updatableBuckets[i].m_updateTime = interval * i;
 		}
 
+		//LogState();
 	}
 
 	// --------------------------------------------------------------------------------
