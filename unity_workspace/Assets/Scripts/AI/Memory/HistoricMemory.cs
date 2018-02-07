@@ -100,7 +100,7 @@ public class HistoricMemory : AIBrainComponent, IAIMemory
 	public void RemoveExpiredMemories()
 	{
 
-		// #SteveD	>>> remove all memories that have expired
+		// #SteveD	>>> remove all expired memories
 
 	}
 

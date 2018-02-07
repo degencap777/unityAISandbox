@@ -47,7 +47,7 @@ public class BoundKeyStatePropertyDrawer : PropertyDrawer
 	{
 		SerializedProperty keyStateProperty = property.FindPropertyRelative("m_requiredKeyState");
 		bool isHeld = (KeyState)keyStateProperty.intValue == KeyState.Held;
-		return isHeld ? 54.0f : 36.0f;
+		return (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * (isHeld ? 3 : 2);
 	}
 
 }

@@ -36,7 +36,7 @@ public class BoundAxisStatePropertyDrawer : PropertyDrawer
 
 	public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
 	{
-		return 36.0f;
+		return (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * 2;
 	}
 
 }
