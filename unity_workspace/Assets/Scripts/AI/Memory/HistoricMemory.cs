@@ -42,7 +42,7 @@ public class HistoricMemory : AIBrainComponent, IAIMemory
 
 	[SerializeField]
 	private PerceptionEventTypeFloatDictionary m_eventLifetimes = new PerceptionEventTypeFloatDictionary();
-
+	
 	// --------------------------------------------------------------------------------
 
 	private Dictionary<PerceptionEventType, List<PerishablePerceptionEvent>> m_rememberedEvents = 
@@ -83,7 +83,7 @@ public class HistoricMemory : AIBrainComponent, IAIMemory
 			{
 				perishableEvent.m_perceptionEvent = rememberedEvent;
 
-				float lifetime = 1.0f;
+				float lifetime = m_defaultMemoryLifetime;
 				if (m_eventLifetimes.TryGetValue(rememberedEvent.Action, out lifetime) == false)
 				{
 					lifetime = m_defaultMemoryLifetime;

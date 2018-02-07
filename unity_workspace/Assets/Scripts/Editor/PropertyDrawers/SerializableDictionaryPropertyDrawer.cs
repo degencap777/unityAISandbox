@@ -5,8 +5,9 @@ public abstract class SerializableDictionaryPropertyDrawer<K, V> : PropertyDrawe
 {
 
 	protected abstract void DrawKey(SerializedProperty keys, int index, Rect keyRect);
+	protected abstract void AddKey(SerializedProperty keys);
 	protected abstract void DrawValue(SerializedProperty values, int index, Rect valueRect);
-	protected abstract void AddNew(SerializedProperty keys, SerializedProperty values);
+	protected abstract void AddValue(SerializedProperty values);
 
 	// --------------------------------------------------------------------------------
 
@@ -21,17 +22,18 @@ public abstract class SerializableDictionaryPropertyDrawer<K, V> : PropertyDrawe
 		SerializedProperty keysProperty = property.FindPropertyRelative("m_keys");
 		SerializedProperty valuesProperty = property.FindPropertyRelative("m_values");
 
-		float paddedLineHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
+		float lineHeight = EditorGUIUtility.singleLineHeight;
+		float paddedLineHeight = lineHeight + EditorGUIUtility.standardVerticalSpacing;
 
 		for (int i = 0; i < keysProperty.arraySize; ++i)
 		{
-			Rect keyRect = new Rect(0.0f, 0.0f, position.width * 0.4f, paddedLineHeight);
+			Rect keyRect = new Rect(position.x, position.y + paddedLineHeight * i, position.width * 0.35f, lineHeight);
 			DrawKey(keysProperty, i, keyRect);
 
-			Rect valueRect = new Rect(position.width * 0.4f, 0.0f, position.width * 0.4f, paddedLineHeight);
+			Rect valueRect = new Rect(position.x + position.width * 0.375f, position.y + paddedLineHeight * i, position.width * 0.35f, lineHeight);
 			DrawValue(valuesProperty, i, valueRect);
 
-			Rect deleteButtonRect = new Rect(position.width * 0.8f, 0.0f, position.width * 0.1f, paddedLineHeight);
+			Rect deleteButtonRect = new Rect(position.x + position.width * 0.75f, position.y + paddedLineHeight * i, position.width * 0.25f, lineHeight);
 			if (GUI.Button(deleteButtonRect, "Delete"))
 			{
 				keysProperty.DeleteArrayElementAtIndex(i);
@@ -39,10 +41,13 @@ public abstract class SerializableDictionaryPropertyDrawer<K, V> : PropertyDrawe
 			}
 		}
 
-		Rect addButtonRect = new Rect(0.0f, keysProperty.arraySize * paddedLineHeight, position.width * 0.33f, paddedLineHeight);
+		Rect addButtonRect = new Rect(position.x + position.width * 0.25f, position.y + keysProperty.arraySize * paddedLineHeight, position.width * 0.5f, lineHeight);
 		if (GUI.Button(addButtonRect, "Add"))
 		{
-			AddNew(keysProperty, valuesProperty);
+			++keysProperty.arraySize;
+			AddKey(keysProperty);
+			++valuesProperty.arraySize;
+			AddValue(valuesProperty);
 		}
 
 		EditorGUI.indentLevel = indent;

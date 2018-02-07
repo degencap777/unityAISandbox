@@ -32,13 +32,13 @@ public abstract class SerializableDictionary<K, V> : ISerializationCallbackRecei
 
 	public void OnAfterDeserialize()
 	{
-		Debug.AssertFormat(m_keys.Count == m_values.Count, "[SerializableDictionary] key and value count out of synch >>> {0} keys, {1} values\n",
-			m_keys.Count, m_values.Count);
-
 		m_dictionary.Clear();
 		for (int i = 0; i < m_keys.Count; ++i)
 		{
-			m_dictionary.Add(m_keys[i], m_values[i]);
+			if (m_dictionary.ContainsKey(m_keys[i]) == false)
+			{
+				m_dictionary.Add(m_keys[i], m_values[i]);
+			}
 		}
 	}
 
