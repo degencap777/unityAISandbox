@@ -21,17 +21,17 @@ public class StringIntDictionaryPropertyDrawer : SerializableDictionaryPropertyD
 
 	// --------------------------------------------------------------------------------
 
-	protected override void AddKey(SerializedProperty keys)
+	protected override void SetDefaultKey(SerializedProperty keys, int index)
 	{
-		SerializedProperty keyProperty = keys.GetArrayElementAtIndex(keys.arraySize - 1);
+		SerializedProperty keyProperty = keys.GetArrayElementAtIndex(index);
 		keyProperty.stringValue = "new key";
 	}
 
 	// --------------------------------------------------------------------------------
 
-	protected override void AddValue(SerializedProperty values)
+	protected override void SetDefaultValue(SerializedProperty values, int index)
 	{
-		SerializedProperty valueProperty = values.GetArrayElementAtIndex(values.arraySize - 1);
+		SerializedProperty valueProperty = values.GetArrayElementAtIndex(index);
 		valueProperty.intValue = -1;
 	}
 
@@ -47,8 +47,7 @@ public class PerceptionEventTypeFloatDictionaryPropertyDrawer : SerializableDict
 	protected override void DrawKey(SerializedProperty keys, int index, Rect keyRect)
 	{
 		SerializedProperty keyProperty = keys.GetArrayElementAtIndex(index);
-		PerceptionEventType key = (PerceptionEventType)keyProperty.intValue;
-		keyProperty.intValue = (int)(PerceptionEventType)EditorGUI.EnumPopup(keyRect, key);
+		keyProperty.intValue = (int)(PerceptionEventType)EditorGUI.EnumPopup(keyRect, (PerceptionEventType)keyProperty.intValue);
 	}
 
 	// --------------------------------------------------------------------------------
@@ -56,23 +55,22 @@ public class PerceptionEventTypeFloatDictionaryPropertyDrawer : SerializableDict
 	protected override void DrawValue(SerializedProperty values, int index, Rect valueRect)
 	{
 		SerializedProperty valueProperty = values.GetArrayElementAtIndex(index);
-		float value = valueProperty.floatValue;
-		valueProperty.floatValue = EditorGUI.FloatField(valueRect, value);
+		valueProperty.floatValue = EditorGUI.FloatField(valueRect, valueProperty.floatValue);
 	}
 
 	// --------------------------------------------------------------------------------
 
-	protected override void AddKey(SerializedProperty keys)
+	protected override void SetDefaultKey(SerializedProperty keys, int index)
 	{
-		SerializedProperty keyProperty = keys.GetArrayElementAtIndex(keys.arraySize - 1);
+		SerializedProperty keyProperty = keys.GetArrayElementAtIndex(index);
 		keyProperty.intValue = (int)PerceptionEventType.None;
 	}
 
 	// --------------------------------------------------------------------------------
 
-	protected override void AddValue(SerializedProperty values)
+	protected override void SetDefaultValue(SerializedProperty values, int index)
 	{
-		SerializedProperty valueProperty = values.GetArrayElementAtIndex(values.arraySize - 1);
+		SerializedProperty valueProperty = values.GetArrayElementAtIndex(index);
 		valueProperty.floatValue = -1.0f;
 	}
 }
