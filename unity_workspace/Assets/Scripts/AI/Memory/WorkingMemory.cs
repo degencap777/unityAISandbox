@@ -195,7 +195,9 @@ public class WorkingMemory : AIBrainComponent, IAIMemory
 
 	public void ProcessPerceptionEvent(PerceptionEvent percievedEvent)
 	{
-		// #SteveD >>> process
+
+		// #SteveD >>> process > react
+
 	}
 
 	// --------------------------------------------------------------------------------

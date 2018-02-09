@@ -1,7 +1,7 @@
 ﻿using System;
 
 [Serializable]
-public class StringIntDictionary : SerializableDictionary<string, int> { }
+public class String_Int_Dictionary : SerializableDictionary<string, int> { }
 
 [Serializable]
-public class PerceptionEventTypeFloatDictionary : SerializableDictionary<PerceptionEventType, float> { }
+public class PerceptionEventType_Float_Dictionary : SerializableDictionary<PerceptionEventType, float> { }
