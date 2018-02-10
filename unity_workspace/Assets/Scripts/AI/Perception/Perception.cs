@@ -77,9 +77,17 @@ public abstract class Perception : AIBrainComponent
 
 		if (CanPercieve(trigger.PerceptionEvent))
 		{
-			if (m_brain != null && m_brain.WorkingMemory != null)
+			if (m_brain != null)
 			{
-				m_brain.WorkingMemory.ProcessPerceptionEvent(trigger.PerceptionEvent);
+				if (m_brain.HistoricMemory != null)
+				{
+					m_brain.HistoricMemory.ProcessPerceptionEvent(trigger.PerceptionEvent);
+				}
+				
+				if (m_brain.WorkingMemory != null)
+				{
+					m_brain.WorkingMemory.ProcessPerceptionEvent(trigger.PerceptionEvent);
+				}
 			}
 			return true;
 		}
