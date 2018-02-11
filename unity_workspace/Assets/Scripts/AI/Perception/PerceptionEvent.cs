@@ -1,5 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
+[Serializable]
 public class PerceptionEvent : IPooledObject
 {
 
@@ -10,7 +12,7 @@ public class PerceptionEvent : IPooledObject
 	// --------------------------------------------------------------------------------
 	
 	private PerceptionEventType m_percievedEventType = PerceptionEventType.None;
-	public PerceptionEventType Action
+	public PerceptionEventType EventType
 	{
 		get { return m_percievedEventType; }
 		set { m_percievedEventType = value; }
@@ -38,24 +40,25 @@ public class PerceptionEvent : IPooledObject
 	}
 	
 	// --------------------------------------------------------------------------------
-
-	public void ReleaseResources()
-	{
-		;
-	}
-
-	// --------------------------------------------------------------------------------
-
+	
 	public PerceptionEvent Clone()
 	{
 		PerceptionEvent clonedEvent = Pool.Get();
 		if (clonedEvent != null)
 		{
+			clonedEvent.m_percievedEventType = m_percievedEventType;
 			clonedEvent.m_location = m_location;
 			clonedEvent.m_actor = m_actor;
 			clonedEvent.m_target = m_target;
 		}
 		return clonedEvent;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void ReleaseResources()
+	{
+		;
 	}
 
 	// --------------------------------------------------------------------------------

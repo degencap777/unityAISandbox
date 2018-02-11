@@ -34,8 +34,16 @@ public class PerceptionTest : Test
 		{
 			PerceptionEvent percievedEvent = PerceptionEvent.Pool.Get();
 			percievedEvent.Actor = m_actor;
-			percievedEvent.Action = m_percievedEventType;
+			if (m_actor != null)
+			{
+				percievedEvent.Location = m_actor.transform.position;
+			}
+			percievedEvent.EventType = m_percievedEventType;
 			percievedEvent.Target = m_target;
+			if (m_actor == null && m_target != null)
+			{
+				percievedEvent.Location = m_target.transform.position;
+			}
 
 			PerceptionTrigger trigger = PerceptionTrigger.Pool.Get();
 			trigger.PerceptionType = m_perceptionType;

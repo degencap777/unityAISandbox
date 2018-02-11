@@ -1,11 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 [DisallowMultipleComponent]
 public class HistoricMemory : AIBrainComponent, IAIMemory
 {
 
-	private class PerishablePerceptionEvent : IPooledObject
+	[Serializable]
+	public class PerishablePerceptionEvent : IPooledObject
 	{
 
 		private static ObjectPool<PerishablePerceptionEvent> m_pool =
@@ -78,7 +80,7 @@ public class HistoricMemory : AIBrainComponent, IAIMemory
 		}
 
 		float lifetime = 0.0f;
-		if (m_eventLifetimes.TryGetValue(percievedEvent.Action, out lifetime) == false)
+		if (m_eventLifetimes.TryGetValue(percievedEvent.EventType, out lifetime) == false)
 		{
 			lifetime = m_defaultMemoryLifetime;
 		}
@@ -86,11 +88,11 @@ public class HistoricMemory : AIBrainComponent, IAIMemory
 
 		// check for this event already existing
 		List<PerishablePerceptionEvent> eventList = null;
-		if (m_rememberedEvents.TryGetValue(percievedEvent.Action, out eventList))
+		if (m_rememberedEvents.TryGetValue(percievedEvent.EventType, out eventList))
 		{
 			for (int i = 0; i < eventList.Count; ++i)
 			{
-				if (eventList[i].m_perceptionEvent.Action == percievedEvent.Action &&
+				if (eventList[i].m_perceptionEvent.EventType == percievedEvent.EventType &&
 					eventList[i].m_perceptionEvent.Actor == percievedEvent.Actor &&
 					eventList[i].m_perceptionEvent.Target == percievedEvent.Target)
 				{
@@ -98,7 +100,7 @@ public class HistoricMemory : AIBrainComponent, IAIMemory
 					if (expiryTime > eventList[i].m_expirationTime)
 					{
 						Debug.LogFormat("[HistoricMemory] Updated an existing {0} event expiry time from {1} to {2}\n",
-							eventList[i].m_perceptionEvent.Action, eventList[i].m_expirationTime, expiryTime);
+							eventList[i].m_perceptionEvent.EventType, eventList[i].m_expirationTime, expiryTime);
 						eventList[i].m_expirationTime = expiryTime;
 					}
 
@@ -126,12 +128,21 @@ public class HistoricMemory : AIBrainComponent, IAIMemory
 				{
 					// create an new list, add the event and add the list to our dictionary
 					eventList = new List<PerishablePerceptionEvent> { perishableEvent };
-					m_rememberedEvents.Add(perishableEvent.m_perceptionEvent.Action, eventList);
+					m_rememberedEvents.Add(perishableEvent.m_perceptionEvent.EventType, eventList);
+
+					Debug.LogFormat("[HistoricMemory] Added a new {0} memory list \n", 
+						perishableEvent.m_perceptionEvent.EventType);
+
+					Debug.LogFormat("[HistoricMemory] Added a new {0} memory expiring at {1} \n", 
+						perishableEvent.m_perceptionEvent.EventType, expiryTime);
 				}
 				else
 				{
 					// add to the existing list
 					eventList.Add(perishableEvent);
+
+					Debug.LogFormat("[HistoricMemory] Added a new {0} memory expiring at {1} \n",
+						perishableEvent.m_perceptionEvent.EventType, expiryTime);
 				}
 			}
 		}
@@ -185,5 +196,24 @@ public class HistoricMemory : AIBrainComponent, IAIMemory
 			}
 		}
 	}
+
+
+#if UNITY_EDITOR
+
+	public Dictionary<PerceptionEventType, List<PerishablePerceptionEvent>> Editor_RememberedEvents { get { return m_rememberedEvents; } }
+
+	// --------------------------------------------------------------------------------
+
+	public void Editor_ClearMemoryType(PerceptionEventType type)
+	{
+		List<PerishablePerceptionEvent> toClear = null;
+		if (m_rememberedEvents.TryGetValue(type, out toClear))
+		{
+			float time = Time.time;
+			toClear.ForEach(e => e.m_expirationTime = time);
+		}
+	}
+	
+#endif // UNITY_EDITOR
 
 }

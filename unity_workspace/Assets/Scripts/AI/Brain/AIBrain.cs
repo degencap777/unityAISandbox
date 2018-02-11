@@ -25,10 +25,12 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 	{
 		m_owner = GetComponentInParent<Agent>();
 		m_workingMemory = GetComponentInChildren<WorkingMemory>();
+		m_historicMemory = GetComponentInChildren<HistoricMemory>();
 		m_behaviourController = GetComponentInChildren<AIBehaviourController>();
 		
 		// add brain components
 		m_brainComponents.Add(m_workingMemory);
+		m_brainComponents.Add(m_historicMemory);
 		m_brainComponents.Add(m_behaviourController);
 
 		// add all perception brain components

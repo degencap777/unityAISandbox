@@ -1,15 +1,15 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatable
 {
 
-	private class UpdatableBucket
+	[Serializable]
+	public class UpdatableBucket
 	{
-
 		public List<T> m_updatables = new List<T>();
 		public float m_updateTime = 0.0f;
-
 	}
 
 	// --------------------------------------------------------------------------------
@@ -18,7 +18,7 @@ public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatab
 	private float m_updateInterval = 0.5f;
 
 	[SerializeField, Range(1, 60)]
-	private int m_targetBucketCount = 30;
+	private int m_targetBucketCount = 10;
 
 	// --------------------------------------------------------------------------------
 
@@ -137,5 +137,13 @@ public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatab
 				i, m_updatableBuckets[i].m_updateTime, m_updatableBuckets[i].m_updatables.Count);
 		}
 	}
+
+	// --------------------------------------------------------------------------------
+
+#if UNITY_EDITOR
+
+	public List<UpdatableBucket> Editor_UpdatableBuckets { get { return m_updatableBuckets; } }
+
+#endif // UNITY_EDITOR
 
 }
