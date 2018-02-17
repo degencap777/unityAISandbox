@@ -1,34 +1,75 @@
-﻿
+﻿using System;
 
-public class Node<T>
+public class BTreeNode<T> where T : IComparable<T>
 {
 
 	private T m_data = default(T);
-	public T Data
-	{
-		get { return m_data; }
-		set { m_data = value; }
-	}
+	public T Data { get { return m_data; } }
 
-	private Node<T> m_left = null;
-	public Node<T> Left
-	{
-		get { return m_left; }
-		set { m_left = value; }
-	}
+	private BTreeNode<T> m_left = null;
+	public BTreeNode<T> Left { get { return m_left; } }
 
-	private Node<T> m_right = null;
-	public Node<T> Right
+	private BTreeNode<T> m_right = null;
+	public BTreeNode<T> Right { get { return m_right; } }
+
+	private BTreeNode<T> m_parent = null;
+	public BTreeNode<T> Parent { get { return m_parent; } }
+
+	// --------------------------------------------------------------------------------
+
+	public BTreeNode(T data, BTreeNode<T> parent)
 	{
-		get { return m_right; }
-		set { m_right = value; }
+		m_data = data;
+		m_parent = parent;
 	}
 
 	// --------------------------------------------------------------------------------
 
-	public Node(T data)
+	public void Insert(BTreeNode<T> node)
 	{
-		m_data = data;
+		if (node == null)
+		{
+			return;
+		}
+
+		if (node.Data.CompareTo(m_data) < 0)
+		{
+			if (m_left != null)
+			{
+				node.m_parent = this;
+				m_left.Insert(node);
+			}
+			else
+			{
+				m_left = node;
+			}
+		}
+		else
+		{
+			if (m_right != null)
+			{
+				m_right.Insert(node);
+			}
+			else
+			{
+				node.m_parent = this;
+				m_right = node; 
+			}
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Detach(BTreeNode<T> child)
+	{
+		if (m_left == child)
+		{
+			m_left = null;
+		}
+		else if (m_right == child)
+		{
+			m_right = null;
+		}
 	}
 	
 }

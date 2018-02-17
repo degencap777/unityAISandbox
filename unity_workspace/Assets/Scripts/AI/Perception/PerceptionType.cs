@@ -1,7 +1,9 @@
-﻿
+﻿using System;
 
+[Flags]
 public enum PerceptionType : uint
 {
-	Vision,
-	Hearing,
+	None = 0,
+	Vision = (1 << 0),
+	Hearing = (1 << 1),
 }
