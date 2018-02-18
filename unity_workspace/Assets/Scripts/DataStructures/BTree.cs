@@ -5,6 +5,7 @@ public class BTree<T> where T : IComparable<T>
 {
 
 	private BTreeNode<T> m_root = null;
+	public BTreeNode<T> Root { get { return m_root; } }
 
 	private List<T> m_nodes = new List<T>();
 	private bool m_nodesDirty = false;
