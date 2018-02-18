@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 public class BTreeNode<T> where T : IComparable<T>
 {
@@ -71,5 +72,39 @@ public class BTreeNode<T> where T : IComparable<T>
 			m_right = null;
 		}
 	}
-	
+
+	// --------------------------------------------------------------------------------
+
+	public void GenerateList(List<T> list)
+	{
+		if (m_left != null)
+		{
+			m_left.GenerateList(list);
+		}
+
+		list.Add(m_data);
+
+		if (m_right != null)
+		{
+			m_right.GenerateList(list);
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Clear()
+	{
+		if (m_left != null)
+		{
+			m_left.Clear();
+			m_left = null;
+		}
+
+		if (m_right != null)
+		{
+			m_right.Clear();
+			m_right = null;
+		}
+	}
+
 }
