@@ -93,7 +93,7 @@ public class BTree<T> where T : IComparable<T>
 
 	// --------------------------------------------------------------------------------
 
-	public List<T> Content()
+	public List<T> AsList()
 	{
 		if (m_nodesDirty)
 		{

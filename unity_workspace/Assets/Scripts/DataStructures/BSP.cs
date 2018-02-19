@@ -9,7 +9,7 @@ public class BSP : MonoBehaviour
 
 	[SerializeField]
 	private int m_partitionAgentLimit = 8;
-
+	
 	// --------------------------------------------------------------------------------
 
 	private BTree<BSPPartition> m_bsp = new BTree<BSPPartition>();
@@ -28,33 +28,34 @@ public class BSP : MonoBehaviour
 		if (node.Data.AgentCount >= m_partitionAgentLimit)
 		{
 			Vector3 size = node.Data.MaxBounds - node.Data.MinBounds;
-
 			float halfX = size.x * 0.5f;
 			float halfY = size.y * 0.5f;
 			float halfZ = size.z * 0.5f;
 
-			BSPPartition left = null;
-			BSPPartition right = null;
+			Vector3 leftMaxBounds = node.Data.MaxBounds;
+			Vector3 rightMinBounds = node.Data.MinBounds;
 
 			if (halfX >= halfY && halfX >= halfZ) // split on YZ plane 
 			{
-				// #SteveD	>>> left = new BSPPartition(???, ???);
-				// #SteveD	>>> right = new BSPPartition(???, ???);
+				leftMaxBounds.x -= halfX;
+				rightMinBounds.x += halfX;
 			}
 			else if (halfY >= halfX && halfY >= halfZ) // split on XZ plane
 			{
-				// #SteveD	>>> left = new BSPPartition(???, ???);
-				// #SteveD	>>> right = new BSPPartition(???, ???);
+				leftMaxBounds.y -= halfY;
+				rightMinBounds.y += halfY;
 			}
 			else // halfZ >= halfX && halfZ >= halfY, split on XY plane
 			{
-				// #SteveD	>>> left = new BSPPartition(???, ???);
-				// #SteveD	>>> right = new BSPPartition(???, ???);
+				leftMaxBounds.z -= halfZ;
+				rightMinBounds.z += halfZ;
 			}
+
+			BSPPartition left = new BSPPartition(node.Data.MinBounds, leftMaxBounds);
+			BSPPartition right = new BSPPartition(rightMinBounds, node.Data.MaxBounds);
 
 			var agents = node.Data.Agents;
 			agents.Add(agent);
-			
 			for (int i = 0; i < agents.Count; ++i)
 			{
 				if (left.ContainsPoint(agents[i].Transform.position))
@@ -70,14 +71,10 @@ public class BSP : MonoBehaviour
 					Debug.LogError("[BSP::AddAgent] Subdivide partition failed; agent cannot be inserted into either subdivision\n");
 				}
 			}
-			node.Data.FlushAgents();
 
-			// #SteveD	>>> insertion into tree requires comparison of BSPPartitions
+			node.Data.FlushAgents();
 			m_bsp.Insert(left);
 			m_bsp.Insert(right);
-			// <<<<<<<<<<<<
-			
-			// #SteveD	>>> handle all agents being added to one partition (one child being over limit)
 		}
 		else
 		{
@@ -95,8 +92,6 @@ public class BSP : MonoBehaviour
 			Debug.Assert(node.Data.ContainsAgent(agent), "[BSP::RemoveAgent] Agent is not in suggested partition\n");
 			node.Data.RemoveAgent(agent);
 		}
-
-		// #SteveD	>>> check for partitions that can be combined
 	}
 
 	// --------------------------------------------------------------------------------
@@ -133,6 +128,32 @@ public class BSP : MonoBehaviour
 			}
 		}
 		return null;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void OnDrawGizmos()
+	{
+		var partitions = m_bsp.AsList();
+		for (int i = 0; i < partitions.Count; ++i)
+		{
+			Vector3 min = partitions[i].MinBounds;
+			Vector3 max = partitions[i].MaxBounds;
+			Vector3 size = max - min;
+
+			Gizmos.DrawLine(min, min + new Vector3(size.x, 0.0f, 0.0f));
+			Gizmos.DrawLine(min, min + new Vector3(0.0f, size.y, 0.0f));
+			Gizmos.DrawLine(min, min + new Vector3(0.0f, 0.0f, size.z));
+			Gizmos.DrawLine(min + new Vector3(size.x, 0.0f, 0.0f), min + new Vector3(size.x, 0.0f, size.z));
+			Gizmos.DrawLine(min + new Vector3(0.0f, size.y, 0.0f), min + new Vector3(0.0f, size.y, size.z));
+			Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(size.x, 0.0f, size.z));
+			Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(0.0f, size.y, size.z));
+			Gizmos.DrawLine(max, max - new Vector3(size.x, 0.0f, 0.0f));
+			Gizmos.DrawLine(max, max - new Vector3(0.0f, size.y, 0.0f));
+			Gizmos.DrawLine(max, max - new Vector3(0.0f, 0.0f, size.z));
+			Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(size.x, 0.0f, size.z));
+			Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(0.0f, size.y, size.z));
+		}
 	}
 
 }

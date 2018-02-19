@@ -67,7 +67,7 @@ public class BTreeTest : Test
 
 	private void LogTree()
 	{
-		Debug.LogFormat("[BTreeTest] {0}\n", string.Join(", ", m_tree.Content().ConvertAll<string>(n => n.ToString()).ToArray()));
+		Debug.LogFormat("[BTreeTest] {0}\n", string.Join(", ", m_tree.AsList().ConvertAll<string>(n => n.ToString()).ToArray()));
 	}
 
 }

@@ -75,7 +75,27 @@ public class BSPPartition : IComparable<BSPPartition>
 
 	public int CompareTo(BSPPartition other)
 	{
-		// #SteveD	>>> how to compare 2 partitions?
+		Vector3 centre = m_minBounds + ((m_maxBounds - m_minBounds) * 0.5f);
+		Vector3 otherCentre = other.m_minBounds + ((other.m_maxBounds - other.m_minBounds) * 0.5f);
+
+		float diffX = centre.x - otherCentre.x;
+		if (Mathf.Abs(diffX) > float.Epsilon)
+		{
+			return diffX < 0.0f ? -1 : 1;
+		}
+
+		float diffY = centre.y - otherCentre.y;
+		if (Mathf.Abs(diffY) > float.Epsilon)
+		{
+			return diffY < 0.0f ? -1 : 1;
+		}
+
+		float diffZ = centre.z - otherCentre.z;
+		if (Mathf.Abs(diffZ) > float.Epsilon)
+		{
+			return diffZ < 0.0f ? -1 : 1;
+		}
+
 		return 0;
 	}
 
