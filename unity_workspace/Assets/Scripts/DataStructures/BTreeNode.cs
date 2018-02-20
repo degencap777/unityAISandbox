@@ -37,11 +37,11 @@ public class BTreeNode<T> where T : IComparable<T>
 		{
 			if (m_left != null)
 			{
-				node.m_parent = this;
 				m_left.Insert(node);
 			}
 			else
 			{
+				node.m_parent = this;
 				m_left = node;
 			}
 		}

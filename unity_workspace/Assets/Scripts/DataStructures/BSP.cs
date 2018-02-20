@@ -3,16 +3,32 @@
 public class BSP : MonoBehaviour
 {
 
-	// #SteveD	>>> draw BSP (gizmo) >>> colour code for easy validation
-
 	// #SteveD	>>> update >>> check for agents moving between partitions
 
+	[SerializeField]
+	private Vector3 m_minBounds = Vector3.zero;
+	[SerializeField]
+	private Vector3 m_maxBounds = Vector3.zero;
+	
 	[SerializeField]
 	private int m_partitionAgentLimit = 8;
 	
 	// --------------------------------------------------------------------------------
 
 	private BTree<BSPPartition> m_bsp = new BTree<BSPPartition>();
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual void Start()
+	{
+		m_bsp.Insert(new BSPPartition(m_minBounds, m_maxBounds));
+
+		var agents = FindObjectsOfType<Agent>();
+		for (int i = 0; i < agents.Length; ++i)
+		{
+			AddAgent(agents[i]);
+		}
+	}
 
 	// --------------------------------------------------------------------------------
 
