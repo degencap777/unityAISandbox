@@ -13,7 +13,7 @@ public class BSPPartition : IComparable<BSPPartition>
 
 	private List<Agent> m_agents = new List<Agent>();
 	public int AgentCount { get { return m_agents.Count; } }
-	public List<Agent> Agents { get { return m_agents; } }
+	public IEnumerator<Agent> AgentsEnumerator { get { return m_agents.GetEnumerator(); } }
 
 	// --------------------------------------------------------------------------------
 

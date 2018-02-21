@@ -41,60 +41,69 @@ public class BSP : MonoBehaviour
 		}
 
 		var node = FindNodeForPosition(agent.Transform.position);
-		if (node.Data.AgentCount >= m_partitionAgentLimit)
+		if (node.Data.AgentCount > m_partitionAgentLimit)
 		{
-			Vector3 size = node.Data.MaxBounds - node.Data.MinBounds;
-			float halfX = size.x * 0.5f;
-			float halfY = size.y * 0.5f;
-			float halfZ = size.z * 0.5f;
-
-			Vector3 leftMaxBounds = node.Data.MaxBounds;
-			Vector3 rightMinBounds = node.Data.MinBounds;
-
-			if (halfX >= halfY && halfX >= halfZ) // split on YZ plane 
+			SubdivideNode(node);
+			AddAgentToChild(node, agent);
+			
+			var agentsEnumerator = node.Data.AgentsEnumerator;
+			while (agentsEnumerator.MoveNext())
 			{
-				leftMaxBounds.x -= halfX;
-				rightMinBounds.x += halfX;
+				AddAgentToChild(node, agentsEnumerator.Current);
 			}
-			else if (halfY >= halfX && halfY >= halfZ) // split on XZ plane
-			{
-				leftMaxBounds.y -= halfY;
-				rightMinBounds.y += halfY;
-			}
-			else // halfZ >= halfX && halfZ >= halfY, split on XY plane
-			{
-				leftMaxBounds.z -= halfZ;
-				rightMinBounds.z += halfZ;
-			}
-
-			BSPPartition left = new BSPPartition(node.Data.MinBounds, leftMaxBounds);
-			BSPPartition right = new BSPPartition(rightMinBounds, node.Data.MaxBounds);
-
-			var agents = node.Data.Agents;
-			agents.Add(agent);
-			for (int i = 0; i < agents.Count; ++i)
-			{
-				if (left.ContainsPoint(agents[i].Transform.position))
-				{
-					left.AddAgent(agents[i]);
-				}
-				else if (right.ContainsPoint(agents[i].Transform.position))
-				{
-					right.AddAgent(agents[i]);
-				}
-				else
-				{
-					Debug.LogError("[BSP::AddAgent] Subdivide partition failed; agent cannot be inserted into either subdivision\n");
-				}
-			}
-
 			node.Data.FlushAgents();
-			m_bsp.Insert(left);
-			m_bsp.Insert(right);
+			
+			// #SteveD	>>> handle node.Left or node.Right being over capacity
+
 		}
 		else
 		{
 			node.Data.AddAgent(agent);
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void SubdivideNode(BTreeNode<BSPPartition> node)
+	{
+		Vector3 size = node.Data.MaxBounds - node.Data.MinBounds;
+		float halfX = size.x * 0.5f;
+		float halfZ = size.z * 0.5f;
+
+		Vector3 leftMaxBounds = node.Data.MaxBounds;
+		Vector3 rightMinBounds = node.Data.MinBounds;
+
+		if (halfX >= halfZ) // split on YZ plane 
+		{
+			leftMaxBounds.x -= halfX;
+			rightMinBounds.x += halfX;
+		}
+		else // split on XY plane
+		{
+			leftMaxBounds.z -= halfZ;
+			rightMinBounds.z += halfZ;
+		}
+
+		node.Insert(new BTreeNode<BSPPartition>(new BSPPartition(node.Data.MinBounds, leftMaxBounds), node));
+		node.Insert(new BTreeNode<BSPPartition>(new BSPPartition(rightMinBounds, node.Data.MaxBounds), node));
+		Debug.Assert(node.Left != null && node.Right != null, "[BSP::SubdivideNode] failed to divide node into 2 children");
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private static void AddAgentToChild(BTreeNode<BSPPartition> parent, Agent agent)
+	{
+		if (parent.Left.Data.ContainsPoint(agent.Transform.position))
+		{
+			parent.Left.Data.AddAgent(agent);
+		}
+		else if (parent.Right.Data.ContainsPoint(agent.Transform.position))
+		{
+			parent.Right.Data.AddAgent(agent);
+		}
+		else
+		{
+			Debug.LogError("[BSP::AddAgent] Subdivide partition failed; agent cannot be inserted into either subdivision\n");
 		}
 	}
 
@@ -148,8 +157,17 @@ public class BSP : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+#if UNITY_EDITOR
+
+//	private BTreeNode<BSPPartition> m_highlightedParent = null;
+//	private float m_highlightDuration = 1.0f;
+//	private float m_highlightRemaining = 0.0f;
+
 	private void OnDrawGizmos()
 	{
+		Color cachedColour = Gizmos.color;
+		Gizmos.color = Color.green;
+
 		var partitions = m_bsp.AsList();
 		for (int i = 0; i < partitions.Count; ++i)
 		{
@@ -170,6 +188,9 @@ public class BSP : MonoBehaviour
 			Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(size.x, 0.0f, size.z));
 			Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(0.0f, size.y, size.z));
 		}
+		Gizmos.color = cachedColour;
 	}
+
+#endif // UNITY_EDITOR
 
 }
