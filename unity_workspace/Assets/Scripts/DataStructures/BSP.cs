@@ -60,6 +60,8 @@ public class BSP : MonoBehaviour
 		{
 			node.Data.AddAgent(agent);
 		}
+
+		m_bsp.Log(TreeTraversal.BreadthFirst);
 	}
 
 	// --------------------------------------------------------------------------------
@@ -158,17 +160,13 @@ public class BSP : MonoBehaviour
 	// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
-
-//	private BTreeNode<BSPPartition> m_highlightedParent = null;
-//	private float m_highlightDuration = 1.0f;
-//	private float m_highlightRemaining = 0.0f;
-
+	
 	private void OnDrawGizmos()
 	{
 		Color cachedColour = Gizmos.color;
 		Gizmos.color = Color.green;
 
-		var partitions = m_bsp.AsList();
+		var partitions = m_bsp.ToList(TreeTraversal.BreadthFirst);
 		for (int i = 0; i < partitions.Count; ++i)
 		{
 			Vector3 min = partitions[i].MinBounds;

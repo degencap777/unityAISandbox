@@ -75,19 +75,47 @@ public class BTreeNode<T> where T : IComparable<T>
 
 	// --------------------------------------------------------------------------------
 
-	public void GenerateList(List<T> list)
+	public void GenerateList(List<T> list, TreeTraversal traversal)
 	{
-		if (m_left != null)
+		switch (traversal)
 		{
-			m_left.GenerateList(list);
+			case TreeTraversal.BreadthFirst:
+				list.Add(m_data);
+				if (m_left != null)
+				{
+					list.Add(m_left.m_data);
+				}
+				if (m_right != null)
+				{
+					list.Add(m_right.m_data);
+				}
+
+				if (m_left != null)
+				{
+					m_left.GenerateList(list, traversal);
+				}
+				if (m_right != null)
+				{
+					m_right.GenerateList(list, traversal);
+				}
+				
+				break;
+
+			case TreeTraversal.DepthFirst:
+				if (m_left != null)
+				{
+					m_left.GenerateList(list, traversal);
+				}
+				list.Add(m_data);
+				if (m_right != null)
+				{
+					m_right.GenerateList(list, traversal);
+				}
+				
+				break;
 		}
 
-		list.Add(m_data);
-
-		if (m_right != null)
-		{
-			m_right.GenerateList(list);
-		}
+		
 	}
 
 	// --------------------------------------------------------------------------------

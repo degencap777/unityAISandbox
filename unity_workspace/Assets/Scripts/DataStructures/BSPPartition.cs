@@ -99,4 +99,13 @@ public class BSPPartition : IComparable<BSPPartition>
 		return 0;
 	}
 
+	// --------------------------------------------------------------------------------
+
+	public override string ToString()
+	{
+		return string.Format("Min: ({0}, {1}, {2}), Max: ({3}, {4}, {5})",
+			m_minBounds.x.ToString("0.00"), m_minBounds.y.ToString("0.00"), m_minBounds.z.ToString("0.00"),
+			m_maxBounds.x.ToString("0.00"), m_maxBounds.y.ToString("0.00"), m_maxBounds.z.ToString("0.00"));
+	}
+
 }

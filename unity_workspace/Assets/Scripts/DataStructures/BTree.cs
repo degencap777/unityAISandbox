@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public class BTree<T> where T : IComparable<T>
 {
@@ -93,18 +94,25 @@ public class BTree<T> where T : IComparable<T>
 
 	// --------------------------------------------------------------------------------
 
-	public List<T> AsList()
+	public List<T> ToList(TreeTraversal traversal)
 	{
 		if (m_nodesDirty)
 		{
 			m_nodes.Clear();
 			if (m_root != null)
 			{
-				m_root.GenerateList(m_nodes);
+				m_root.GenerateList(m_nodes, traversal);
 			}
 		}
 
 		return m_nodes;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Log(TreeTraversal traversal)
+	{
+		Debug.LogFormat("[BTree] {0}\n{1}\n", traversal.ToString(), string.Join("\n", ToList(traversal).ConvertAll<string>(n => n.ToString()).ToArray()));
 	}
 
 }
