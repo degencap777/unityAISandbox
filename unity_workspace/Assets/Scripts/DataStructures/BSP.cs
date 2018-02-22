@@ -53,7 +53,7 @@ public class BSP : MonoBehaviour
 			}
 			node.Data.FlushAgents();
 			
-			// #SteveD	>>> handle node.Left or node.Right being over capacity
+			// #SteveD	>>> handle node.Left or node.Right being over capacity (recursively)
 
 		}
 		else
@@ -161,8 +161,10 @@ public class BSP : MonoBehaviour
 
 #if UNITY_EDITOR
 	
-	private void OnDrawGizmos()
+	private void OnDrawGizmosSelected()
 	{
+		// #SteveD	>>> Highlight one pair of children at a time
+
 		Color cachedColour = Gizmos.color;
 		Gizmos.color = Color.green;
 
