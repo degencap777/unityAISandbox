@@ -16,6 +16,8 @@ public class BTreeNode<T> where T : IComparable<T>
 	private BTreeNode<T> m_parent = null;
 	public BTreeNode<T> Parent { get { return m_parent; } }
 
+	private Queue<BTreeNode<T>> m_bfsQueue = new Queue<BTreeNode<T>>();
+
 	// --------------------------------------------------------------------------------
 
 	public BTreeNode(T data, BTreeNode<T> parent)
@@ -80,25 +82,24 @@ public class BTreeNode<T> where T : IComparable<T>
 		switch (traversal)
 		{
 			case TreeTraversal.BreadthFirst:
-				list.Add(m_data);
-				if (m_left != null)
+				m_bfsQueue.Clear();
+				m_bfsQueue.Enqueue(this);
+
+				while (m_bfsQueue.Count > 0)
 				{
-					list.Add(m_left.m_data);
-				}
-				if (m_right != null)
-				{
-					list.Add(m_right.m_data);
+					var next = m_bfsQueue.Dequeue();
+					list.Add(next.m_data);
+
+					if (next.Left != null)
+					{
+						m_bfsQueue.Enqueue(next.Left);
+					}
+					if (next.Right != null)
+					{
+						m_bfsQueue.Enqueue(next.Right);
+					}
 				}
 
-				if (m_left != null)
-				{
-					m_left.GenerateList(list, traversal);
-				}
-				if (m_right != null)
-				{
-					m_right.GenerateList(list, traversal);
-				}
-				
 				break;
 
 			case TreeTraversal.DepthFirst:
@@ -114,8 +115,6 @@ public class BTreeNode<T> where T : IComparable<T>
 				
 				break;
 		}
-
-		
 	}
 
 	// --------------------------------------------------------------------------------

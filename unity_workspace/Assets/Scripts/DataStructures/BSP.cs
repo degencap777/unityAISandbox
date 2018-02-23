@@ -19,6 +19,14 @@ public class BSP : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+#if UNITY_EDITOR
+
+	private int m_currentPartitionIndex = 0;
+
+#endif // UNITY_EDITOR
+
+	// --------------------------------------------------------------------------------
+
 	protected virtual void Start()
 	{
 		m_bsp.Insert(new BSPPartition(m_minBounds, m_maxBounds));
@@ -32,7 +40,25 @@ public class BSP : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public void AddAgent(Agent agent)
+	protected virtual void Update()
+	{
+#if UNITY_EDITOR
+
+		if (Input.GetKeyUp(KeyCode.Comma))
+		{
+			--m_currentPartitionIndex;
+		}
+		else if (Input.GetKeyUp(KeyCode.Period))
+		{
+			++m_currentPartitionIndex;
+		}
+
+#endif // UNITY_EDITOR
+	}
+
+// --------------------------------------------------------------------------------
+
+public void AddAgent(Agent agent)
 	{
 		Debug.Assert(agent != null && agent.Transform != null, "[BSP::AddAgent] Attempted to add an invalid agent\n");
 		if (agent == null || agent.Transform == null)
@@ -160,34 +186,48 @@ public class BSP : MonoBehaviour
 	// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
-	
+
 	private void OnDrawGizmosSelected()
 	{
 		// #SteveD	>>> Highlight one pair of children at a time
+		var partitions = m_bsp.ToList(TreeTraversal.BreadthFirst);
+		if (partitions.Count == 0)
+		{
+			return;
+		}
+
+		BSPPartition currentPartition = null;
+
+		if (m_currentPartitionIndex < 0)
+		{
+			m_currentPartitionIndex = partitions.Count - 1;
+		}
+		else if (m_currentPartitionIndex >= partitions.Count)
+		{
+			m_currentPartitionIndex = 0;
+		}
 
 		Color cachedColour = Gizmos.color;
 		Gizmos.color = Color.green;
 
-		var partitions = m_bsp.ToList(TreeTraversal.BreadthFirst);
-		for (int i = 0; i < partitions.Count; ++i)
-		{
-			Vector3 min = partitions[i].MinBounds;
-			Vector3 max = partitions[i].MaxBounds;
-			Vector3 size = max - min;
+		currentPartition = partitions[m_currentPartitionIndex];
+		Vector3 min = currentPartition.MinBounds;
+		Vector3 max = currentPartition.MaxBounds;
+		Vector3 size = max - min;
 
-			Gizmos.DrawLine(min, min + new Vector3(size.x, 0.0f, 0.0f));
-			Gizmos.DrawLine(min, min + new Vector3(0.0f, size.y, 0.0f));
-			Gizmos.DrawLine(min, min + new Vector3(0.0f, 0.0f, size.z));
-			Gizmos.DrawLine(min + new Vector3(size.x, 0.0f, 0.0f), min + new Vector3(size.x, 0.0f, size.z));
-			Gizmos.DrawLine(min + new Vector3(0.0f, size.y, 0.0f), min + new Vector3(0.0f, size.y, size.z));
-			Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(size.x, 0.0f, size.z));
-			Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(0.0f, size.y, size.z));
-			Gizmos.DrawLine(max, max - new Vector3(size.x, 0.0f, 0.0f));
-			Gizmos.DrawLine(max, max - new Vector3(0.0f, size.y, 0.0f));
-			Gizmos.DrawLine(max, max - new Vector3(0.0f, 0.0f, size.z));
-			Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(size.x, 0.0f, size.z));
-			Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(0.0f, size.y, size.z));
-		}
+		Gizmos.DrawLine(min, min + new Vector3(size.x, 0.0f, 0.0f));
+		Gizmos.DrawLine(min, min + new Vector3(0.0f, size.y, 0.0f));
+		Gizmos.DrawLine(min, min + new Vector3(0.0f, 0.0f, size.z));
+		Gizmos.DrawLine(min + new Vector3(size.x, 0.0f, 0.0f), min + new Vector3(size.x, 0.0f, size.z));
+		Gizmos.DrawLine(min + new Vector3(0.0f, size.y, 0.0f), min + new Vector3(0.0f, size.y, size.z));
+		Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(size.x, 0.0f, size.z));
+		Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(0.0f, size.y, size.z));
+		Gizmos.DrawLine(max, max - new Vector3(size.x, 0.0f, 0.0f));
+		Gizmos.DrawLine(max, max - new Vector3(0.0f, size.y, 0.0f));
+		Gizmos.DrawLine(max, max - new Vector3(0.0f, 0.0f, size.z));
+		Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(size.x, 0.0f, size.z));
+		Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(0.0f, size.y, size.z));
+
 		Gizmos.color = cachedColour;
 	}
 
