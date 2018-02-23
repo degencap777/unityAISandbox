@@ -134,4 +134,20 @@ public class BTreeNode<T> where T : IComparable<T>
 		}
 	}
 
+	// --------------------------------------------------------------------------------
+
+	public int GetDepth()
+	{
+		int depth = 1;
+		BTreeNode<T> parent = m_parent;
+
+		while (parent != null)
+		{
+			++depth;
+			parent = parent.m_parent;
+		}
+
+		return depth;
+	}
+
 }

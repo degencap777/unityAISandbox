@@ -1,22 +1,29 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 public class BSP : MonoBehaviour
 {
 
 	// #SteveD	>>> update >>> check for agents moving between partitions
 
+	// #SteveD	>>> highlight all agents within the selected partition
+
 	[SerializeField]
 	private Vector3 m_minBounds = Vector3.zero;
 	[SerializeField]
 	private Vector3 m_maxBounds = Vector3.zero;
-	
+
 	[SerializeField]
+	private int m_maximumDepth = 4;
+
+	[SerializeField, Tooltip("The maximum number of agents that can occupy a partition before triggering division")]
 	private int m_partitionAgentLimit = 8;
 	
 	// --------------------------------------------------------------------------------
 
 	private BTree<BSPPartition> m_bsp = new BTree<BSPPartition>();
-
+	private List<BTreeNode<BSPPartition>> m_subdivideChecks = new List<BTreeNode<BSPPartition>>();
+	
 	// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
@@ -66,28 +73,34 @@ public void AddAgent(Agent agent)
 			return;
 		}
 
-		var node = FindNodeForPosition(agent.Transform.position);
-		if (node.Data.AgentCount > m_partitionAgentLimit)
+		BTreeNode<BSPPartition> node = FindNodeForPosition(agent.Transform.position);
+		node.Data.AddAgent(agent);
+
+		m_subdivideChecks.Clear();
+		m_subdivideChecks.Add(node);
+		
+		while (m_subdivideChecks.Count > 0)
 		{
-			SubdivideNode(node);
-			AddAgentToChild(node, agent);
-			
-			var agentsEnumerator = node.Data.AgentsEnumerator;
-			while (agentsEnumerator.MoveNext())
+			int lastIndex = m_subdivideChecks.Count - 1;
+			node = m_subdivideChecks[lastIndex];
+			m_subdivideChecks.RemoveAt(lastIndex);
+
+			if (node.Data.AgentCount > m_partitionAgentLimit &&
+				node.GetDepth() < m_maximumDepth)
 			{
-				AddAgentToChild(node, agentsEnumerator.Current);
+				SubdivideNode(node);
+
+				var agentsEnumerator = node.Data.AgentsEnumerator;
+				while (agentsEnumerator.MoveNext())
+				{
+					AddAgentToChild(node, agentsEnumerator.Current);
+				}
+				node.Data.FlushAgents();
+
+				m_subdivideChecks.Add(node.Left);
+				m_subdivideChecks.Add(node.Right);
 			}
-			node.Data.FlushAgents();
-			
-			// #SteveD	>>> handle node.Left or node.Right being over capacity (recursively)
-
 		}
-		else
-		{
-			node.Data.AddAgent(agent);
-		}
-
-		m_bsp.Log(TreeTraversal.BreadthFirst);
 	}
 
 	// --------------------------------------------------------------------------------
@@ -189,7 +202,6 @@ public void AddAgent(Agent agent)
 
 	private void OnDrawGizmosSelected()
 	{
-		// #SteveD	>>> Highlight one pair of children at a time
 		var partitions = m_bsp.ToList(TreeTraversal.BreadthFirst);
 		if (partitions.Count == 0)
 		{
