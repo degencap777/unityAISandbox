@@ -6,8 +6,6 @@ public class BSP : MonoBehaviour
 
 	// #SteveD	>>> update >>> check for agents moving between partitions
 
-	// #SteveD	>>> highlight all agents within the selected partition
-
 	[SerializeField]
 	private Vector3 m_minBounds = Vector3.zero;
 	[SerializeField]
@@ -219,14 +217,13 @@ public void AddAgent(Agent agent)
 			m_currentPartitionIndex = 0;
 		}
 
-		Color cachedColour = Gizmos.color;
-		Gizmos.color = Color.green;
-
 		currentPartition = partitions[m_currentPartitionIndex];
 		Vector3 min = currentPartition.MinBounds;
 		Vector3 max = currentPartition.MaxBounds;
 		Vector3 size = max - min;
 
+		Color cachedColour = Gizmos.color;
+		Gizmos.color = Color.green;
 		Gizmos.DrawLine(min, min + new Vector3(size.x, 0.0f, 0.0f));
 		Gizmos.DrawLine(min, min + new Vector3(0.0f, size.y, 0.0f));
 		Gizmos.DrawLine(min, min + new Vector3(0.0f, 0.0f, size.z));
@@ -240,6 +237,12 @@ public void AddAgent(Agent agent)
 		Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(size.x, 0.0f, size.z));
 		Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(0.0f, size.y, size.z));
 
+		var agentsEnumerator = currentPartition.AgentsEnumerator;
+		while (agentsEnumerator.MoveNext())
+		{
+			// #SteveD	>>> draw icon depicting agent in current partition
+		}
+		
 		Gizmos.color = cachedColour;
 	}
 
