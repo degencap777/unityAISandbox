@@ -8,6 +8,11 @@ public class Agent : MonoBehaviour
 
 	private AgentController m_agentController;
 	public AgentController AgentController { get { return m_agentController; } }
+
+	public Vector3 Position { get { return m_transform != null ? m_transform.position : Vector3.zero; } }
+	
+	private Vector3 m_previousPosition = Vector3.zero;
+	public Vector3 PreviousPosition { get { return m_previousPosition; } }
 	
 	// --------------------------------------------------------------------------------
 
@@ -24,6 +29,8 @@ public class Agent : MonoBehaviour
 
 	public virtual void Update()
 	{
+		m_previousPosition = Position;
+
 		if (m_agentController != null)
 		{
 			m_agentController.OnUpdate();

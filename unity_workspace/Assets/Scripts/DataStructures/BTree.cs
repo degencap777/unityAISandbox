@@ -8,8 +8,8 @@ public class BTree<T> where T : IComparable<T>
 	private BTreeNode<T> m_root = null;
 	public BTreeNode<T> Root { get { return m_root; } }
 
-	private List<T> m_nodes = new List<T>();
-	private bool m_nodesDirty = false;
+	private List<BTreeNode<T>> m_listNodes = new List<BTreeNode<T>>();
+	private bool m_listNodesDirty = false;
 
 	// --------------------------------------------------------------------------------
 
@@ -27,7 +27,7 @@ public class BTree<T> where T : IComparable<T>
 			return;
 		}
 
-		m_nodesDirty = true;
+		m_listNodesDirty = true;
 
 		if (m_root == null)
 		{
@@ -69,7 +69,7 @@ public class BTree<T> where T : IComparable<T>
 			Insert(current.Left);
 			Insert(current.Right);
 
-			m_nodesDirty = true;
+			m_listNodesDirty = true;
 			return true;
 		}
 
@@ -89,30 +89,23 @@ public class BTree<T> where T : IComparable<T>
 			m_root.Clear();
 			m_root = null;
 		}
-		m_nodesDirty = true;
+		m_listNodesDirty = true;
 	}
 
 	// --------------------------------------------------------------------------------
 
-	public List<T> ToList(TreeTraversal traversal)
+	public List<BTreeNode<T>>.Enumerator Enumerator(TreeTraversal traversal)
 	{
-		if (m_nodesDirty)
+		if (m_listNodesDirty)
 		{
-			m_nodes.Clear();
+			m_listNodes.Clear();
 			if (m_root != null)
 			{
-				m_root.GenerateList(m_nodes, traversal);
+				m_root.GenerateList(m_listNodes, traversal);
 			}
 		}
 
-		return m_nodes;
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public void Log(TreeTraversal traversal)
-	{
-		Debug.LogFormat("[BTree] {0}\n{1}\n", traversal.ToString(), string.Join("\n", ToList(traversal).ConvertAll<string>(n => n.ToString()).ToArray()));
+		return m_listNodes.GetEnumerator();
 	}
 
 }

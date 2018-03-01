@@ -88,7 +88,7 @@ public class AIBehaviour_Evade : AIBehaviour
 		}
 		
 		// vector away from target
-		Vector3 targetToOwner = owner.Transform.position - target.Transform.position;
+		Vector3 targetToOwner = owner.Position - target.Position;
 		m_targetToOwnerSquared = targetToOwner.sqrMagnitude;
 		
 		if (m_active || m_targetToOwnerSquared <= m_triggerDistanceSquared)

@@ -88,7 +88,7 @@ public class AIBehaviour_Pursue : AIBehaviour
 		}
 
 		// vector to target
-		Vector3 toTarget = target.Transform.position - owner.Transform.position;
+		Vector3 toTarget = target.Position - owner.Position;
 		m_toTargetSquared = toTarget.sqrMagnitude;
 		
 		// angle to target (shortest)

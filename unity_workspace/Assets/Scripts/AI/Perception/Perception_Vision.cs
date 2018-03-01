@@ -103,7 +103,7 @@ public class Perception_Vision : Perception
 
 		Vector3 eventPosition = percievedEvent.Actor == null ?
 			percievedEvent.Location :
-			percievedEvent.Actor.Transform.position;
+			percievedEvent.Actor.Position;
 
 		// vector to event
 		Vector3 toEvent = eventPosition - m_transform.position;

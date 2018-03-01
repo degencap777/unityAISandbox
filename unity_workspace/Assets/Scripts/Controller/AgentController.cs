@@ -35,7 +35,7 @@ public class AgentController : MonoBehaviour
 	[SerializeField]
 	private float m_rotationDecelerationFactor = 100.0f;
 	private float m_rotationAcceleration = 0.0f;
-
+	
 	// --------------------------------------------------------------------------------
 
 	[Header("Debug utility")]

@@ -4,8 +4,6 @@ using UnityEngine;
 public class BSP : MonoBehaviour
 {
 
-	// #SteveD	>>> update >>> check for agents moving between partitions
-
 	[SerializeField]
 	private Vector3 m_minBounds = Vector3.zero;
 	[SerializeField]
@@ -15,8 +13,11 @@ public class BSP : MonoBehaviour
 	private int m_maximumDepth = 4;
 
 	[SerializeField, Tooltip("The maximum number of agents that can occupy a partition before triggering division")]
-	private int m_partitionAgentLimit = 8;
-	
+	private int m_partitionSplitLimit = 8;
+
+	[SerializeField, Tooltip("The maximum number of agents that can occupy a partition before triggering division")]
+	private int m_partitionCombineLimit = 6;
+
 	// --------------------------------------------------------------------------------
 
 	private BTree<BSPPartition> m_bsp = new BTree<BSPPartition>();
@@ -27,6 +28,16 @@ public class BSP : MonoBehaviour
 #if UNITY_EDITOR
 
 	private int m_currentPartitionIndex = 0;
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual void OnValidate()
+	{
+		if (m_partitionCombineLimit >= m_partitionSplitLimit)
+		{
+			m_partitionCombineLimit = m_partitionSplitLimit - 1;
+		}
+	}
 
 #endif // UNITY_EDITOR
 
@@ -47,6 +58,39 @@ public class BSP : MonoBehaviour
 
 	protected virtual void Update()
 	{
+		var partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
+		while (partitionsEnumerator.MoveNext())
+		{
+			var agentsEnumerator = partitionsEnumerator.Current.Data.AgentsEnumerator;
+			while (agentsEnumerator.MoveNext())
+			{
+				if (partitionsEnumerator.Current.Data.ContainsAgent(agentsEnumerator.Current) == false)
+				{
+					partitionsEnumerator.Current.Data.RemoveAgent(agentsEnumerator.Current);
+					AddAgent(agentsEnumerator.Current);
+				}
+			}
+		}
+
+		partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
+		while (partitionsEnumerator.MoveNext())
+		{
+			var left = partitionsEnumerator.Current.Left;
+			var right = partitionsEnumerator.Current.Right;
+
+			if (left != null && left.Left == null && left.Right == null &&
+				right != null && right.Left == null && right.Right == null)
+			{
+				int agentCount = partitionsEnumerator.Current.Left.Data.AgentCount +
+					partitionsEnumerator.Current.Right.Data.AgentCount;
+
+				if (agentCount <= m_partitionCombineLimit)
+				{
+					CombineNodes(left, right);
+				}
+			}
+		}
+
 #if UNITY_EDITOR
 
 		if (Input.GetKeyUp(KeyCode.Comma))
@@ -66,12 +110,12 @@ public class BSP : MonoBehaviour
 public void AddAgent(Agent agent)
 	{
 		Debug.Assert(agent != null && agent.Transform != null, "[BSP::AddAgent] Attempted to add an invalid agent\n");
-		if (agent == null || agent.Transform == null)
+		if (agent == null)
 		{
 			return;
 		}
 
-		BTreeNode<BSPPartition> node = FindNodeForPosition(agent.Transform.position);
+		BTreeNode<BSPPartition> node = FindNodeForPosition(agent.Position);
 		node.Data.AddAgent(agent);
 
 		m_subdivideChecks.Clear();
@@ -83,7 +127,7 @@ public void AddAgent(Agent agent)
 			node = m_subdivideChecks[lastIndex];
 			m_subdivideChecks.RemoveAt(lastIndex);
 
-			if (node.Data.AgentCount > m_partitionAgentLimit &&
+			if (node.Data.AgentCount > m_partitionSplitLimit &&
 				node.GetDepth() < m_maximumDepth)
 			{
 				SubdivideNode(node);
@@ -93,7 +137,7 @@ public void AddAgent(Agent agent)
 				{
 					AddAgentToChild(node, agentsEnumerator.Current);
 				}
-				node.Data.FlushAgents();
+				node.Data.ClearAgents();
 
 				m_subdivideChecks.Add(node.Left);
 				m_subdivideChecks.Add(node.Right);
@@ -130,13 +174,52 @@ public void AddAgent(Agent agent)
 
 	// --------------------------------------------------------------------------------
 
+	private void CombineNodes(BTreeNode<BSPPartition> left, BTreeNode<BSPPartition> right)
+	{
+		Debug.Assert(left != null, "[BSP::CombineNodes] left is null");
+		Debug.Assert(left.Parent != null, "[BSP::CombineNodes] left.Parent is null");
+		Debug.Assert(right != null, "[BSP::CombineNodes] right is null");
+		Debug.Assert(right.Parent != null, "[BSP::CombineNodes] right.Parent is null");
+
+		if (left == null || right == null)
+		{
+			return;
+		}
+
+		if (left.Parent == null || right.Parent == null)
+		{
+			return;
+		}
+
+		var agentsEnumerator = left.Data.AgentsEnumerator;
+		while (agentsEnumerator.MoveNext())
+		{
+			left.Parent.Data.AddAgent(agentsEnumerator.Current);
+		}
+		left.Data.ClearAgents();
+
+		agentsEnumerator = right.Data.AgentsEnumerator;
+		while (agentsEnumerator.MoveNext())
+		{
+			right.Parent.Data.AddAgent(agentsEnumerator.Current);
+		}
+		right.Data.ClearAgents();
+	}
+
+	// --------------------------------------------------------------------------------
+
 	private static void AddAgentToChild(BTreeNode<BSPPartition> parent, Agent agent)
 	{
-		if (parent.Left.Data.ContainsPoint(agent.Transform.position))
+		if (agent == null)
+		{
+			return;
+		}
+
+		if (parent.Left.Data.ContainsPoint(agent.Position))
 		{
 			parent.Left.Data.AddAgent(agent);
 		}
-		else if (parent.Right.Data.ContainsPoint(agent.Transform.position))
+		else if (parent.Right.Data.ContainsPoint(agent.Position))
 		{
 			parent.Right.Data.AddAgent(agent);
 		}
@@ -150,7 +233,7 @@ public void AddAgent(Agent agent)
 
 	public void RemoveAgent(Agent agent)
 	{
-		var node = FindNodeForPosition(agent.Transform.position);
+		var node = FindNodeForPosition(agent.Position);
 		if (node != null)
 		{
 			Debug.Assert(node.Data.ContainsAgent(agent), "[BSP::RemoveAgent] Agent is not in suggested partition\n");
@@ -199,50 +282,37 @@ public void AddAgent(Agent agent)
 #if UNITY_EDITOR
 
 	private void OnDrawGizmosSelected()
-	{
-		var partitions = m_bsp.ToList(TreeTraversal.BreadthFirst);
-		if (partitions.Count == 0)
-		{
-			return;
-		}
-
-		BSPPartition currentPartition = null;
-
-		if (m_currentPartitionIndex < 0)
-		{
-			m_currentPartitionIndex = partitions.Count - 1;
-		}
-		else if (m_currentPartitionIndex >= partitions.Count)
-		{
-			m_currentPartitionIndex = 0;
-		}
-
-		currentPartition = partitions[m_currentPartitionIndex];
-		Vector3 min = currentPartition.MinBounds;
-		Vector3 max = currentPartition.MaxBounds;
-		Vector3 size = max - min;
-
+	{		
 		Color cachedColour = Gizmos.color;
-		Gizmos.color = Color.green;
-		Gizmos.DrawLine(min, min + new Vector3(size.x, 0.0f, 0.0f));
-		Gizmos.DrawLine(min, min + new Vector3(0.0f, size.y, 0.0f));
-		Gizmos.DrawLine(min, min + new Vector3(0.0f, 0.0f, size.z));
-		Gizmos.DrawLine(min + new Vector3(size.x, 0.0f, 0.0f), min + new Vector3(size.x, 0.0f, size.z));
-		Gizmos.DrawLine(min + new Vector3(0.0f, size.y, 0.0f), min + new Vector3(0.0f, size.y, size.z));
-		Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(size.x, 0.0f, size.z));
-		Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(0.0f, size.y, size.z));
-		Gizmos.DrawLine(max, max - new Vector3(size.x, 0.0f, 0.0f));
-		Gizmos.DrawLine(max, max - new Vector3(0.0f, size.y, 0.0f));
-		Gizmos.DrawLine(max, max - new Vector3(0.0f, 0.0f, size.z));
-		Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(size.x, 0.0f, size.z));
-		Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(0.0f, size.y, size.z));
-
-		var agentsEnumerator = currentPartition.AgentsEnumerator;
-		while (agentsEnumerator.MoveNext())
-		{
-			// #SteveD	>>> draw icon depicting agent in current partition
-		}
 		
+		var partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
+		while (partitionsEnumerator.MoveNext())
+		{
+			var current = partitionsEnumerator.Current;
+
+			Vector3 min = current.Data.MinBounds;
+			Vector3 max = current.Data.MaxBounds;
+			Vector3 size = max - min;
+
+			Gizmos.color = Color.green;
+			if (current.Parent != null)
+			{
+				Gizmos.color = current.Parent.Left == current ? Color.green : Color.red;
+			}
+
+			Gizmos.DrawLine(min, min + new Vector3(size.x, 0.0f, 0.0f));
+			Gizmos.DrawLine(min, min + new Vector3(0.0f, size.y, 0.0f));
+			Gizmos.DrawLine(min, min + new Vector3(0.0f, 0.0f, size.z));
+			Gizmos.DrawLine(min + new Vector3(size.x, 0.0f, 0.0f), min + new Vector3(size.x, 0.0f, size.z));
+			Gizmos.DrawLine(min + new Vector3(0.0f, size.y, 0.0f), min + new Vector3(0.0f, size.y, size.z));
+			Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(size.x, 0.0f, size.z));
+			Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(0.0f, size.y, size.z));
+			Gizmos.DrawLine(max, max - new Vector3(size.x, 0.0f, 0.0f));
+			Gizmos.DrawLine(max, max - new Vector3(0.0f, size.y, 0.0f));
+			Gizmos.DrawLine(max, max - new Vector3(0.0f, 0.0f, size.z));
+			Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(size.x, 0.0f, size.z));
+			Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(0.0f, size.y, size.z));
+		}
 		Gizmos.color = cachedColour;
 	}
 

@@ -16,6 +16,36 @@ public class BTreeNode<T> where T : IComparable<T>
 	private BTreeNode<T> m_parent = null;
 	public BTreeNode<T> Parent { get { return m_parent; } }
 
+	public BTreeNode<T> GrandParent
+	{
+		get { return m_parent != null ? m_parent.m_parent : null; }
+	}
+
+	public BTreeNode<T> Sibling 
+	{ 
+		get 
+		{ 
+			if (m_parent == null)
+			{
+				return null;
+			}
+			return m_parent.Left == this ? m_parent.Right : m_parent.Left;
+		}
+	}
+
+	public BTreeNode<T> Uncle
+	{
+		get
+		{
+			BTreeNode<T> grandParent = GrandParent;
+			if (grandParent == null)
+			{
+				return null;
+			}
+			return grandParent.Left == m_parent ? grandParent.Right : grandParent.Left;
+		}
+	}
+
 	private Queue<BTreeNode<T>> m_bfsQueue = new Queue<BTreeNode<T>>();
 
 	// --------------------------------------------------------------------------------
@@ -77,7 +107,7 @@ public class BTreeNode<T> where T : IComparable<T>
 
 	// --------------------------------------------------------------------------------
 
-	public void GenerateList(List<T> list, TreeTraversal traversal)
+	public void GenerateList(List<BTreeNode<T>> list, TreeTraversal traversal)
 	{
 		switch (traversal)
 		{
@@ -88,7 +118,7 @@ public class BTreeNode<T> where T : IComparable<T>
 				while (m_bfsQueue.Count > 0)
 				{
 					var next = m_bfsQueue.Dequeue();
-					list.Add(next.m_data);
+					list.Add(next);
 
 					if (next.Left != null)
 					{
@@ -107,7 +137,7 @@ public class BTreeNode<T> where T : IComparable<T>
 				{
 					m_left.GenerateList(list, traversal);
 				}
-				list.Add(m_data);
+				list.Add(this);
 				if (m_right != null)
 				{
 					m_right.GenerateList(list, traversal);

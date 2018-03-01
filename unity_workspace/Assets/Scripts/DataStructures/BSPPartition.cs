@@ -27,7 +27,13 @@ public class BSPPartition : IComparable<BSPPartition>
 
 	public void AddAgent(Agent agent)
 	{
-		Vector3 agentPosition = agent.Transform.position;
+		if (agent == null)
+		{
+			Debug.LogError("[BSPPartition::AddAgent] Attempting to add a null Agent");
+			return;
+		}
+
+		Vector3 agentPosition = agent.Position;
 		Debug.AssertFormat(agentPosition.x >= m_minBounds.x, "[BSPPartition::AddAgent] Agent is not within minimum bounds (x) Agent.x: {0}, MinBounds.X: {1}\n", agentPosition.x, m_minBounds.x);
 		Debug.AssertFormat(agentPosition.y >= m_minBounds.y, "[BSPPartition::AddAgent] Agent is not within minimum bounds (y) Agent.y: {0}, MinBounds.y: {1}\n", agentPosition.y, m_minBounds.y);
 		Debug.AssertFormat(agentPosition.z >= m_minBounds.z, "[BSPPartition::AddAgent] Agent is not within minimum bounds (z) Agent.z: {0}, MinBounds.z: {1}\n", agentPosition.z, m_minBounds.z);
@@ -66,7 +72,7 @@ public class BSPPartition : IComparable<BSPPartition>
 
 	// --------------------------------------------------------------------------------
 
-	public void FlushAgents()
+	public void ClearAgents()
 	{
 		m_agents.Clear();
 	}

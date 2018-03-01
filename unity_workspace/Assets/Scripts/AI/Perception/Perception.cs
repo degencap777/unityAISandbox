@@ -67,7 +67,7 @@ public abstract class Perception : AIBrainComponent
 		// position of interest
 		Vector3 eventPosition = percievedEvent.Actor == null ?
 			percievedEvent.Location :
-			percievedEvent.Actor.Transform.position;
+			percievedEvent.Actor.Position;
 
 		Vector3 toEvent = eventPosition - m_transform.position;
 		if (toEvent.sqrMagnitude > trigger.Range * trigger.Range)
