@@ -18,25 +18,26 @@ public class BSP : MonoBehaviour
 	[SerializeField, Tooltip("The maximum number of agents that can occupy a partition before triggering division")]
 	private int m_partitionCombineLimit = 6;
 
+	[SerializeField]
+	private Agent m_highlightedAgent = null;
+
 	// --------------------------------------------------------------------------------
 
 	private BTree<BSPPartition> m_bsp = new BTree<BSPPartition>();
+
+	// worker lists
 	private List<BTreeNode<BSPPartition>> m_subdivideChecks = new List<BTreeNode<BSPPartition>>();
-	
+	private List<Agent> m_migratingAgents = new List<Agent>();
+	private List<BTreeNode<BSPPartition>> m_mergePartitions = new List<BTreeNode<BSPPartition>>();
+
 	// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
-
-	private int m_currentPartitionIndex = 0;
-
-	// --------------------------------------------------------------------------------
-
+		
 	protected virtual void OnValidate()
 	{
-		if (m_partitionCombineLimit >= m_partitionSplitLimit)
-		{
-			m_partitionCombineLimit = m_partitionSplitLimit - 1;
-		}
+		m_partitionSplitLimit = Mathf.Clamp(m_partitionSplitLimit, 1, int.MaxValue);
+		m_partitionCombineLimit = Mathf.Clamp(m_partitionCombineLimit, 0, m_partitionSplitLimit);
 	}
 
 #endif // UNITY_EDITOR
@@ -58,26 +59,48 @@ public class BSP : MonoBehaviour
 
 	protected virtual void Update()
 	{
+		UpdateMigration();
+		TryMergePartitions();
+	}
+
+	// --------------------------------------------------------------------------------
+	
+	private void UpdateMigration()
+	{
 		var partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
 		while (partitionsEnumerator.MoveNext())
 		{
+			// construct list of agents that will migrate from each partition
 			var agentsEnumerator = partitionsEnumerator.Current.Data.AgentsEnumerator;
 			while (agentsEnumerator.MoveNext())
 			{
-				if (partitionsEnumerator.Current.Data.ContainsAgent(agentsEnumerator.Current) == false)
+				if (partitionsEnumerator.Current.Data.ContainsAgentPosition(agentsEnumerator.Current) == false)
 				{
-					partitionsEnumerator.Current.Data.RemoveAgent(agentsEnumerator.Current);
-					AddAgent(agentsEnumerator.Current);
+					m_migratingAgents.Add(agentsEnumerator.Current);
 				}
 			}
-		}
 
-		partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
+			// migrate agents out of partition and re-insert into BSP
+			for (int i = 0; i < m_migratingAgents.Count; ++i)
+			{
+				partitionsEnumerator.Current.Data.RemoveAgent(m_migratingAgents[i]);
+				AddAgent(m_migratingAgents[i]);
+			}
+			m_migratingAgents.Clear();
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+	
+	private void TryMergePartitions()
+	{
+		var partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
 		while (partitionsEnumerator.MoveNext())
 		{
 			var left = partitionsEnumerator.Current.Left;
 			var right = partitionsEnumerator.Current.Right;
 
+			// only merge leaf partitions
 			if (left != null && left.Left == null && left.Right == null &&
 				right != null && right.Left == null && right.Right == null)
 			{
@@ -86,28 +109,21 @@ public class BSP : MonoBehaviour
 
 				if (agentCount <= m_partitionCombineLimit)
 				{
-					CombineNodes(left, right);
+					m_mergePartitions.Add(partitionsEnumerator.Current);
 				}
 			}
 		}
 
-#if UNITY_EDITOR
-
-		if (Input.GetKeyUp(KeyCode.Comma))
+		for (int i = 0; i < m_mergePartitions.Count; ++i)
 		{
-			--m_currentPartitionIndex;
+			CombineChildren(m_mergePartitions[i]);
 		}
-		else if (Input.GetKeyUp(KeyCode.Period))
-		{
-			++m_currentPartitionIndex;
-		}
-
-#endif // UNITY_EDITOR
+		m_mergePartitions.Clear();
 	}
 
-// --------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------
 
-public void AddAgent(Agent agent)
+	public void AddAgent(Agent agent)
 	{
 		Debug.Assert(agent != null && agent.Transform != null, "[BSP::AddAgent] Attempted to add an invalid agent\n");
 		if (agent == null)
@@ -174,36 +190,39 @@ public void AddAgent(Agent agent)
 
 	// --------------------------------------------------------------------------------
 
-	private void CombineNodes(BTreeNode<BSPPartition> left, BTreeNode<BSPPartition> right)
+	private void CombineChildren(BTreeNode<BSPPartition> parent)
 	{
-		Debug.Assert(left != null, "[BSP::CombineNodes] left is null");
-		Debug.Assert(left.Parent != null, "[BSP::CombineNodes] left.Parent is null");
-		Debug.Assert(right != null, "[BSP::CombineNodes] right is null");
-		Debug.Assert(right.Parent != null, "[BSP::CombineNodes] right.Parent is null");
+		Debug.Assert(parent != null, "[BSP::CombineNodes] parent is null");
+		if (parent == null)
+		{
+			return;
+		}
 
+		var left = parent.Left;
+		var right = parent.Right;
+
+		Debug.Assert(left != null, "[BSP::CombineNodes] left is null");
+		Debug.Assert(right != null, "[BSP::CombineNodes] right is null");
 		if (left == null || right == null)
 		{
 			return;
 		}
-
-		if (left.Parent == null || right.Parent == null)
-		{
-			return;
-		}
-
+		
 		var agentsEnumerator = left.Data.AgentsEnumerator;
 		while (agentsEnumerator.MoveNext())
 		{
-			left.Parent.Data.AddAgent(agentsEnumerator.Current);
+			parent.Data.AddAgent(agentsEnumerator.Current);
 		}
 		left.Data.ClearAgents();
 
 		agentsEnumerator = right.Data.AgentsEnumerator;
 		while (agentsEnumerator.MoveNext())
 		{
-			right.Parent.Data.AddAgent(agentsEnumerator.Current);
+			parent.Data.AddAgent(agentsEnumerator.Current);
 		}
 		right.Data.ClearAgents();
+
+		parent.Clear();
 	}
 
 	// --------------------------------------------------------------------------------
@@ -282,38 +301,64 @@ public void AddAgent(Agent agent)
 #if UNITY_EDITOR
 
 	private void OnDrawGizmosSelected()
-	{		
+	{
 		Color cachedColour = Gizmos.color;
-		
+		Gizmos.color = Color.red;
+
+		BSPPartition highlightedPartition = null;
+
+		// draw all partitions
 		var partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
 		while (partitionsEnumerator.MoveNext())
 		{
 			var current = partitionsEnumerator.Current;
 
-			Vector3 min = current.Data.MinBounds;
-			Vector3 max = current.Data.MaxBounds;
-			Vector3 size = max - min;
-
-			Gizmos.color = Color.green;
-			if (current.Parent != null)
+			if (m_highlightedAgent != null && highlightedPartition == null)
 			{
-				Gizmos.color = current.Parent.Left == current ? Color.green : Color.red;
+				var agentsEnumerator = current.Data.AgentsEnumerator;
+				while (agentsEnumerator.MoveNext())
+				{
+					if (agentsEnumerator.Current == m_highlightedAgent)
+					{
+						highlightedPartition = current.Data;
+						break;
+					}
+				}
 			}
 
-			Gizmos.DrawLine(min, min + new Vector3(size.x, 0.0f, 0.0f));
-			Gizmos.DrawLine(min, min + new Vector3(0.0f, size.y, 0.0f));
-			Gizmos.DrawLine(min, min + new Vector3(0.0f, 0.0f, size.z));
-			Gizmos.DrawLine(min + new Vector3(size.x, 0.0f, 0.0f), min + new Vector3(size.x, 0.0f, size.z));
-			Gizmos.DrawLine(min + new Vector3(0.0f, size.y, 0.0f), min + new Vector3(0.0f, size.y, size.z));
-			Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(size.x, 0.0f, size.z));
-			Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(0.0f, size.y, size.z));
-			Gizmos.DrawLine(max, max - new Vector3(size.x, 0.0f, 0.0f));
-			Gizmos.DrawLine(max, max - new Vector3(0.0f, size.y, 0.0f));
-			Gizmos.DrawLine(max, max - new Vector3(0.0f, 0.0f, size.z));
-			Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(size.x, 0.0f, size.z));
-			Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(0.0f, size.y, size.z));
+			Gizmos_DrawPartition(partitionsEnumerator.Current.Data);
 		}
+
+		// draw partition for the agent we are tracking
+		if (highlightedPartition != null)
+		{
+			Gizmos.color = Color.green;
+			Gizmos_DrawPartition(highlightedPartition);
+		}
+
 		Gizmos.color = cachedColour;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void Gizmos_DrawPartition(BSPPartition partition)
+	{
+		Vector3 min = partition.MinBounds;
+		Vector3 max = partition.MaxBounds;
+		Vector3 size = max - min;
+
+		Gizmos.DrawLine(min, min + new Vector3(size.x, 0.0f, 0.0f));
+		Gizmos.DrawLine(min, min + new Vector3(0.0f, size.y, 0.0f));
+		Gizmos.DrawLine(min, min + new Vector3(0.0f, 0.0f, size.z));
+		Gizmos.DrawLine(min + new Vector3(size.x, 0.0f, 0.0f), min + new Vector3(size.x, 0.0f, size.z));
+		Gizmos.DrawLine(min + new Vector3(0.0f, size.y, 0.0f), min + new Vector3(0.0f, size.y, size.z));
+		Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(size.x, 0.0f, size.z));
+		Gizmos.DrawLine(min + new Vector3(0.0f, 0.0f, size.z), min + new Vector3(0.0f, size.y, size.z));
+		Gizmos.DrawLine(max, max - new Vector3(size.x, 0.0f, 0.0f));
+		Gizmos.DrawLine(max, max - new Vector3(0.0f, size.y, 0.0f));
+		Gizmos.DrawLine(max, max - new Vector3(0.0f, 0.0f, size.z));
+		Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(size.x, 0.0f, size.z));
+		Gizmos.DrawLine(max - new Vector3(0.0f, 0.0f, size.z), max - new Vector3(0.0f, size.y, size.z));
 	}
 
 #endif // UNITY_EDITOR

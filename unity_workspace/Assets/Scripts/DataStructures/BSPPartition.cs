@@ -63,6 +63,13 @@ public class BSPPartition : IComparable<BSPPartition>
 
 	// --------------------------------------------------------------------------------
 
+	public bool ContainsAgentPosition(Agent agent)
+	{
+		return ContainsPoint(agent.Position);
+	}
+
+	// --------------------------------------------------------------------------------
+
 	public bool ContainsPoint(Vector3 point)
 	{
 		return point.x >= m_minBounds.x && point.x <= m_maxBounds.x &&
