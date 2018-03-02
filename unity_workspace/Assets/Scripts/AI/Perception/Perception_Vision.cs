@@ -5,9 +5,6 @@ using UnityEngine;
 public class Perception_Vision : Perception
 {
 	
-	[SerializeField, Range(1.0f, 180.0f)]
-	private float m_fieldOfView = 135.0f;
-
 	[SerializeField]
 	private List<string> m_raycastLayers = new List<string>();
 	private int m_raycastLayerMask = -1;
@@ -101,20 +98,12 @@ public class Perception_Vision : Perception
 			return false;
 		}
 
-		Vector3 eventPosition = percievedEvent.Actor == null ?
-			percievedEvent.Location :
-			percievedEvent.Actor.Position;
-
-		// vector to event
+		Vector3 eventPosition = percievedEvent.Actor != null ?
+			percievedEvent.Actor.Position : 
+			percievedEvent.Location;
+		
+		// cast a ray toward the event/target
 		Vector3 toEvent = eventPosition - m_transform.position;
-		
-		// fail if out of field of view
-		if (Vector3.Angle(m_transform.forward, toEvent) > m_fieldOfView * 0.5f)
-		{
-			return false;
-		}
-		
-		// within range, cast a ray toward the target
 		m_rayCastRay.origin = m_transform.position;
 		m_rayCastRay.direction = toEvent.normalized;
 

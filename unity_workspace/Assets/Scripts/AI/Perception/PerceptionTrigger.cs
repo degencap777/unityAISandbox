@@ -23,13 +23,6 @@ public class PerceptionTrigger : IPooledObject
 		set { m_percievedEvent = value; }
 	}
 
-	private float m_range = 0.0f;
-	public float Range
-	{
-		get { return m_range; }
-		set { m_range = value; }
-	}
-
 	// --------------------------------------------------------------------------------
 
 	public void ReleaseResources()
@@ -43,7 +36,6 @@ public class PerceptionTrigger : IPooledObject
 	{
 		m_perceptionType = PerceptionType.Hearing;
 		m_percievedEvent = null;
-		m_range = 0.0f;
 	}
 	
 }

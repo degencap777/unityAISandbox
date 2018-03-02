@@ -47,7 +47,10 @@ public class PerceptionTest : Test
 
 			PerceptionTrigger trigger = PerceptionTrigger.Pool.Get();
 			trigger.PerceptionType = m_perceptionType;
-			trigger.Range = m_range;
+
+			//trigger.Range = m_range;
+			// #SteveD	>>> This needs removing or replacing..
+
 			trigger.PerceptionEvent = percievedEvent;
 			PerceptionTriggerDistributor.Instance.DistributeTrigger(trigger);
 		}

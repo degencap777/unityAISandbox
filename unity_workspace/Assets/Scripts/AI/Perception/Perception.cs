@@ -69,11 +69,12 @@ public abstract class Perception : AIBrainComponent
 			percievedEvent.Location :
 			percievedEvent.Actor.Position;
 
-		Vector3 toEvent = eventPosition - m_transform.position;
-		if (toEvent.sqrMagnitude > trigger.Range * trigger.Range)
-		{
-			return false;
-		}
+		// #SteveD	>>> requires a perception zone(s) (see GameAI Pro)
+		//			>>> must be definable in editor
+		//			>>> must be generic enough to represent different senses (sight, hearing, etc.)
+		//			>>> should live on base perception class (this) and be tweakable
+		//			>>> requires intuitive custom editor & gizmo
+		//			>>> Requires owning class with multiple layers of zones with different values
 
 		if (CanPercieve(trigger.PerceptionEvent))
 		{

@@ -198,6 +198,7 @@ public class WorkingMemory : AIBrainComponent, IAIMemory
 		// #SteveD	>>> process event, do we want to add a target/ally?
 		//			>>> need to know event actor's allegiance, or event target's allegiance to determine action warranted
 		//			>>> what should trigger a change in behaviour?
+		//			>>> track certainty of perception. An event should only be added to historic memory if 100% percieved
 	}
 
 	// --------------------------------------------------------------------------------
