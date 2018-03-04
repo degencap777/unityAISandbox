@@ -10,7 +10,7 @@ public class AIBrainManager : SingletonMonoBehaviour<AIBrainManager>
 	protected override void OnAwake()
 	{
 		m_brainUpdater = GetComponent<DistributedAIBrainUpdater>();
-		Debug.Assert(m_brainUpdater != null, "[AIBrainManager::OnAwake] GetComponent<DistributedUpdater<AIBrain>> failed\n");
+		Debug.Assert(m_brainUpdater != null, "[AIBrainManager::OnAwake] GetComponent<DistributedAIBrainUpdater> failed\n");
 	}
 
 	// --------------------------------------------------------------------------------

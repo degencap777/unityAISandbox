@@ -14,14 +14,15 @@ public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatab
 
 	// --------------------------------------------------------------------------------
 
-	[SerializeField, Range(0.0f, 10.0f)]
+	[SerializeField]
 	private float m_updateInterval = 0.5f;
 
-	[SerializeField, Range(1, 60)]
+	[SerializeField]
 	private int m_targetBucketCount = 10;
 
 	// --------------------------------------------------------------------------------
 
+	[SerializeField, HideInInspector]
 	private List<UpdatableBucket> m_updatableBuckets = new List<UpdatableBucket>();
 
 	private float m_currentInterval = 0.0f;

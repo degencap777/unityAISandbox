@@ -7,15 +7,6 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 
 	private Agent m_owner = null;
 	public Agent Owner { get { return m_owner; } }
-
-	private WorkingMemory m_workingMemory = null;
-	public WorkingMemory WorkingMemory { get { return m_workingMemory; } }
-
-	private HistoricMemory m_historicMemory = null;
-	public HistoricMemory HistoricMemory { get { return m_historicMemory; } }
-
-	private AIBehaviourController m_behaviourController = null;
-	public AIBehaviourController BehaviourController { get { return m_behaviourController; } }
 	
 	private List<AIBrainComponent> m_brainComponents = new List<AIBrainComponent>();
 
@@ -24,18 +15,6 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 	protected virtual void Awake()
 	{
 		m_owner = GetComponentInParent<Agent>();
-		m_workingMemory = GetComponentInChildren<WorkingMemory>();
-		m_historicMemory = GetComponentInChildren<HistoricMemory>();
-		m_behaviourController = GetComponentInChildren<AIBehaviourController>();
-		
-		// add brain components
-		m_brainComponents.Add(m_workingMemory);
-		m_brainComponents.Add(m_historicMemory);
-		m_brainComponents.Add(m_behaviourController);
-
-		// add all perception brain components
-		var perceptions = GetComponentsInChildren<Perception>(true);
-		m_brainComponents.AddRange(perceptions);
 	}
 
 	// --------------------------------------------------------------------------------
@@ -69,23 +48,7 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 
 	public virtual void DistributedUpdate()
 	{
-		CleanMemories();
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public void CleanMemories()
-	{
-		if (m_workingMemory != null)
-		{
-			m_workingMemory.RemoveExpiredTargets();
-			m_workingMemory.RemoveExpiredAllies();
-		}
-
-		if (m_historicMemory != null)
-		{
-			m_historicMemory.RemoveExpiredMemories();
-		}
+		;
 	}
 
 	// --------------------------------------------------------------------------------

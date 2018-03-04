@@ -16,7 +16,6 @@ public class BTreeTest : Test
 
 	protected override void RunTests()
 	{
-		Debug.Log("[BTreeTest] Insert 5\n");
 		m_tree.Insert(5);
 		m_tree.Insert(7);
 		m_tree.Insert(8);
