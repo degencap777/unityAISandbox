@@ -138,13 +138,5 @@ public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatab
 				i, m_updatableBuckets[i].m_updateTime, m_updatableBuckets[i].m_updatables.Count);
 		}
 	}
-
-	// --------------------------------------------------------------------------------
-
-#if UNITY_EDITOR
-
-	public List<UpdatableBucket> Editor_UpdatableBuckets { get { return m_updatableBuckets; } }
-
-#endif // UNITY_EDITOR
-
+	
 }
