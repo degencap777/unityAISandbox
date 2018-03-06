@@ -36,16 +36,25 @@ public class BSP : MonoBehaviour
 		
 	protected virtual void OnValidate()
 	{
-		m_partitionSplitLimit = Mathf.Clamp(m_partitionSplitLimit, 1, int.MaxValue);
-		m_partitionCombineLimit = Mathf.Clamp(m_partitionCombineLimit, 0, m_partitionSplitLimit);
+		ValidateSplitLimits();
 	}
 
 #endif // UNITY_EDITOR
 
 	// --------------------------------------------------------------------------------
 
+	private void ValidateSplitLimits()
+	{
+		m_partitionSplitLimit = Mathf.Clamp(m_partitionSplitLimit, 1, int.MaxValue);
+		m_partitionCombineLimit = Mathf.Clamp(m_partitionCombineLimit, 0, m_partitionSplitLimit);
+	}
+
+	// --------------------------------------------------------------------------------
+
 	protected virtual void Start()
 	{
+		ValidateSplitLimits();
+
 		m_bsp.Insert(new BSPPartition(m_minBounds, m_maxBounds));
 
 		var agents = FindObjectsOfType<Agent>();
