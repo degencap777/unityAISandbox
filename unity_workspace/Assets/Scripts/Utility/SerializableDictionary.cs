@@ -44,6 +44,13 @@ public abstract class SerializableDictionary<K, V> : ISerializationCallbackRecei
 
 	// --------------------------------------------------------------------------------
 
+	public void Add(K key, V value)
+	{
+		m_dictionary.Add(key, value);
+	}
+
+	// --------------------------------------------------------------------------------
+
 	public bool TryGetValue(K key, out V value)
 	{
 		return m_dictionary.TryGetValue(key, out value);

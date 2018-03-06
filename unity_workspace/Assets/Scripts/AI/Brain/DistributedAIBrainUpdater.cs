@@ -1,3 +1,3 @@
 ﻿
 
-public class DistributedAIBrainUpdater : DistributedUpdater<AIBrain> { }
+public sealed class DistributedAIBrainUpdater : DistributedUpdater<AIBrain> { }
