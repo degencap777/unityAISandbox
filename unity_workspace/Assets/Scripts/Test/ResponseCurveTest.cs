@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ResponseCurveTest : Test
 {
-
+	
 	[SerializeField]
 	[Range(0.01f, 1.0f)]
 	private float m_step = 0.1f;
@@ -27,8 +27,8 @@ public class ResponseCurveTest : Test
 		{
 			for (float f = 0.0f; f <= 1.0f + m_step; f += m_step)
 			{
-				Debug.LogFormat("[ResponseCurveTest] ResponseCurve [{0}] value at {1} = {2}\n", i, f.ToString("N2"), m_responseCurves[i].GetValue(f));
-				Debug.LogFormat("[ResponseCurveTest] ResponseCurve [{0}] normalised value at {1} = {2}\n", i, f.ToString("N2"), m_responseCurves[i].GetValueNormalised(f));
+				Logger.Instance.Log(GetType().ToString(), LogLevel.Info, string.Format("ResponseCurve [{0}] value at {1} = {2}", i, f.ToString("N2"), m_responseCurves[i].GetValue(f)));
+				Logger.Instance.Log(GetType().ToString(), LogLevel.Info, string.Format("ResponseCurve [{0}] normalised value at {1} = {2}", i, f.ToString("N2"), m_responseCurves[i].GetValue(f)));
 			}
 		}
 	}

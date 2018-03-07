@@ -9,9 +9,9 @@ public class Logger : SingletonMonoBehaviour<Logger>
 
 	// --------------------------------------------------------------------------------
 
-	public void Log(ILogger logger, LogLevel logLevel, string message)
+	public void Log(string tag, LogLevel logLevel, string message)
 	{
-		string tag = logger.GetTag();
+#if UNITY_EDITOR
 		LogPermissions permissions = null;
 		
 		for (int i = 0; i < m_permissions.Count; ++i)
@@ -25,12 +25,18 @@ public class Logger : SingletonMonoBehaviour<Logger>
 
 		if (permissions != null)
 		{
-			LogInternal(tag, logLevel, message);
+			if ((logLevel == LogLevel.Info && permissions.Info) ||
+				(logLevel == LogLevel.Warning && permissions.Warning) ||
+				(logLevel == LogLevel.Error && permissions.Error))
+			{
+				LogInternal(tag, logLevel, message);
+			}
 		}
 		else
 		{
 			m_permissions.Add(new LogPermissions(tag, false, false, false));
 		}
+#endif
 	}
 
 	// --------------------------------------------------------------------------------

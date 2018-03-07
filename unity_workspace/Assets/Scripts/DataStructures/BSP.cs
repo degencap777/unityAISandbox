@@ -195,6 +195,8 @@ public class BSP : MonoBehaviour
 		node.Insert(new BTreeNode<BSPPartition>(new BSPPartition(node.Data.MinBounds, leftMaxBounds), node));
 		node.Insert(new BTreeNode<BSPPartition>(new BSPPartition(rightMinBounds, node.Data.MaxBounds), node));
 		Debug.Assert(node.Left != null && node.Right != null, "[BSP::SubdivideNode] failed to divide node into 2 children");
+
+		Logger.Instance.Log(GetType().ToString(), LogLevel.Info, "Subdivided partition");
 	}
 
 	// --------------------------------------------------------------------------------
@@ -230,13 +232,14 @@ public class BSP : MonoBehaviour
 			parent.Data.AddAgent(agentsEnumerator.Current);
 		}
 		right.Data.ClearAgents();
+		Logger.Instance.Log(GetType().ToString(), LogLevel.Info, "Combined partitions");
 
 		parent.Clear();
 	}
 
 	// --------------------------------------------------------------------------------
 
-	private static void AddAgentToChild(BTreeNode<BSPPartition> parent, Agent agent)
+	private void AddAgentToChild(BTreeNode<BSPPartition> parent, Agent agent)
 	{
 		if (agent == null)
 		{
@@ -253,7 +256,7 @@ public class BSP : MonoBehaviour
 		}
 		else
 		{
-			Debug.LogError("[BSP::AddAgent] Subdivide partition failed; agent cannot be inserted into either subdivision\n");
+			Logger.Instance.Log(GetType().ToString(), LogLevel.Error, "Subdivide partition failed; agent cannot be inserted into either subdivision");
 		}
 	}
 
@@ -282,7 +285,7 @@ public class BSP : MonoBehaviour
 			}
 			else if (current.Left == null || current.Right == null)
 			{
-				Debug.LogError("[BSP::FindNodeForPosition] Invalid BSP tree; nodes should have either 0 or 2 children, found a node with 1 child\n");
+				Logger.Instance.Log(GetType().ToString(), LogLevel.Error, "Invalid BSP tree; nodes should have either 0 or 2 children, found a node with 1 child");
 				return null;
 			}
 			else
@@ -297,7 +300,7 @@ public class BSP : MonoBehaviour
 				}
 				else
 				{
-					Debug.LogErrorFormat("[BSP::FindNodeForPosition] No child nodes contain the agent position ({0})\n", position.ToString());
+					Logger.Instance.Log(GetType().ToString(), LogLevel.Error, string.Format("No child nodes contain the agent position({0})", position.ToString()));
 					return null;
 				}
 			}

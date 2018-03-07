@@ -12,7 +12,7 @@ public interface IPooledObject
 
 public class ObjectPool<T> where T : IPooledObject
 {
-
+	
 	private static readonly uint k_minInitialCapacity = 1;
 
 	// --------------------------------------------------------------------------------
@@ -38,7 +38,7 @@ public class ObjectPool<T> where T : IPooledObject
 		{
 			m_pool.Add(Activator.CreateInstance<T>());
 		}
-		Debug.LogFormat("[ObjectPool] {0} increased in size by {1}\n", ToString(), objectCount);
+		Logger.Instance.Log(typeof(T).ToString(), LogLevel.Info, string.Format("{0} increased in size by {1}", ToString(), objectCount));
 	}
 
 	// --------------------------------------------------------------------------------
@@ -58,7 +58,7 @@ public class ObjectPool<T> where T : IPooledObject
 			return obj;
 		}
 
-		Debug.LogErrorFormat("[ObjectPool<{0}>] Empty pool, unable to allocate an object\n", typeof(T));
+		Logger.Instance.Log(typeof(T).ToString(), LogLevel.Error, "Empty pool, unable to allocate an object");
 		return default(T);
 	}
 

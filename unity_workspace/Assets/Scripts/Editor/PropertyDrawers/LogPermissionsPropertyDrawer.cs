@@ -5,7 +5,7 @@ using UnityEngine;
 public class LogPermissionsPropertyDrawer : PropertyDrawer
 {
 
-	private static readonly int k_lineCount = 4;
+	private static readonly int k_lineCount = 2;
 
 	// --------------------------------------------------------------------------------
 
@@ -24,15 +24,19 @@ public class LogPermissionsPropertyDrawer : PropertyDrawer
 		SerializedProperty warningProperty = property.FindPropertyRelative("m_warning");
 		SerializedProperty errorProperty = property.FindPropertyRelative("m_error");
 
-		var indent = EditorGUI.indentLevel;
+		int cachedIndentLevel = EditorGUI.indentLevel;
 		EditorGUI.indentLevel = 0;
-		
-		tagProperty.stringValue = EditorGUI.TextField(new Rect(x, y, w, h), tagProperty.stringValue);
-		infoProperty.boolValue = EditorGUI.Toggle(new Rect(x, y + h, w, h), "Info", infoProperty.boolValue);
-		warningProperty.boolValue = EditorGUI.Toggle(new Rect(x, y + (h * 2), w, h), "Warning", warningProperty.boolValue);
-		errorProperty.boolValue = EditorGUI.Toggle(new Rect(x, y + (h * 3), w, h), "Error", errorProperty.boolValue);
 
-		EditorGUI.indentLevel = indent;
+		float labelWidth = EditorGUIUtility.labelWidth;
+		EditorGUIUtility.labelWidth = 32.0f;
+
+		tagProperty.stringValue = EditorGUI.TextField(new Rect(x, y, w, h), tagProperty.stringValue);
+		infoProperty.boolValue = EditorGUI.Toggle(new Rect(x, y + h, w * 0.33f, h), "Info", infoProperty.boolValue);
+		warningProperty.boolValue = EditorGUI.Toggle(new Rect(x + w * 0.33f, y + h, w * 0.33f, h), "Warn", warningProperty.boolValue);
+		errorProperty.boolValue = EditorGUI.Toggle(new Rect(x + w * 0.66f, y + h, w * 0.34f, h), "Error", errorProperty.boolValue);
+
+		EditorGUIUtility.labelWidth = labelWidth;
+		EditorGUI.indentLevel = cachedIndentLevel;
 		EditorGUI.EndProperty();
 	}
 

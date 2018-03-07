@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class BSPPartition : IComparable<BSPPartition>
 {
-
+	
 	private Vector3 m_minBounds = Vector3.zero;
 	public Vector3 MinBounds { get { return m_minBounds; } }
 
@@ -29,7 +29,7 @@ public class BSPPartition : IComparable<BSPPartition>
 	{
 		if (agent == null)
 		{
-			Debug.LogError("[BSPPartition::AddAgent] Attempting to add a null Agent");
+			Logger.Instance.Log(GetType().ToString(), LogLevel.Error, "Attempting to add a null Agent");
 			return;
 		}
 
