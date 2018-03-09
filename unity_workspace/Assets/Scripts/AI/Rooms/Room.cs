@@ -6,10 +6,6 @@ using UnityEngine;
 public class Room : MonoBehaviour
 {
 	
-	// #SteveD	>>> room portal (connection between rooms) - automate/menu tool
-
-	// #SteveD	>>> room manager showing all rooms & inhabitants
-
 	private List<BoxCollider> m_colliders = new List<BoxCollider>();
 
 	private List<Agent> m_inhabitants = new List<Agent>();
