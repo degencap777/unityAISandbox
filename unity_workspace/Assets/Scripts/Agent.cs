@@ -6,8 +6,11 @@ public class Agent : MonoBehaviour
 	private Transform m_transform = null;
 	public Transform Transform { get { return m_transform; } }
 
-	private AgentController m_agentController;
+	private AgentController m_agentController = null;
 	public AgentController AgentController { get { return m_agentController; } }
+
+	private Collider m_collider = null;
+	public Collider Collider { get { return m_collider; } }
 
 	public Vector3 Position { get { return m_transform != null ? m_transform.position : Vector3.zero; } }
 	
@@ -23,6 +26,9 @@ public class Agent : MonoBehaviour
 
 		m_agentController = GetComponent<AgentController>();
 		Debug.Assert(m_agentController != null, "[Agent::Awake] GetComponent<AgentController> failed\n");
+
+		m_collider = GetComponentInChildren<Collider>();
+		Debug.Assert(m_collider != null, "[Agent::Awake] GetComponent<Collider> failed\n");
 	}
 
 	// --------------------------------------------------------------------------------

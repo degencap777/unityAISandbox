@@ -1,17 +1,19 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(BoxCollider))]
 public class Room : MonoBehaviour
 {
+	
+	// #SteveD	>>> room portal (connection between rooms) - automate/menu tool
 
-	// #SteveD	>>> retain list of all inhabitants
+	// #SteveD	>>> room manager showing all rooms & inhabitants
 
-	// #SteveD	>>> collision matrix (collide with Agent only, add layer 'room', or something more general purpose?)
+	private List<BoxCollider> m_colliders = new List<BoxCollider>();
 
-	// #SteveD	>>> custom drawer for readonly lists of inhabiting agent
-
-	private BoxCollider m_collider = null;
+	private List<Agent> m_inhabitants = new List<Agent>();
+	public List<Agent>.Enumerator InhabitantsEnumerator { get { return m_inhabitants.GetEnumerator(); } }
 
 	// --------------------------------------------------------------------------------
 
@@ -23,14 +25,8 @@ public class Room : MonoBehaviour
 
 	protected virtual void Awake()
 	{
-		m_collider = GetComponent<BoxCollider>();
-		Debug.Assert(m_collider != null, "[Room] m_collider (BoxCollider) is null");
-
-#if UNITY_EDITOR
-
-		OnValidate();
-
-#endif // UNITY_EDITOR
+		GetComponents(m_colliders);
+		Debug.Assert(m_colliders.Count > 0, "[Room] has no colliders");
 	}
 
 	// --------------------------------------------------------------------------------
@@ -38,9 +34,22 @@ public class Room : MonoBehaviour
 	protected virtual void OnTriggerEnter(Collider collider)
 	{
 		Agent agent = collider.GetComponentInParent<Agent>();
-		if (agent != null && OnAgentEnter != null)
+		if (agent != null && m_inhabitants.Contains(agent) == false)
 		{
-			OnAgentEnter(agent, this);
+			m_inhabitants.Add(agent);
+			if (OnAgentEnter != null)
+			{
+				OnAgentEnter(agent, this);
+			}
+
+			Logger.Instance.Log(GetType().ToString(), LogLevel.Info, string.Format("Agent [{0}] entered room [{1}]", agent.name, name));
+
+#if UNITY_EDITOR
+			if (OnRequestRepaint != null)
+			{
+				OnRequestRepaint();
+			}
+#endif
 		}
 	}
 
@@ -49,9 +58,34 @@ public class Room : MonoBehaviour
 	protected virtual void OnTriggerExit(Collider collider)
 	{
 		Agent agent = collider.GetComponentInParent<Agent>();
-		if (agent != null && OnAgentExit != null)
+		if (agent != null && m_inhabitants.Contains(agent))
 		{
-			OnAgentExit(agent, this);
+			if (agent.Collider != null)
+			{
+				for (int i = 0; i < m_colliders.Count; ++i)
+				{
+					if (m_colliders[i].bounds.Contains(agent.Transform.position))
+					{
+						Logger.Instance.Log(GetType().ToString(), LogLevel.Info, string.Format("Agent [{0}] exit room [{1}] failed as we're still within one of it's colliders", agent.name, name));
+						return;
+					}
+				}
+			}
+			
+			m_inhabitants.Remove(agent);
+			if (OnAgentExit != null)
+			{
+				OnAgentExit(agent, this);
+			}
+
+			Logger.Instance.Log(GetType().ToString(), LogLevel.Info, string.Format("Agent [{0}] exited room [{1}]", agent.name, name));
+
+#if UNITY_EDITOR
+			if (OnRequestRepaint != null)
+			{
+				OnRequestRepaint();
+			}
+#endif
 		}
 	}
 
@@ -60,21 +94,12 @@ public class Room : MonoBehaviour
 
 #if UNITY_EDITOR
 
-	private Vector3 m_gizmoCubeDimensions = Vector3.zero;
+	public delegate void RequestRepaint();
+	public event RequestRepaint OnRequestRepaint;
 
 	// --------------------------------------------------------------------------------
 
-	protected virtual void OnValidate()
-	{
-		if (m_collider != null)
-		{
-			m_gizmoCubeDimensions.Set(m_collider.size.x, 0.01f, m_collider.size.z);
-		}
-	}
-
-	// --------------------------------------------------------------------------------
-
-	protected virtual void OnDrawGizmosSelected()
+	protected virtual void OnDrawGizmos()
 	{
 		DoDrawGizmos();
 	}
@@ -92,7 +117,14 @@ public class Room : MonoBehaviour
 		Matrix4x4 cachedMatrix = Gizmos.matrix;
 		Gizmos.matrix = Matrix4x4.Rotate(transform.rotation);
 
-		Gizmos.DrawCube(transform.position, m_gizmoCubeDimensions);
+		for (int i = 0; i < m_colliders.Count; ++i)
+		{
+			Vector3 pos = transform.position;
+			pos.x += m_colliders[i].center.x;
+			pos.z += m_colliders[i].center.z;
+
+			Gizmos.DrawCube(pos, new Vector3(m_colliders[i].size.x, 0.01f, m_colliders[i].size.z));
+		}
 		
 		Gizmos.matrix = cachedMatrix;
 		Gizmos.color = cachedColour;
