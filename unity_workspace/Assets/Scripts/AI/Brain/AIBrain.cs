@@ -44,7 +44,7 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 		}
 	}
 
-	// -------------------------------------------------------------------------------/
+	// --------------------------------------------------------------------------------
 
 	public virtual void DistributedUpdate()
 	{

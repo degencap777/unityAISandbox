@@ -11,8 +11,8 @@ public class Room : MonoBehaviour
 	private List<Agent> m_inhabitants = new List<Agent>();
 	public List<Agent>.Enumerator InhabitantsEnumerator { get { return m_inhabitants.GetEnumerator(); } }
 
-	// #SteveD	>>>	add links to property drawer
 	private List<RoomLink> m_links = new List<RoomLink>();
+	public List<RoomLink>.Enumerator LinksEnumerator { get { return m_links.GetEnumerator(); } }
 
 	// --------------------------------------------------------------------------------
 
@@ -65,18 +65,15 @@ public class Room : MonoBehaviour
 		Agent agent = collider.GetComponentInParent<Agent>();
 		if (agent != null && m_inhabitants.Contains(agent))
 		{
-			if (agent.Collider != null)
+			for (int i = 0; i < m_colliders.Count; ++i)
 			{
-				for (int i = 0; i < m_colliders.Count; ++i)
+				if (m_colliders[i].bounds.Contains(agent.Transform.position))
 				{
-					if (m_colliders[i].bounds.Contains(agent.Transform.position))
-					{
-						this.LogInfo(string.Format("Agent [{0}] exit room [{1}] failed as we're still within one of it's colliders", agent.name, name));
-						return;
-					}
+					this.LogInfo(string.Format("Agent [{0}] exit room [{1}] failed as we're still within one of it's colliders", agent.name, name));
+					return;
 				}
 			}
-			
+
 			m_inhabitants.Remove(agent);
 			if (OnAgentExit != null)
 			{
@@ -93,8 +90,8 @@ public class Room : MonoBehaviour
 #endif
 		}
 	}
-	
-	// --------------------------------------------------------------------------------
+
+	// Editor specific ----------------------------------------------------------------
 	// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
@@ -105,14 +102,7 @@ public class Room : MonoBehaviour
 	// --------------------------------------------------------------------------------
 
 	private static readonly Color k_gizmoColour = new Color(0.0f, 1.0f, 0.25f, 0.25f);
-
-	// --------------------------------------------------------------------------------
-
-	protected virtual void OnDrawGizmos()
-	{
-		DoDrawGizmos();
-	}
-
+	
 	// --------------------------------------------------------------------------------
 
 	public virtual void DoDrawGizmos()

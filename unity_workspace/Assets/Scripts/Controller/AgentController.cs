@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 
+[ExecuteInEditMode]
 [RequireComponent(typeof(CharacterController))]
 public class AgentController : MonoBehaviour
 {
@@ -163,6 +164,7 @@ public class AgentController : MonoBehaviour
 		return Time.deltaTime* m_deltaTimeScalar;
 	}
 
+	// Editor specific ----------------------------------------------------------------
 	// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
@@ -175,18 +177,20 @@ public class AgentController : MonoBehaviour
 		}
 
 		Color originalColor = Gizmos.color;
+		Vector3 origin = m_transform.position;
+		origin.y += 1.0f;
 
 		// forward, z
 		Gizmos.color = Color.blue;
-		Gizmos.DrawLine(m_transform.position, m_transform.position + m_transform.forward * 2.0f);
+		Gizmos.DrawLine(origin, origin + m_transform.forward);
 
 		// right, x
 		Gizmos.color = Color.red;
-		Gizmos.DrawLine(m_transform.position, m_transform.position + m_transform.right * 2.0f);
+		Gizmos.DrawLine(origin, origin + m_transform.right);
 
 		// up, y
-		Gizmos.color = Color.green;
-		Gizmos.DrawLine(m_transform.position, m_transform.position + m_transform.up * 2.0f);
+		//Gizmos.color = Color.green;
+		//Gizmos.DrawLine(origin, origin + m_transform.up);
 
 		Gizmos.color = originalColor;
 	}

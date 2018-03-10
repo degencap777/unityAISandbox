@@ -2,6 +2,7 @@
 using UnityEngine;
 
 [CustomEditor(typeof(RoomLink))]
+[CanEditMultipleObjects]
 public class RoomLinkEditor : Editor
 {
 

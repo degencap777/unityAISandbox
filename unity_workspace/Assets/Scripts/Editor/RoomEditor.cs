@@ -1,9 +1,8 @@
-﻿
-
-using UnityEditor;
+﻿using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(Room))]
+[CanEditMultipleObjects]
 public class RoomEditor : Editor
 {
 

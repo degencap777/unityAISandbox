@@ -22,13 +22,12 @@ public class RoomLink : MonoBehaviour
 		return m_connectedLink != null ? m_connectedLink.Room : null;
 	}
 
-	// --------------------------------------------------------------------------------
+	// Editor specific ----------------------------------------------------------------
 	// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
 
 	private static readonly Vector3 k_connectionIconOffset = new Vector3(0.0f, 0.15f, 0.0f);
-	private static readonly Color k_connectionColour = new Color(0.0f, 0.25f, 1.0f, 1.0f);
 
 	// --------------------------------------------------------------------------------
 
@@ -57,13 +56,9 @@ public class RoomLink : MonoBehaviour
 	{
 		if (m_connectedLink != null)
 		{
-			Color cachedColour = Gizmos.color;
-			Gizmos.color = k_connectionColour;
-			Gizmos.DrawLine(transform.position, m_connectedLink.transform.position);
-
 			Vector3 distance = transform.position - m_connectedLink.transform.position;
 			Vector3 centre = transform.position - (distance * 0.5f);
-
+			
 			if (m_connectedLink.m_connectedLink == null)
 			{
 				Gizmos.DrawIcon(centre + k_connectionIconOffset, "room_one_way_connection.png", true);

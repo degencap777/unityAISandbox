@@ -1,11 +1,9 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
+[ExecuteInEditMode]
 public class RoomManager : SingletonMonoBehaviour<RoomManager>
 {
-
-	// #SteveD	>>> links between rooms at link location so we can estimate 
-	//				distance between links/rooms
 
 	[SerializeField, HideInInspector]
 	private List<Room> m_rooms = new List<Room>();
@@ -57,7 +55,7 @@ public class RoomManager : SingletonMonoBehaviour<RoomManager>
 		{
 			OnRequestRepaint();
 		}
-#endif // UNITY
+#endif // UNITY_EDITOR
 	}
 
 	// --------------------------------------------------------------------------------
@@ -69,10 +67,10 @@ public class RoomManager : SingletonMonoBehaviour<RoomManager>
 		{
 			OnRequestRepaint();
 		}
-#endif // UNITY
+#endif // UNITY_EDITOR
 	}
 
-	// --------------------------------------------------------------------------------
+	// Editor specific ----------------------------------------------------------------
 	// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
@@ -80,7 +78,19 @@ public class RoomManager : SingletonMonoBehaviour<RoomManager>
 	public delegate void RequestRepaint();
 	public event RequestRepaint OnRequestRepaint;
 
-	public List<Room>.Enumerator RoomsEnumerator { get { return m_rooms.GetEnumerator(); } }
+	// --------------------------------------------------------------------------------
+
+	public List<Room>.Enumerator RoomEnumerator { get { return m_rooms.GetEnumerator(); } }
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual void OnDrawGizmosSelected()
+	{
+		for (int i = 0; i < m_rooms.Count; ++i)
+		{
+			m_rooms[i].DoDrawGizmos();
+		}
+	}
 
 #endif // UNITY_EDITOR
 
