@@ -26,30 +26,28 @@ public class RoomLink : MonoBehaviour
 
 #if UNITY_EDITOR
 
-	// #SteveD >>>	change sphere to sprite (red X for invalid connection, connection icon for valid connection
+	private static readonly Vector3 k_connectionIconOffset = new Vector3(0.0f, 0.15f, 0.0f);
+	private static readonly Color k_connectionColour = new Color(0.0f, 0.25f, 1.0f, 1.0f);
+
+	// --------------------------------------------------------------------------------
+
 	protected virtual void OnDrawGizmos()
 	{
-		Color cachedColour = Gizmos.color;
-
 		if (m_connectedLink != null)
 		{
-			Color colour = Color.green;
-			colour.a = 0.5f; 
-			Gizmos.color = colour;
-
+			Color cachedColour = Gizmos.color;
+			Gizmos.color = k_connectionColour;
 			Gizmos.DrawLine(transform.position, m_connectedLink.transform.position);
-			Gizmos.DrawSphere(transform.position, 0.25f);
+
+			Vector3 distance = transform.position - m_connectedLink.transform.position;
+			Vector3 centre = transform.position - (distance * 0.5f);
+
+			Gizmos.DrawIcon(centre + k_connectionIconOffset, "room_connected.png", true);
 		}
 		else
 		{
-			Color colour = Color.red;
-			colour.a = 0.5f;
-			Gizmos.color = colour;
-
-			Gizmos.DrawSphere(transform.position, 0.25f);
+			Gizmos.DrawIcon(transform.position + k_connectionIconOffset, "room_disconnect.png", true);
 		}
-
-		Gizmos.color = cachedColour;
 	}
 
 #endif // UNITY_EDITOR

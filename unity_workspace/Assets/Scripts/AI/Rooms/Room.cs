@@ -104,6 +104,10 @@ public class Room : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	private static readonly Color k_gizmoColour = new Color(0.0f, 1.0f, 0.25f, 0.25f);
+
+	// --------------------------------------------------------------------------------
+
 	protected virtual void OnDrawGizmos()
 	{
 		DoDrawGizmos();
@@ -114,10 +118,7 @@ public class Room : MonoBehaviour
 	public virtual void DoDrawGizmos()
 	{
 		Color cachedColour = Gizmos.color;
-
-		Color color = Color.green;
-		color.a = 0.25f;
-		Gizmos.color = color;
+		Gizmos.color = k_gizmoColour;
 
 		Matrix4x4 cachedMatrix = Gizmos.matrix;
 		Gizmos.matrix = Matrix4x4.Rotate(transform.rotation);
