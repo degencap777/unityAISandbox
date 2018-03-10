@@ -15,7 +15,18 @@ public class RoomEditor : Editor
 
 		if (m_room != null)
 		{
+			m_room.OnRequestRepaint -= Repaint;
 			m_room.OnRequestRepaint += Repaint;
+		}
+	}
+	
+	// --------------------------------------------------------------------------------
+
+	public void OnDisable()
+	{
+		if (m_room != null)
+		{
+			m_room.OnRequestRepaint -= Repaint;
 		}
 	}
 

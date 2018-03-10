@@ -11,6 +11,9 @@ public class Room : MonoBehaviour
 	private List<Agent> m_inhabitants = new List<Agent>();
 	public List<Agent>.Enumerator InhabitantsEnumerator { get { return m_inhabitants.GetEnumerator(); } }
 
+	// #SteveD	>>>	add links to property drawer
+	private List<RoomLink> m_links = new List<RoomLink>();
+
 	// --------------------------------------------------------------------------------
 
 	public delegate void AgentMigration(Agent agent, Room room);
@@ -23,6 +26,12 @@ public class Room : MonoBehaviour
 	{
 		GetComponents(m_colliders);
 		Debug.Assert(m_colliders.Count > 0, "[Room] has no colliders");
+
+		GetComponentsInChildren(m_links);
+		for (int i = 0; i < m_links.Count; ++i)
+		{
+			m_links[i].Room = this;
+		}
 	}
 
 	// --------------------------------------------------------------------------------
