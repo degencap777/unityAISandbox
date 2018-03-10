@@ -27,12 +27,12 @@ public class ResponseCurveTest : Test
 		{
 			for (float f = 0.0f; f <= 1.0f + m_step; f += m_step)
 			{
-				Logger.Instance.Log(GetType().ToString(), LogLevel.Info, string.Format("ResponseCurve [{0}] value at {1} = {2}", i, f.ToString("N2"), m_responseCurves[i].GetValue(f)));
-				Logger.Instance.Log(GetType().ToString(), LogLevel.Info, string.Format("ResponseCurve [{0}] normalised value at {1} = {2}", i, f.ToString("N2"), m_responseCurves[i].GetValue(f)));
+				this.LogInfo(string.Format("ResponseCurve [{0}] value at {1} = {2}", i, f.ToString("N2"), m_responseCurves[i].GetValue(f)));
+				this.LogInfo(string.Format("ResponseCurve [{0}] normalised value at {1} = {2}", i, f.ToString("N2"), m_responseCurves[i].GetValue(f)));
 			}
 		}
 	}
-
+	
 	// ------------------------------------------------------------------------------------
 
 	protected override void ResetTests()

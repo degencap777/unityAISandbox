@@ -13,6 +13,7 @@ public class RoomLink : MonoBehaviour
 
 	[SerializeField]
 	private RoomLink m_connectedLink = null;
+	public RoomLink ConnectedLink { get { return m_connectedLink; } }
 
 	// --------------------------------------------------------------------------------
 
@@ -31,6 +32,27 @@ public class RoomLink : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	public void Editor_ReciprocateConnection()
+	{
+		if (m_connectedLink != null)
+		{
+			m_connectedLink.m_connectedLink = this;
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Editor_SeverConnection()
+	{
+		if (m_connectedLink != null)
+		{
+			m_connectedLink.m_connectedLink = null;
+			m_connectedLink = null;
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
 	protected virtual void OnDrawGizmos()
 	{
 		if (m_connectedLink != null)
@@ -42,7 +64,14 @@ public class RoomLink : MonoBehaviour
 			Vector3 distance = transform.position - m_connectedLink.transform.position;
 			Vector3 centre = transform.position - (distance * 0.5f);
 
-			Gizmos.DrawIcon(centre + k_connectionIconOffset, "room_connected.png", true);
+			if (m_connectedLink.m_connectedLink == null)
+			{
+				Gizmos.DrawIcon(centre + k_connectionIconOffset, "room_one_way_connection.png", true);
+			}
+			else 
+			{ 
+				Gizmos.DrawIcon(centre + k_connectionIconOffset, "room_connected.png", true); 
+			}
 		}
 		else
 		{

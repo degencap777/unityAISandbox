@@ -1,4 +1,6 @@
-﻿using UnityEditor;
+﻿
+
+using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(Room))]
@@ -19,7 +21,7 @@ public class RoomEditor : Editor
 			m_room.OnRequestRepaint += Repaint;
 		}
 	}
-	
+
 	// --------------------------------------------------------------------------------
 
 	public void OnDisable()
@@ -56,8 +58,8 @@ public class RoomEditor : Editor
 			EditorGUI.EndDisabledGroup();
 			EditorGUI.indentLevel = cachedIndentLevel;
 		}
-		
+
 		serializedObject.ApplyModifiedProperties();
 	}
-	
+
 }

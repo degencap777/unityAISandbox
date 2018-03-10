@@ -9,12 +9,18 @@ public class RoomManager : SingletonMonoBehaviour<RoomManager>
 
 	[SerializeField, HideInInspector]
 	private List<Room> m_rooms = new List<Room>();
-	
+
+	[SerializeField, HideInInspector]
+	private List<RoomLink> m_roomLinks = new List<RoomLink>();
+
 	// --------------------------------------------------------------------------------
 
 	protected override void OnAwake()
 	{
 		GetComponentsInChildren(m_rooms);
+		GetComponentsInChildren(m_roomLinks);
+
+		ValidateRoomLinks();
 
 		for (int i = 0; i < m_rooms.Count; ++i)
 		{
@@ -25,6 +31,23 @@ public class RoomManager : SingletonMonoBehaviour<RoomManager>
 		}
 	}
 
+	// --------------------------------------------------------------------------------
+
+	private void ValidateRoomLinks()
+	{
+		for (int i = 0; i < m_roomLinks.Count; ++i)
+		{
+			if (m_roomLinks[i].ConnectedLink == null)
+			{
+				this.LogError(string.Format("RoomLink {0} doesn't have a connection", m_roomLinks[i].name));
+			}
+			else if (m_roomLinks[i].ConnectedLink.ConnectedLink != m_roomLinks[i])
+			{
+				this.LogError(string.Format("RoomLinks {0} and {1} invalid", m_roomLinks[i].name, m_roomLinks[i].ConnectedLink.name));
+			}
+		}
+	}
+	
 	// --------------------------------------------------------------------------------
 
 	private void OnAgentEnterRoom(Agent agent, Room room)

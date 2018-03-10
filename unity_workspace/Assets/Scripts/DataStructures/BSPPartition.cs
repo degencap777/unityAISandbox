@@ -29,7 +29,7 @@ public class BSPPartition : IComparable<BSPPartition>
 	{
 		if (agent == null)
 		{
-			Logger.Instance.Log(GetType().ToString(), LogLevel.Error, "Attempting to add a null Agent");
+			this.LogError("Attempting to add a null Agent");
 			return;
 		}
 
