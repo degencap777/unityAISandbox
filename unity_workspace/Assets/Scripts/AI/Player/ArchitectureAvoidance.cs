@@ -1,22 +1,24 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 [ExecuteInEditMode]
 public class ArchitectureAvoidance : MonoBehaviour
 {
 
 	[SerializeField]
-	[Range(0.0f, 90.0f)]
-	private float m_feelerAngle = 35.0f;
-	
-	[SerializeField]
 	[Range(0.0f, 3.0f)]
 	private float m_feelerReach = 0.5f;
 
-	// --------------------------------------------------------------------------------
+	[SerializeField]
+	private List<string> m_includedCollisionLayers = new List<string>();
 
+	// --------------------------------------------------------------------------------
+	
 	private Agent m_agent = null;
 	private AgentController m_agentController = null;
+	private CapsuleCollider m_agentCollider = null;
 
+	private int m_raycastLayerMask = -1;
 	private RaycastHit[] m_feelerResults = new RaycastHit[2];
 
 	// --------------------------------------------------------------------------------
@@ -30,6 +32,8 @@ public class ArchitectureAvoidance : MonoBehaviour
 			currentparent = currentparent.parent;
 		}
 		Debug.Assert(m_agent != null, "Owner Agent is null");
+
+		m_raycastLayerMask = LayerMask.GetMask(m_includedCollisionLayers.ToArray());
 	}
 
 	// --------------------------------------------------------------------------------
@@ -39,32 +43,33 @@ public class ArchitectureAvoidance : MonoBehaviour
 		if (m_agent != null)
 		{
 			m_agentController = m_agent.AgentController;
+			m_agentCollider = m_agent.MainCollider;
 		}
 		Debug.Assert(m_agentController != null, "Owner AgentController is null");
+		Debug.Assert(m_agentCollider != null, "Owner MainCollider is null");
 	}
 
 	// --------------------------------------------------------------------------------
 
 	protected virtual void Update()
 	{
-		if (m_agentController != null)
+		if (m_agentController != null && m_agentCollider != null)
 		{
-			Vector3 reach = (m_agent.Transform.forward * m_feelerReach);
+			Vector3 origin = m_agent.Transform.position;
+			origin.y += m_agentCollider.bounds.size.y * 0.5f;
+			origin.x += m_agentCollider.bounds.size.x * 0.5f;
 
-			Vector3 ray = Quaternion.AngleAxis(m_feelerAngle, Vector3.up) * reach;
-			int hits = Physics.RaycastNonAlloc(m_agent.Transform.position, ray, m_feelerResults, m_feelerReach);
+			int hits = Physics.RaycastNonAlloc(origin, m_agent.Transform.forward, m_feelerResults, m_feelerReach, m_raycastLayerMask);
 			if (hits > 0)
 			{
-				//this.LogInfo(string.Format("felt {0}", m_feelerResults[0].transform.name));
 				RotateAwayFrom(m_feelerResults[0]);
 				return;
 			}
-			
-			ray = Quaternion.AngleAxis(-m_feelerAngle, Vector3.up) * reach;
-			hits = Physics.RaycastNonAlloc(m_agent.Transform.position, ray, m_feelerResults, m_feelerReach);
+
+			origin.x -= m_agentCollider.bounds.size.x;
+			hits = Physics.RaycastNonAlloc(origin, m_agent.Transform.forward, m_feelerResults, m_feelerReach, m_raycastLayerMask);
 			if (hits > 0)
 			{
-				//this.LogInfo(string.Format("felt {0}", m_feelerResults[0].transform.name));
 				RotateAwayFrom(m_feelerResults[0]);
 			}
 		}
@@ -76,9 +81,9 @@ public class ArchitectureAvoidance : MonoBehaviour
 	{
 		if (m_agent != null && m_agentController != null)
 		{
-			Quaternion currentRotation = m_agent.Transform.rotation;
-			float currentAngle = currentRotation.eulerAngles.y;
-			float desiredAngle = currentAngle;
+			//Quaternion currentRotation = m_agent.Transform.rotation;
+			//float currentAngle = currentRotation.eulerAngles.y;
+			//float desiredAngle = currentAngle;
 
 			// #SteveD >>>	rotate agent away from architecture. hitinfo.normal could be useful?
 		}
@@ -95,7 +100,7 @@ public class ArchitectureAvoidance : MonoBehaviour
 
 	protected virtual void OnDrawGizmos()
 	{
-		if (m_agent == null)
+		if (m_agent == null || m_agentCollider == null)
 		{
 			return;
 		}
@@ -103,17 +108,13 @@ public class ArchitectureAvoidance : MonoBehaviour
 		Color cachedColour = Gizmos.color;
 		Gizmos.color = k_feelerColour;
 
-		Vector3 reach = (m_agent.transform.forward * m_feelerReach);
-		Vector3 origin = m_agent.transform.position;
-		origin.y += 1.0f;
+		Vector3 origin = m_agent.Transform.position;
+		origin.y += m_agentCollider.bounds.size.y * 0.5f;
+		origin.x += m_agentCollider.bounds.size.x * 0.5f;
 
-		Vector3 ray = Quaternion.AngleAxis(m_feelerAngle, Vector3.up) * reach;
-		Gizmos.DrawLine(origin, origin + ray);
-		Gizmos.DrawSphere(origin + ray, 0.1f);
-
-		ray = Quaternion.AngleAxis(-m_feelerAngle, Vector3.up) * reach;
-		Gizmos.DrawLine(origin, origin + ray);
-		Gizmos.DrawSphere(origin + ray, 0.1f);
+		Gizmos.DrawLine(origin, origin + m_agent.Transform.forward * m_feelerReach);
+		origin.x -= m_agentCollider.bounds.size.x;
+		Gizmos.DrawLine(origin, origin + m_agent.Transform.forward * m_feelerReach);
 
 		Gizmos.color = cachedColour;
 	}

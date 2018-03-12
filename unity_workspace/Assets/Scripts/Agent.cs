@@ -10,8 +10,8 @@ public class Agent : MonoBehaviour
 	private AgentController m_agentController = null;
 	public AgentController AgentController { get { return m_agentController; } }
 
-	private CapsuleCollider m_collider = null;
-	public CapsuleCollider Collider {  get { return m_collider; } }
+	private CapsuleCollider m_mainCollider = null;
+	public CapsuleCollider MainCollider {  get { return m_mainCollider; } }
 
 	public Vector3 Position { get { return m_transform != null ? m_transform.position : Vector3.zero; } }
 	private Vector3 m_previousPosition = Vector3.zero;
@@ -27,8 +27,8 @@ public class Agent : MonoBehaviour
 		m_agentController = GetComponent<AgentController>();
 		Debug.Assert(m_agentController != null, "[Agent::Awake] GetComponent<AgentController> failed\n");
 
-		m_collider = GetComponentInChildren<CapsuleCollider>();
-		Debug.Assert(m_collider != null, "[Agent::Awake] GetComponent<CapsuleCollider> failed\n");
+		m_mainCollider = GetComponentInChildren<CapsuleCollider>();
+		Debug.Assert(m_mainCollider != null, "[Agent::Awake] GetComponent<CapsuleCollider> failed\n");
 	}
 
 	// --------------------------------------------------------------------------------
