@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 [DisallowMultipleComponent]
 public class AIBrain : MonoBehaviour, IDistributedUpdatable
@@ -8,8 +7,6 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 	private Agent m_owner = null;
 	public Agent Owner { get { return m_owner; } }
 	
-	private List<AIBrainComponent> m_brainComponents = new List<AIBrainComponent>();
-
 	// --------------------------------------------------------------------------------
 
 	protected virtual void Awake()
@@ -21,13 +18,9 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 
 	protected virtual void Start()
 	{
-		for (int i = 0; i < m_brainComponents.Count; ++i)
-		{
-			m_brainComponents[i].OnStart();
-		}
-
-		AIBrainManager brainManager = AIBrainManager.Instance as AIBrainManager;
+		AIBrainManager brainManager = AIBrainManager.Instance;
 		Debug.Assert(brainManager != null, "[AIBrain::Start] AIBrainManager instance is null");
+
 		if (brainManager != null)
 		{
 			brainManager.RegisterAIBrain(this);
@@ -38,10 +31,7 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 
 	public virtual void Update()
 	{
-		for (int i = 0; i < m_brainComponents.Count; ++i)
-		{
-			m_brainComponents[i].OnUpdate();
-		}
+		;
 	}
 
 	// --------------------------------------------------------------------------------

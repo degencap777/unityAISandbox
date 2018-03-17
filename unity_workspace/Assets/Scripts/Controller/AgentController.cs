@@ -2,7 +2,7 @@
 
 [ExecuteInEditMode]
 [RequireComponent(typeof(CharacterController))]
-public class AgentController : MonoBehaviour
+public class AgentController : BaseComponent
 {
 
 	// movement
@@ -55,7 +55,7 @@ public class AgentController : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	protected virtual void Awake()
+	public override void OnAwake()
 	{
 		m_transform = GetComponent<Transform>();
 		Debug.Assert(m_transform != null, "[AgentController::Awake] GetComponent<Transform> failed\n");
@@ -66,7 +66,14 @@ public class AgentController : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public void OnUpdate()
+	public override void OnStart()
+	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public override void OnUpdate()
 	{
 		if (m_characterController != null)
 		{
