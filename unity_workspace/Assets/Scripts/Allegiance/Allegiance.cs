@@ -10,11 +10,12 @@ public class Allegiance : IComparable<Allegiance>
 	public string Name { get { return m_name; } }
 
 	[SerializeField]
-	private Color m_colour = new Color(1.0f, 0.33f, 0.66f, 1.0f);
+	private Color m_colour = new Color(1.0f, 1.0f, 1.0f, 1.0f);
 	public Color Colour { get { return m_colour; } }
 
 	// --------------------------------------------------------------------------------
 
+	[SerializeField, HideInInspector]
 	private int m_id = -1;
 	public int Id { get { return m_id; } }
 

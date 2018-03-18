@@ -5,22 +5,51 @@ using System.Collections.Generic;
 public class AllegianceManager : MonoBehaviour
 {
 
-	private static int m_nextUid = 0;
+	[SerializeField, HideInInspector]
+	private List<Allegiance> m_allegiances = new List<Allegiance>();
+	public List<Allegiance>.Enumerator AllegianceEnumerator { get { return m_allegiances.GetEnumerator(); } }
 
-	public static int GetNextUid()
+	// --------------------------------------------------------------------------------
+
+	protected virtual void Awake()
 	{
-		return m_nextUid++;
+#if UNITY_EDITOR
+		Editor_Awake();
+#endif // UNITY_EDITOR
+	}
+
+	// Editor specific ----------------------------------------------------------------
+	// --------------------------------------------------------------------------------
+
+#if UNITY_EDITOR
+
+	private int m_nextUid = 0;
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual void Editor_Awake()
+	{
+		m_nextUid = 0;
+		for (int i = 0; i < m_allegiances.Count; ++i)
+		{
+			m_nextUid = m_nextUid <= m_allegiances[i].Id ? m_allegiances[i].Id + 1 : m_nextUid;
+		}
 	}
 
 	// --------------------------------------------------------------------------------
 
-	[SerializeField]
-	private List<Allegiance> m_allegiances = new List<Allegiance>();
+	public void Editor_RemoveAllegiance(int id)
+	{
+		m_allegiances.RemoveAll(allegiance => allegiance.Id == id);
+	}
 
 	// --------------------------------------------------------------------------------
 
-	// #SteveD	>>> editor functionality - add allegiance (call Allegiance constructor using GetNextUid())
-	//			>>> custom editor with Add allegiance button at bottom of list, remove allegiance button next to each allegiance
-	//			>>> property drawer for allegiance (one row with background in allegiance colour, name in textbox, change colour button, remove button)
+	public void Editor_CreateAllegiance()
+	{
+		m_allegiances.Add(new Allegiance(m_nextUid++));
+	}
+
+#endif // UNITY_EDITOR
 
 }
