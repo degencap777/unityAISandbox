@@ -39,6 +39,13 @@ public class DamageableComponent : BaseComponent
 
 	// --------------------------------------------------------------------------------
 
+	public override void Destroy()
+	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
 	protected virtual void OnValidate()
 	{
 		if (m_maxHealth <= 0.0f)

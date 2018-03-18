@@ -1,23 +1,23 @@
 ﻿using UnityEngine;
 
-public class CollisionComponent : BaseComponent
+public class AgentBlackboardComponent : BaseComponent
 {
 
-	private Collider m_collider = null;
+	private SharedBlackboard m_sharedBlackboard = null;
 
 	// --------------------------------------------------------------------------------
 
-	public override void OnAwake() 
+	public override void OnAwake()
 	{
-		m_collider = GetComponent<Collider>();
-		Debug.Assert(m_collider != null, "[Collisioncomponent::OnAwake] GetComponent<Collider> failed\n");
+		;
 	}
 
 	// --------------------------------------------------------------------------------
-	
+
 	public override void OnStart()
 	{
-		;
+		m_sharedBlackboard = SharedBlackboard.Instance;
+		Debug.Assert(m_sharedBlackboard != null, "[AgentBlackboardComponent::OnStart] SharedBlackboard is null\n");
 	}
 
 	// --------------------------------------------------------------------------------

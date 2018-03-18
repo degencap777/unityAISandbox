@@ -12,9 +12,7 @@ public class AllegianceManager : SingletonMonoBehaviour<AllegianceManager>
 
 	protected override void OnAwake()
 	{
-#if UNITY_EDITOR
-		Editor_Awake();
-#endif // UNITY_EDITOR
+		;
 	}
 
 	// --------------------------------------------------------------------------------
@@ -37,31 +35,18 @@ public class AllegianceManager : SingletonMonoBehaviour<AllegianceManager>
 
 #if UNITY_EDITOR
 
-	private int m_nextUid = 0;
-	
 	// --------------------------------------------------------------------------------
 
-	protected virtual void Editor_Awake()
+	public void Editor_RemoveAllegiance(string name)
 	{
-		m_nextUid = 0;
-		for (int i = 0; i < m_allegiances.Count; ++i)
-		{
-			m_nextUid = m_nextUid <= m_allegiances[i].Id ? m_allegiances[i].Id + 1 : m_nextUid;
-		}
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public void Editor_RemoveAllegiance(int id)
-	{
-		m_allegiances.RemoveAll(allegiance => allegiance.Id == id);
+		m_allegiances.RemoveAll(allegiance => string.Compare(allegiance.Name, name) == 0);
 	}
 
 	// --------------------------------------------------------------------------------
 
 	public void Editor_CreateAllegiance()
 	{
-		m_allegiances.Add(new Allegiance(m_nextUid++));
+		m_allegiances.Add(new Allegiance());
 	}
 
 #endif // UNITY_EDITOR

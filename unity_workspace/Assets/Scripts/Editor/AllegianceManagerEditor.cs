@@ -8,7 +8,7 @@ public class AllegianceManagerEditor : Editor
 
 	private AllegianceManager m_allegianceManager = null;
 	private SerializedProperty m_allegiances = null;
-	private List<int> m_toRemove = new List<int>();
+	private List<string> m_toRemove = new List<string>();
 
 	// --------------------------------------------------------------------------------
 
@@ -38,7 +38,7 @@ public class AllegianceManagerEditor : Editor
 
 				if (GUILayout.Button("X", GUILayout.MaxWidth(24.0f)))
 				{
-					m_toRemove.Add(m_allegiances.GetArrayElementAtIndex(i).FindPropertyRelative("m_id").intValue);
+					m_toRemove.Add(m_allegiances.GetArrayElementAtIndex(i).FindPropertyRelative("m_name").stringValue);
 				}
 
 				EditorGUILayout.EndHorizontal();

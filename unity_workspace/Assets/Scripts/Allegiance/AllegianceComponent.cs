@@ -48,6 +48,13 @@ public class AllegianceComponent : BaseComponent
 
 	// --------------------------------------------------------------------------------
 
+	public override void Destroy()
+	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
 	private void SetAllegianceColour()
 	{
 		Color colour = m_allegiance != null ? m_allegiance.Colour : Color.grey;

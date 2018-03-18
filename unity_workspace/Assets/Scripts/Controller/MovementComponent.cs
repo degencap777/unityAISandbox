@@ -136,6 +136,13 @@ public class MovementComponent : BaseComponent
 
 	// --------------------------------------------------------------------------------
 
+	public override void Destroy()
+	{
+		;
+	}
+
+	// --------------------------------------------------------------------------------
+
 	public void MoveForward(float value)
 	{
 		float dt = GetScaledDeltaTime();
