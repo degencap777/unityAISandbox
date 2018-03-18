@@ -46,6 +46,8 @@ public class BTreeNode<T> where T : IComparable<T>
 		}
 	}
 
+	public bool IsLeaf { get { return m_left == null && m_right == null; } }
+
 	private Queue<BTreeNode<T>> m_bfsQueue = new Queue<BTreeNode<T>>();
 
 	// --------------------------------------------------------------------------------

@@ -50,14 +50,8 @@ public class AllegianceComponent : BaseComponent
 
 	private void SetAllegianceColour()
 	{
-		if (m_allegiance != null)
-		{
-			m_renderer.material.SetColor(m_shaderColourId, m_allegiance.Colour);
-		}
-		else
-		{
-			m_renderer.material.SetColor(m_shaderColourId, Color.grey);
-		}
+		Color colour = m_allegiance != null ? m_allegiance.Colour : Color.grey;
+		m_renderer.material.SetColor(m_shaderColourId, colour);
 	}
 
 	// --------------------------------------------------------------------------------

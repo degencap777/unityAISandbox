@@ -4,7 +4,7 @@ public abstract class AgentAction : MonoBehaviour
 {
 
 	[SerializeField]
-	protected AgentController m_agentController = null;
+	protected MovementComponent m_agentController = null;
 
 	// --------------------------------------------------------------------------------
 

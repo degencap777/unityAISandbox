@@ -1,8 +1,7 @@
 ﻿using UnityEngine;
 
-[ExecuteInEditMode]
 [RequireComponent(typeof(CharacterController))]
-public class AgentController : BaseComponent
+public class MovementComponent : BaseComponent
 {
 
 	// movement
@@ -58,10 +57,10 @@ public class AgentController : BaseComponent
 	public override void OnAwake()
 	{
 		m_transform = GetComponent<Transform>();
-		Debug.Assert(m_transform != null, "[AgentController::Awake] GetComponent<Transform> failed\n");
+		Debug.Assert(m_transform != null, "[MovementComponent::Awake] GetComponent<Transform> failed\n");
 
 		m_characterController = GetComponent<CharacterController>();
-		Debug.Assert(m_characterController != null, "[AgentController::Awake] GetComponent<CharacterController> failed\n");
+		Debug.Assert(m_characterController != null, "[MovementComponent::Awake] GetComponent<CharacterController> failed\n");
 	}
 
 	// --------------------------------------------------------------------------------

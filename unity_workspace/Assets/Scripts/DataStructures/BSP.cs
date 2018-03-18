@@ -15,7 +15,7 @@ public class BSP : MonoBehaviour
 	[SerializeField, Tooltip("The maximum number of agents that can occupy a partition before triggering division")]
 	private int m_partitionSplitLimit = 8;
 
-	[SerializeField, Tooltip("The maximum number of agents that can occupy a partition before triggering division")]
+	[SerializeField, Tooltip("The minimum number of agents that can occupy a partition before triggering combination")]
 	private int m_partitionCombineLimit = 6;
 
 	[SerializeField]
@@ -309,6 +309,66 @@ public class BSP : MonoBehaviour
 	}
 
 	// --------------------------------------------------------------------------------
+
+	public void GetPartitionsForRadius(Vector3 position, float radius, List<BSPPartition> partitions)
+	{
+		if (partitions == null)
+		{
+			return;
+		}
+		partitions.Clear();
+
+		var partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
+		while (partitionsEnumerator.MoveNext())
+		{
+			var node = partitionsEnumerator.Current;
+			var partition = node.Data;
+
+			if (node.IsLeaf == false)
+			{
+				continue;
+			}
+
+			if (partition.MinBounds.y > position.y || partition.MaxBounds.y < position.y)
+			{
+				continue;
+			}
+			else if (partition.MinBounds.x > position.x + radius || partition.MaxBounds.x < position.x - radius)
+			{
+				continue;
+			}
+			else if (partition.MinBounds.z > position.z + radius || partition.MaxBounds.z < position.z - radius)
+			{
+				continue;
+			}
+
+			else if (partition.MinBounds.x <= position.x + radius && partition.MaxBounds.x >= position.x - radius &&
+				partition.MinBounds.z <= position.z + radius || partition.MaxBounds.z >= position.z - radius)
+			{
+				partitions.Add(partition);
+			}
+			else
+			{
+				Vector3 closestCorner = Vector3.zero;
+				float toMinBoundsX = Mathf.Abs(position.x - partition.MinBounds.x);
+				float toMaxBoundsX = Mathf.Abs(position.x - partition.MaxBounds.x);
+				float toMinBoundsZ = Mathf.Abs(position.z - partition.MinBounds.z);
+				float toMaxBoundsZ = Mathf.Abs(position.z - partition.MaxBounds.z);
+
+				closestCorner.x = toMinBoundsX < toMaxBoundsX ? partition.MinBounds.x : partition.MaxBounds.x;
+				closestCorner.z = toMinBoundsZ < toMaxBoundsZ ? partition.MinBounds.z : partition.MaxBounds.z;
+				closestCorner.y = position.y;
+
+				if ((position - closestCorner).sqrMagnitude <= radius * radius)
+				{
+					partitions.Add(partition);
+				}
+			}
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+	// Editor specific ----------------------------------------------------------------
 
 #if UNITY_EDITOR
 
