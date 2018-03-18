@@ -19,7 +19,7 @@ public class AIBrain : MonoBehaviour, IDistributedUpdatable
 	protected virtual void Start()
 	{
 		AIBrainManager brainManager = AIBrainManager.Instance;
-		Debug.Assert(brainManager != null, "[AIBrain::Start] AIBrainManager instance is null");
+		Debug.Assert(brainManager != null, "[AIBrain::Start] AIBrainManager instance is null\n");
 
 		if (brainManager != null)
 		{

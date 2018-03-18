@@ -194,7 +194,7 @@ public class BSP : MonoBehaviour
 
 		node.Insert(new BTreeNode<BSPPartition>(new BSPPartition(node.Data.MinBounds, leftMaxBounds), node));
 		node.Insert(new BTreeNode<BSPPartition>(new BSPPartition(rightMinBounds, node.Data.MaxBounds), node));
-		Debug.Assert(node.Left != null && node.Right != null, "[BSP::SubdivideNode] failed to divide node into 2 children");
+		Debug.Assert(node.Left != null && node.Right != null, "[BSP::SubdivideNode] failed to divide node into 2 children\n");
 
 		this.LogInfo("Subdivided partition");
 	}
@@ -203,7 +203,7 @@ public class BSP : MonoBehaviour
 
 	private void CombineChildren(BTreeNode<BSPPartition> parent)
 	{
-		Debug.Assert(parent != null, "[BSP::CombineNodes] parent is null");
+		Debug.Assert(parent != null, "[BSP::CombineNodes] parent is null\n");
 		if (parent == null)
 		{
 			return;
@@ -212,8 +212,8 @@ public class BSP : MonoBehaviour
 		var left = parent.Left;
 		var right = parent.Right;
 
-		Debug.Assert(left != null, "[BSP::CombineNodes] left is null");
-		Debug.Assert(right != null, "[BSP::CombineNodes] right is null");
+		Debug.Assert(left != null, "[BSP::CombineNodes] left is null\n");
+		Debug.Assert(right != null, "[BSP::CombineNodes] right is null\n");
 		if (left == null || right == null)
 		{
 			return;

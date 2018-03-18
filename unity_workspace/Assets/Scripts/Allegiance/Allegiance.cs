@@ -5,8 +5,13 @@ using UnityEngine;
 public class Allegiance : IComparable<Allegiance>
 {
 
+	public static readonly int k_noAllegianceId = -1;
+	public static readonly string k_noAllegianceName = "NOT SET";
+
+	// --------------------------------------------------------------------------------
+
 	[SerializeField]
-	private string m_name = string.Empty;
+	private string m_name = k_noAllegianceName;
 	public string Name { get { return m_name; } }
 
 	[SerializeField]
@@ -16,7 +21,7 @@ public class Allegiance : IComparable<Allegiance>
 	// --------------------------------------------------------------------------------
 
 	[SerializeField, HideInInspector]
-	private int m_id = -1;
+	private int m_id = k_noAllegianceId;
 	public int Id { get { return m_id; } }
 
 	// --------------------------------------------------------------------------------

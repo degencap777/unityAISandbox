@@ -25,7 +25,7 @@ public class Room : MonoBehaviour
 	protected virtual void Awake()
 	{
 		GetComponents(m_colliders);
-		Debug.Assert(m_colliders.Count > 0, "[Room] has no colliders");
+		Debug.Assert(m_colliders.Count > 0, "[Room] has no colliders\n");
 
 		GetComponentsInChildren(m_links);
 		for (int i = 0; i < m_links.Count; ++i)
