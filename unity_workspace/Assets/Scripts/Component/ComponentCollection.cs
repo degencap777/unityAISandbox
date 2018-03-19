@@ -14,7 +14,7 @@ public class ComponentCollection : MonoBehaviour
 		var components = GetComponentsInChildren<BaseComponent>();
 		for (int i = 0; i < components.Length; ++i)
 		{
-			if (HasComponent(components[i].GetType()))
+			if (HasComponentOfType(components[i].GetType()))
 			{
 				this.LogError(string.Format("Attempting to add multiple components of the same type: {0}", components[i].GetType().ToString()));
 			}
@@ -44,16 +44,21 @@ public class ComponentCollection : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public bool HasComponent(Type componentType)
+	public bool HasComponentOfType(Type type)
 	{
-		return m_components.ContainsKey(componentType);
+		return m_components.ContainsKey(type);
 	}
 
 	// --------------------------------------------------------------------------------
 	
-	public bool GetComponent<T>(out BaseComponent component)
+	public T GetComponentOfType<T>() where T : BaseComponent
 	{
-		return m_components.TryGetValue(typeof(T), out component);
+		BaseComponent baseComponent = null;
+		if (m_components.TryGetValue(typeof(T), out baseComponent) && baseComponent != null)
+		{
+			return baseComponent as T;
+		}
+		return null;
 	}
 
 	// --------------------------------------------------------------------------------
