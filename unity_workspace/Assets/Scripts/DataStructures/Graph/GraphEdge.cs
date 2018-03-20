@@ -1,0 +1,36 @@
+﻿
+
+public abstract class GraphEdge<T>
+{
+
+	protected GraphNode<T>[] m_nodes = new GraphNode<T>[] { null, null };
+	public GraphNode<T> Node1 { get { return m_nodes[0]; } }
+	public GraphNode<T> Node2 { get { return m_nodes[1]; } }
+
+	// --------------------------------------------------------------------------------
+
+	private float m_cost = 0.0f;
+	public float Cost { get { return m_cost; } }
+
+	// --------------------------------------------------------------------------------
+
+	public GraphEdge(GraphNode<T> node1, GraphNode<T> node2)
+	{
+		m_nodes[0] = node1;
+		m_nodes[1] = node2;
+		RecalculateCost();
+	}
+
+	// --------------------------------------------------------------------------------
+
+	protected abstract float CalculateCost();
+
+	// --------------------------------------------------------------------------------
+
+	public float RecalculateCost()
+	{
+		m_cost = CalculateCost();
+		return m_cost;
+	}
+
+}

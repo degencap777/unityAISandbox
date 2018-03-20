@@ -23,7 +23,7 @@ public class BSP : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	private BTree<BSPPartition> m_bsp = new BTree<BSPPartition>();
+	private BTree<BSPPartition> m_bspTree = new BTree<BSPPartition>();
 
 	// worker lists
 	private List<BTreeNode<BSPPartition>> m_subdivideChecks = new List<BTreeNode<BSPPartition>>();
@@ -55,7 +55,7 @@ public class BSP : MonoBehaviour
 	{
 		ValidateSplitLimits();
 
-		m_bsp.Insert(new BSPPartition(m_minBounds, m_maxBounds));
+		m_bspTree.Insert(new BSPPartition(m_minBounds, m_maxBounds));
 
 		var agents = FindObjectsOfType<Agent>();
 		for (int i = 0; i < agents.Length; ++i)
@@ -76,7 +76,7 @@ public class BSP : MonoBehaviour
 	
 	private void UpdateMigration()
 	{
-		var partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
+		var partitionsEnumerator = m_bspTree.Enumerator(TreeTraversal.BreadthFirst);
 		while (partitionsEnumerator.MoveNext())
 		{
 			// construct list of agents that will migrate from each partition
@@ -103,7 +103,7 @@ public class BSP : MonoBehaviour
 	
 	private void TryMergePartitions()
 	{
-		var partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
+		var partitionsEnumerator = m_bspTree.Enumerator(TreeTraversal.BreadthFirst);
 		while (partitionsEnumerator.MoveNext())
 		{
 			var left = partitionsEnumerator.Current.Left;
@@ -276,7 +276,7 @@ public class BSP : MonoBehaviour
 
 	private BTreeNode<BSPPartition> FindNodeForPosition(Vector3 position)
 	{
-		var current = m_bsp.Root;
+		var current = m_bspTree.Root;
 		while (current != null)
 		{
 			if (current.Left == null && current.Right == null)
@@ -318,7 +318,7 @@ public class BSP : MonoBehaviour
 		}
 		partitions.Clear();
 
-		var partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
+		var partitionsEnumerator = m_bspTree.Enumerator(TreeTraversal.BreadthFirst);
 		while (partitionsEnumerator.MoveNext())
 		{
 			var node = partitionsEnumerator.Current;
@@ -380,7 +380,7 @@ public class BSP : MonoBehaviour
 		BSPPartition highlightedPartition = null;
 
 		// draw all partitions
-		var partitionsEnumerator = m_bsp.Enumerator(TreeTraversal.BreadthFirst);
+		var partitionsEnumerator = m_bspTree.Enumerator(TreeTraversal.BreadthFirst);
 		while (partitionsEnumerator.MoveNext())
 		{
 			var current = partitionsEnumerator.Current;
