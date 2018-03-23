@@ -4,7 +4,7 @@ using UnityEngine;
 public class Logger : SingletonMonoBehaviour<Logger>
 {
 
-	private static readonly string k_logFormat = "<color=#{0:X2}{1:X2}{2:X2}>{3:0.00}</color> <color=#{4:X2}{5:X2}{6:X2}>[{7}] {8}</color>\n";
+	private static readonly string k_logFormat = "<b><color=#{0:X2}{1:X2}{2:X2}>{3:0.00}</color></b> <color=#{4:X2}{5:X2}{6:X2}>[{7}] {8}</color>\n";
 
 	// --------------------------------------------------------------------------------
 

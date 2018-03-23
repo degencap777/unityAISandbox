@@ -2,12 +2,9 @@
 
 public class DamageableComponent : BaseComponent
 {
-	
-	[SerializeField]
-	private float m_maxHealth = 100.0f;
 
 	[SerializeField]
-	private Scalar m_damageScalar = null;
+	private DamageableSettings m_settings = null;
 
 	// --------------------------------------------------------------------------------
 
@@ -20,7 +17,12 @@ public class DamageableComponent : BaseComponent
 
 	public override void OnAwake()
 	{
-		m_currentHealth = m_maxHealth;
+		if (m_settings == null)
+		{
+			m_settings = ScriptableObject.CreateInstance<DamageableSettings>();
+		}
+
+		m_currentHealth = m_settings.MaxHealth;
 	}
 
 	// --------------------------------------------------------------------------------
@@ -48,14 +50,9 @@ public class DamageableComponent : BaseComponent
 
 	protected virtual void OnValidate()
 	{
-		if (m_maxHealth <= 0.0f)
+		if (m_currentHealth > m_settings.MaxHealth)
 		{
-			m_maxHealth = 1.0f;
-		}
-
-		if (m_currentHealth > m_maxHealth)
-		{
-			m_currentHealth = m_maxHealth;
+			m_currentHealth = m_settings.MaxHealth;
 		}
 	}
 
@@ -65,7 +62,7 @@ public class DamageableComponent : BaseComponent
 	{
 		if (damage > 0.0f)
 		{
-			AlterHealth(-(m_damageScalar != null ? m_damageScalar.ScaleValue(damage) : damage));
+			AlterHealth(m_settings.DamageScalar * damage);
 		}
 	}
 
@@ -84,12 +81,22 @@ public class DamageableComponent : BaseComponent
 	private void AlterHealth(float amount)
 	{
 		float previousHealth = m_currentHealth;
-		m_currentHealth = Mathf.Clamp(m_currentHealth + amount, 0.0f, m_maxHealth);
+		m_currentHealth = Mathf.Clamp(m_currentHealth + amount, 0.0f, m_settings.MaxHealth);
 
 		if (previousHealth != m_currentHealth && OnHealthChanged != null)
 		{
 			OnHealthChanged(m_currentHealth);
 		}
 	}
+
+	// Editor specific ----------------------------------------------------------------
+	// --------------------------------------------------------------------------------
+
+#if UNITY_EDITOR
+
+	public DamageableSettings Editor_Settings { get { return m_settings; } }
+	
+#endif // UNITY_EDITOR
+
 
 }

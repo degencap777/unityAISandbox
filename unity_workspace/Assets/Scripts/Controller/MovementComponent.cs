@@ -4,36 +4,17 @@
 public class MovementComponent : BaseComponent
 {
 
-	// movement
 	[SerializeField]
-	private float m_moveForwardSpeed = 8.5f;
-	[SerializeField]
-	private float m_moveBackwardSpeed = 7.0f;
-	[SerializeField]
-	private float m_moveSidewaysSpeed = 7.0f;
+	private MovementSettings m_settings = null;
+
 	private Vector3 m_movementStep = Vector3.zero;
 	private Vector3 m_lastMovementStep = Vector3.zero;
 	private Vector3 m_appliedMovementStep = Vector3.zero;
+	private float m_movementAcceleration = 0.0f;
 
-	// rotation
-	[SerializeField]
-	private float m_rotationSpeed = 360.0f;
 	private float m_rotationStep = 0.0f;
 	private float m_lastRotationStep = 0.0f;
 	private float m_appliedRotationStep = 0.0f;
-
-	// movement acceleration, deceleration
-	[SerializeField]
-	private float m_movementAccelerationFactor = 3.0f;
-	[SerializeField]
-	private float m_movementDecelerationFactor = 3.0f;
-	private float m_movementAcceleration = 0.0f;
-
-	// rotation acceleration, deceleration
-	[SerializeField]
-	private float m_rotationAccelerationFactor = 100.0f;
-	[SerializeField]
-	private float m_rotationDecelerationFactor = 100.0f;
 	private float m_rotationAcceleration = 0.0f;
 	
 	// --------------------------------------------------------------------------------
@@ -56,6 +37,11 @@ public class MovementComponent : BaseComponent
 
 	public override void OnAwake()
 	{
+		if (m_settings == null)
+		{
+			m_settings = ScriptableObject.CreateInstance<MovementSettings>();
+		}
+
 		m_transform = GetComponent<Transform>();
 		Debug.Assert(m_transform != null, "[MovementComponent::Awake] GetComponent<Transform> failed\n");
 
@@ -83,7 +69,7 @@ public class MovementComponent : BaseComponent
 			{
 				if (m_movementAcceleration < 1.0f)
 				{
-					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration + dt * m_movementAccelerationFactor, 0.0f, 1.0f);
+					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration + dt * m_settings.MovementAccelerationFactor, 0.0f, 1.0f);
 				}
 				m_appliedMovementStep = m_movementStep * m_movementAcceleration;
 				m_lastMovementStep = m_movementStep;
@@ -93,7 +79,7 @@ public class MovementComponent : BaseComponent
 			{
 				if (m_movementAcceleration > 0.0f)
 				{
-					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration - dt * m_movementDecelerationFactor, 0.0f, 1.0f);
+					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration - dt * m_settings.MovementDecelerationFactor, 0.0f, 1.0f);
 					m_appliedMovementStep = m_lastMovementStep * m_movementAcceleration;
 				}
 			}
@@ -110,7 +96,7 @@ public class MovementComponent : BaseComponent
 			{
 				if (m_rotationAcceleration < 1.0f)
 				{
-					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration + dt * m_rotationAccelerationFactor, 0.0f, 1.0f);
+					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration + dt * m_settings.RotationAccelerationFactor, 0.0f, 1.0f);
 				}
 				m_appliedRotationStep = m_rotationStep * m_rotationAcceleration;
 				m_lastRotationStep = m_rotationStep;
@@ -120,7 +106,7 @@ public class MovementComponent : BaseComponent
 			{
 				if (m_rotationAcceleration > 0.0f)
 				{
-					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration - dt * m_rotationDecelerationFactor, 0.0f, 1.0f);
+					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration - dt * m_settings.RotationDecelerationFactor, 0.0f, 1.0f);
 					m_appliedRotationStep = m_lastRotationStep * m_rotationAcceleration;
 				}
 			}
@@ -148,11 +134,11 @@ public class MovementComponent : BaseComponent
 		float dt = GetScaledDeltaTime();
 		if (value > 0.0f)
 		{
-			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_moveForwardSpeed * dt;
+			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_settings.MoveForwardSpeed * dt;
 		}
 		else
 		{
-			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_moveBackwardSpeed * dt;
+			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_settings.MoveBackwardSpeed * dt;
 		}
 	}
 
@@ -160,14 +146,14 @@ public class MovementComponent : BaseComponent
 
 	public void MoveSideways(float value)
 	{
-		m_movementStep += m_transform.right * Mathf.Clamp(value, -1.0f, 1.0f) * m_moveSidewaysSpeed * GetScaledDeltaTime();
+		m_movementStep += m_transform.right * Mathf.Clamp(value, -1.0f, 1.0f) * m_settings.MoveSidewaysSpeed * GetScaledDeltaTime();
 	}
 
 	// --------------------------------------------------------------------------------
 
 	public void Rotate(float value)
 	{
-		m_rotationStep += Mathf.Clamp(value, -1.0f, 1.0f) * m_rotationSpeed * GetScaledDeltaTime();
+		m_rotationStep += Mathf.Clamp(value, -1.0f, 1.0f) * m_settings.RotationSpeed * GetScaledDeltaTime();
 	}
 
 	// --------------------------------------------------------------------------------
@@ -181,6 +167,10 @@ public class MovementComponent : BaseComponent
 	// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
+
+	public MovementSettings Editor_Settings { get { return m_settings; } }
+
+	// --------------------------------------------------------------------------------
 
 	protected virtual void OnDrawGizmos()
 	{
