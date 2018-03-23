@@ -2,6 +2,11 @@
 
 public class AgentBlackboardComponent : BaseComponent
 {
+	
+	[SerializeField]
+	private AgentBlackboardSettings m_settings = null;
+
+	// --------------------------------------------------------------------------------
 
 	private SharedBlackboard m_sharedBlackboard = null;
 	public SharedBlackboard SharedBlackboard { get { return m_sharedBlackboard; } }
@@ -13,7 +18,10 @@ public class AgentBlackboardComponent : BaseComponent
 
 	public override void OnAwake()
 	{
-		;
+		if (m_settings == null)
+		{
+			m_settings = ScriptableObject.CreateInstance<AgentBlackboardSettings>();
+		}
 	}
 
 	// --------------------------------------------------------------------------------
@@ -40,5 +48,14 @@ public class AgentBlackboardComponent : BaseComponent
 	{
 		;
 	}
+
+	// Editor specific ----------------------------------------------------------------
+	// --------------------------------------------------------------------------------
+
+#if UNITY_EDITOR
+
+	public AgentBlackboardSettings Editor_Settings { get { return m_settings; } }
+
+#endif // UNITY_EDITOR
 
 }

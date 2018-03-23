@@ -6,9 +6,12 @@ public class AllegianceComponent : BaseComponent
 	private static readonly string k_shaderColourProperty = "_Color";
 
 	// --------------------------------------------------------------------------------
-
+	
 	[SerializeField]
-	private string m_allegianceName = Allegiance.k_noAllegianceName;
+	private AllegianceSettings m_settings = null;
+
+	// --------------------------------------------------------------------------------
+	
 	private Allegiance m_allegiance = null;
 
 	// --------------------------------------------------------------------------------
@@ -20,6 +23,11 @@ public class AllegianceComponent : BaseComponent
 
 	public override void OnAwake()
 	{
+		if (m_settings == null)
+		{
+			m_settings = ScriptableObject.CreateInstance<AllegianceSettings>();
+		}
+
 		m_renderer = GetComponentInChildren<MeshRenderer>();
 		Debug.Assert(m_renderer != null, "AllegianceComponent::GetComponentInChildren<MeshRenderer> failed\n");
 
@@ -33,7 +41,7 @@ public class AllegianceComponent : BaseComponent
 		AllegianceManager allegianceManager = AllegianceManager.Instance;
 		if (allegianceManager != null)
 		{
-			m_allegiance = allegianceManager.GetAllegiance(m_allegianceName);
+			m_allegiance = allegianceManager.GetAllegiance(m_settings.AllegianceName);
 		}
 
 		SetAllegianceColour();
@@ -68,5 +76,14 @@ public class AllegianceComponent : BaseComponent
 		m_allegiance = allegiance;
 		SetAllegianceColour();
 	}
-	
+
+	// Editor specific ----------------------------------------------------------------
+	// --------------------------------------------------------------------------------
+
+#if UNITY_EDITOR
+
+	public AllegianceSettings Editor_Settings { get { return m_settings; } }
+
+#endif // UNITY_EDITOR
+
 }
