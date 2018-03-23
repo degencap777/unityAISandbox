@@ -5,10 +5,6 @@ using UnityEngine;
 public class LogPermissionsPropertyDrawer : PropertyDrawer
 {
 
-	private static readonly int k_lineCount = 2;
-
-	// --------------------------------------------------------------------------------
-
 	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 	{
 		EditorGUI.BeginProperty(position, label, property);
@@ -16,7 +12,7 @@ public class LogPermissionsPropertyDrawer : PropertyDrawer
 		
 		var x = position.x;
 		var y = position.y;
-		var h = position.height / k_lineCount;
+		var h = position.height;
 		var w = position.width;
 
 		SerializedProperty tagProperty = property.FindPropertyRelative("m_tag");
@@ -28,23 +24,16 @@ public class LogPermissionsPropertyDrawer : PropertyDrawer
 		EditorGUI.indentLevel = 0;
 
 		float labelWidth = EditorGUIUtility.labelWidth;
-		EditorGUIUtility.labelWidth = 32.0f;
+		EditorGUIUtility.labelWidth = 16.0f;
 
-		tagProperty.stringValue = EditorGUI.TextField(new Rect(x, y, w, h), tagProperty.stringValue);
-		infoProperty.boolValue = EditorGUI.Toggle(new Rect(x, y + h, w * 0.33f, h), "Info", infoProperty.boolValue);
-		warningProperty.boolValue = EditorGUI.Toggle(new Rect(x + w * 0.33f, y + h, w * 0.33f, h), "Warn", warningProperty.boolValue);
-		errorProperty.boolValue = EditorGUI.Toggle(new Rect(x + w * 0.66f, y + h, w * 0.34f, h), "Error", errorProperty.boolValue);
+		tagProperty.stringValue = EditorGUI.TextField(new Rect(x, y, w * 0.5f, h), tagProperty.stringValue);
+		infoProperty.boolValue = EditorGUI.Toggle(new Rect(x + w * 0.55f, y, w * 0.15f, h), "I", infoProperty.boolValue);
+		warningProperty.boolValue = EditorGUI.Toggle(new Rect(x + w * 0.7f, y, w * 0.15f, h), "W", warningProperty.boolValue);
+		errorProperty.boolValue = EditorGUI.Toggle(new Rect(x + w * 0.85f, y, w * 0.15f, h), "E", errorProperty.boolValue);
 
 		EditorGUIUtility.labelWidth = labelWidth;
 		EditorGUI.indentLevel = cachedIndentLevel;
 		EditorGUI.EndProperty();
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-	{
-		return (EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing) * k_lineCount;
 	}
 
 }

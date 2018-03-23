@@ -37,11 +37,11 @@ public class RoomManager : SingletonMonoBehaviour<RoomManager>
 		{
 			if (m_roomLinks[i].ConnectedLink == null)
 			{
-				this.LogError(string.Format("RoomLink {0} doesn't have a connection", m_roomLinks[i].name));
+				Logger.Instance.Error(this, string.Format("RoomLink {0} doesn't have a connection", m_roomLinks[i].name));
 			}
 			else if (m_roomLinks[i].ConnectedLink.ConnectedLink != m_roomLinks[i])
 			{
-				this.LogError(string.Format("RoomLinks {0} and {1} invalid", m_roomLinks[i].name, m_roomLinks[i].ConnectedLink.name));
+				Logger.Instance.Error(this, string.Format("RoomLinks {0} and {1} invalid", m_roomLinks[i].name, m_roomLinks[i].ConnectedLink.name));
 			}
 		}
 	}

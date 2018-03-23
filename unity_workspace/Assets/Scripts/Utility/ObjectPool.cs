@@ -37,7 +37,7 @@ public class ObjectPool<T> where T : IPooledObject
 		{
 			m_pool.Add(Activator.CreateInstance<T>());
 		}
-		this.LogInfo(string.Format("{0} increased in size by {1}", ToString(), objectCount));
+		Logger.Instance.Info(this, string.Format("{0} increased in size by {1}", ToString(), objectCount));
 	}
 
 	// --------------------------------------------------------------------------------
@@ -57,7 +57,7 @@ public class ObjectPool<T> where T : IPooledObject
 			return obj;
 		}
 
-		this.LogError("Empty pool, unable to allocate an object");
+		Logger.Instance.Error(this, "Empty pool, unable to allocate an object");
 		return default(T);
 	}
 
