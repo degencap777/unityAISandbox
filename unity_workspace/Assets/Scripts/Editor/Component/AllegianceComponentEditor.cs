@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using UnityEngine;
+using UnityEditor;
 
 [CustomEditor(typeof(AllegianceComponent))]
 [CanEditMultipleObjects]
@@ -10,7 +11,10 @@ public class AllegianceComponentEditor : ComponentEditor
 		AllegianceComponent allegianceComponent = m_component as AllegianceComponent;
 		if (allegianceComponent != null && allegianceComponent.Editor_Settings != null)
 		{
-			EditorGUILayout.TextField("Allegiance name", allegianceComponent.Editor_Settings.AllegianceName);
+			GUILayout.BeginHorizontal();
+			EditorGUILayout.TextField(allegianceComponent.Editor_Settings.Allegiance.Name);
+			EditorGUILayout.ColorField(allegianceComponent.Editor_Settings.Allegiance.Colour);
+			GUILayout.EndHorizontal();
 		}
 	}
 

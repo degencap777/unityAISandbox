@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using UnityEngine;
 
 public interface IPooledObject
 {
@@ -37,7 +38,7 @@ public class ObjectPool<T> where T : IPooledObject
 		{
 			m_pool.Add(Activator.CreateInstance<T>());
 		}
-		Logger.Instance.Info(this, string.Format("{0} increased in size by {1}", ToString(), objectCount));
+		Debug.LogFormat("[ObjectPool] {0} increased in size by {1}", ToString(), objectCount);
 	}
 
 	// --------------------------------------------------------------------------------
@@ -57,7 +58,7 @@ public class ObjectPool<T> where T : IPooledObject
 			return obj;
 		}
 
-		Logger.Instance.Error(this, "Empty pool, unable to allocate an object");
+		Debug.Log("[ObjectPool] Empty pool, unable to allocate an object");
 		return default(T);
 	}
 

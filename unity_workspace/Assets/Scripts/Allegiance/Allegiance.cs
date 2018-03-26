@@ -1,27 +1,22 @@
-﻿using System;
-using UnityEngine;
+﻿using UnityEngine;
 
-[Serializable]
-public class Allegiance : IComparable<Allegiance>
+[CreateAssetMenu(fileName = "Allegiance", menuName = "Allegiance", order = 1)]
+public class Allegiance : ScriptableObject
 {
 
-	public static readonly string k_noAllegianceName = "NOT SET";
-
-	// --------------------------------------------------------------------------------
-
 	[SerializeField]
-	private string m_name = k_noAllegianceName;
+	private string m_name = string.Empty;
 	public string Name { get { return m_name; } }
 
 	[SerializeField]
-	private Color m_colour = new Color(1.0f, 1.0f, 1.0f, 1.0f);
+	private Color m_colour = Color.white;
 	public Color Colour { get { return m_colour; } }
-	
+
 	// --------------------------------------------------------------------------------
 
-	public int CompareTo(Allegiance other)
+	public Allegiance()
 	{
-		return Mathf.Clamp(string.Compare(m_name, other.Name), -1, 1);
+		;
 	}
 
 }

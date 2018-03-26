@@ -196,7 +196,7 @@ public class BSP : MonoBehaviour
 		node.Insert(new BTreeNode<BSPPartition>(new BSPPartition(rightMinBounds, node.Data.MaxBounds), node));
 		Debug.Assert(node.Left != null && node.Right != null, "[BSP::SubdivideNode] failed to divide node into 2 children\n");
 
-		Logger.Instance.Info(this, "Subdivided partition");
+		Debug.Log("[BSP] Subdivided partition");
 	}
 
 	// --------------------------------------------------------------------------------
@@ -232,7 +232,7 @@ public class BSP : MonoBehaviour
 			parent.Data.AddAgent(agentsEnumerator.Current);
 		}
 		right.Data.ClearAgents();
-		Logger.Instance.Info(this, "Combined partitions");
+		Debug.Log("[BSP] Combined partitions");
 
 		parent.Clear();
 	}
@@ -256,7 +256,7 @@ public class BSP : MonoBehaviour
 		}
 		else
 		{
-			Logger.Instance.Error(this, "Subdivide partition failed; agent cannot be inserted into either subdivision");
+			Debug.LogError("[BSP] Subdivide partition failed; agent cannot be inserted into either subdivision");
 		}
 	}
 
@@ -285,7 +285,7 @@ public class BSP : MonoBehaviour
 			}
 			else if (current.Left == null || current.Right == null)
 			{
-				Logger.Instance.Error(this, "Invalid BSP tree; nodes should have either 0 or 2 children, found a node with 1 child");
+				Debug.LogError("[BSP] Invalid BSP tree; nodes should have either 0 or 2 children, found a node with 1 child");
 				return null;
 			}
 			else
@@ -300,7 +300,7 @@ public class BSP : MonoBehaviour
 				}
 				else
 				{
-					Logger.Instance.Error(this, string.Format("No child nodes contain the agent position({0})", position.ToString()));
+					Debug.LogErrorFormat("[BSP] No child nodes contain the agent position({0})", position.ToString());
 					return null;
 				}
 			}

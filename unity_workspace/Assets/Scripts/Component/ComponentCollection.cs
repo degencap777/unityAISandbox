@@ -16,7 +16,7 @@ public class ComponentCollection : MonoBehaviour
 		{
 			if (HasComponentOfType(components[i].GetType()))
 			{
-				Logger.Instance.Error(this, string.Format("Attempting to add multiple components of the same type: {0}", components[i].GetType().ToString()));
+				Debug.LogErrorFormat("[ComponentCollection] Attempting to add multiple components of the same type: {0}", components[i].GetType().ToString());
 			}
 			else
 			{

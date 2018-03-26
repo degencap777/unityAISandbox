@@ -5,7 +5,7 @@ public class AllegianceSettings : ScriptableObject
 {
 
 	[SerializeField]
-	private string m_allegianceName = Allegiance.k_noAllegianceName;
-	public string AllegianceName { get { return m_allegianceName; } }
+	private Allegiance m_allegiance = null;
+	public Allegiance Allegiance { get { return m_allegiance; } }
 
 }

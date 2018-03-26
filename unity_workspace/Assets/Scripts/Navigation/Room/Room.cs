@@ -47,7 +47,7 @@ public class Room : MonoBehaviour
 				OnAgentEnter(agent, this);
 			}
 
-			Logger.Instance.Info(this, string.Format("Agent [{0}] entered room [{1}]", agent.name, name));
+			Debug.LogFormat("[Room] Agent [{0}] entered room [{1}]", agent.name, name);
 
 #if UNITY_EDITOR
 			if (OnRequestRepaint != null)
@@ -69,7 +69,7 @@ public class Room : MonoBehaviour
 			{
 				if (m_colliders[i].bounds.Contains(agent.Transform.position))
 				{
-					Logger.Instance.Info(this, string.Format("Agent [{0}] exit room [{1}] failed as we're still within one of it's colliders", agent.name, name));
+					Debug.LogFormat("[Room] Agent [{0}] exit room [{1}] failed as we're still within one of it's colliders", agent.name, name);
 					return;
 				}
 			}
@@ -80,7 +80,7 @@ public class Room : MonoBehaviour
 				OnAgentExit(agent, this);
 			}
 
-			Logger.Instance.Info(this, string.Format("Agent [{0}] exited room [{1}]", agent.name, name));
+			Debug.LogFormat("[Room] Agent [{0}] exited room [{1}]", agent.name, name);
 
 #if UNITY_EDITOR
 			if (OnRequestRepaint != null)
