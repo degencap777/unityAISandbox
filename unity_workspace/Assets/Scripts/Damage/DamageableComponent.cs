@@ -48,16 +48,6 @@ public class DamageableComponent : BaseComponent
 
 	// --------------------------------------------------------------------------------
 
-	protected virtual void OnValidate()
-	{
-		if (m_currentHealth > m_config.MaxHealth)
-		{
-			m_currentHealth = m_config.MaxHealth;
-		}
-	}
-
-	// --------------------------------------------------------------------------------
-
 	public void Damage(float damage)
 	{
 		if (damage > 0.0f)
@@ -95,7 +85,22 @@ public class DamageableComponent : BaseComponent
 #if UNITY_EDITOR
 
 	public DamageableConfig Editor_Config { get { return m_config; } }
-	
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual void OnValidate()
+	{
+		if (m_config == null)
+		{
+			m_config = ScriptableObject.CreateInstance<DamageableConfig>();
+		}
+
+		if (m_currentHealth > m_config.MaxHealth)
+		{
+			m_currentHealth = m_config.MaxHealth;
+		}
+	}
+
 #endif // UNITY_EDITOR
 
 
