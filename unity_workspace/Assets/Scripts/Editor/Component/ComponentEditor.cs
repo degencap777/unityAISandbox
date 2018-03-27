@@ -24,12 +24,12 @@ public abstract class ComponentEditor : Editor
 		{
 			EditorGUILayout.Space();
 
-			foldout = EditorGUILayout.Foldout(foldout, "Settings");
+			foldout = EditorGUILayout.Foldout(foldout, "Config");
 			if (foldout)
 			{
 				EditorGUI.indentLevel += 1;
 				EditorGUI.BeginDisabledGroup(true);
-				DrawSettings();
+				DrawConfig();
 				EditorGUI.EndDisabledGroup();
 				EditorGUI.indentLevel -= 1;
 			}
@@ -40,6 +40,6 @@ public abstract class ComponentEditor : Editor
 
 	// --------------------------------------------------------------------------------
 
-	protected abstract void DrawSettings();
+	protected abstract void DrawConfig();
 
 }

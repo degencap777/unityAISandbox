@@ -27,11 +27,21 @@ public class NavMesh : MonoBehaviour
 
 		protected override float CalculateCost()
 		{
-			return (m_nodes[0].Data - m_nodes[1].Data).sqrMagnitude;
+			// #SteveD	>>> squared distance tends towards greed bfs, not true A*
+			// #SteveD	>>> distance will result in true best path, but will result in a lot of sqrt calls
+			return (m_nodes[0].Data - m_nodes[1].Data).magnitude;
 		}
 	}
 
 	// --------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------
+
+	[SerializeField]
+	private Vector3 m_minBounds = new Vector3(-1.0f, 0.0f, -1.0f);
+
+	[SerializeField]
+	private Vector3 m_maxBounds = new Vector3(1.0f, 0.0f, 1.0f);
+	
 	// --------------------------------------------------------------------------------
 
 	private Graph<Vector3> m_graph = new Graph<Vector3>();
@@ -57,11 +67,7 @@ public class NavMesh : MonoBehaviour
 
 		return nearest as NavMeshNode;
 	}
-
-	// --------------------------------------------------------------------------------
-
-	// #SteveD	>>> method to create navmesh graph given bounds and granularity
-
+	
 	// --------------------------------------------------------------------------------
 	//Editor specific -----------------------------------------------------------------
 
@@ -93,6 +99,20 @@ public class NavMesh : MonoBehaviour
 		}
 
 		Gizmos.color = cachedColour;
+	}
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual void OnDrawGizmosSelected()
+	{
+		// #SteveD	>>> draw plane
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Editor_GenerateUniformGraph(float cellWidth)
+	{
+		// #SteveD	>>> generate grid graph
 	}
 
 #endif // UNITY_EDITOR

@@ -6,14 +6,14 @@ using UnityEditor;
 public class AllegianceComponentEditor : ComponentEditor
 {
 
-	protected override void DrawSettings()
+	protected override void DrawConfig()
 	{
 		AllegianceComponent allegianceComponent = m_component as AllegianceComponent;
-		if (allegianceComponent != null && allegianceComponent.Editor_Settings != null)
+		if (allegianceComponent != null && allegianceComponent.Editor_Config != null)
 		{
 			GUILayout.BeginHorizontal();
-			EditorGUILayout.TextField(allegianceComponent.Editor_Settings.Allegiance.Name);
-			EditorGUILayout.ColorField(allegianceComponent.Editor_Settings.Allegiance.Colour);
+			EditorGUILayout.TextField(allegianceComponent.Editor_Config.Name);
+			EditorGUILayout.ColorField(allegianceComponent.Editor_Config.Colour);
 			GUILayout.EndHorizontal();
 		}
 	}

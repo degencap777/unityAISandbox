@@ -8,7 +8,7 @@ public class AllegianceComponent : BaseComponent
 	// --------------------------------------------------------------------------------
 	
 	[SerializeField]
-	private AllegianceSettings m_settings = null;
+	private AllegianceConfig m_config = null;
 
 	// --------------------------------------------------------------------------------
 
@@ -19,9 +19,9 @@ public class AllegianceComponent : BaseComponent
 
 	public override void OnAwake()
 	{
-		if (m_settings == null)
+		if (m_config == null)
 		{
-			m_settings = ScriptableObject.CreateInstance<AllegianceSettings>();
+			m_config = ScriptableObject.CreateInstance<AllegianceConfig>();
 		}
 
 		m_renderer = GetComponentInChildren<MeshRenderer>();
@@ -55,7 +55,7 @@ public class AllegianceComponent : BaseComponent
 
 	private void SetAllegianceColour()
 	{
-		Color colour = m_settings.Allegiance != null ? m_settings.Allegiance.Colour : Color.grey;
+		Color colour = m_config != null ? m_config.Colour : Color.grey;
 		m_renderer.material.SetColor(m_shaderColourId, colour);
 	}
 	
@@ -64,7 +64,7 @@ public class AllegianceComponent : BaseComponent
 
 #if UNITY_EDITOR
 
-	public AllegianceSettings Editor_Settings { get { return m_settings; } }
+	public AllegianceConfig Editor_Config { get { return m_config; } }
 
 #endif // UNITY_EDITOR
 

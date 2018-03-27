@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "MovementSettings", menuName = "Component Settings/Movement", order = 1)]
-public class MovementSettings : ScriptableObject
+[CreateAssetMenu(fileName = "MovementConfig", menuName = "Component Config/Movement", order = 1)]
+public class MovementConfig : ScriptableObject
 {
 
 	[SerializeField]

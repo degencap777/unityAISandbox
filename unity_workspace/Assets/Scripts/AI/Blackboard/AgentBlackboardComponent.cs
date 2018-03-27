@@ -4,7 +4,7 @@ public class AgentBlackboardComponent : BaseComponent
 {
 	
 	[SerializeField]
-	private AgentBlackboardSettings m_settings = null;
+	private AgentBlackboardConfig m_config = null;
 
 	// --------------------------------------------------------------------------------
 
@@ -18,9 +18,9 @@ public class AgentBlackboardComponent : BaseComponent
 
 	public override void OnAwake()
 	{
-		if (m_settings == null)
+		if (m_config == null)
 		{
-			m_settings = ScriptableObject.CreateInstance<AgentBlackboardSettings>();
+			m_config = ScriptableObject.CreateInstance<AgentBlackboardConfig>();
 		}
 	}
 
@@ -54,7 +54,7 @@ public class AgentBlackboardComponent : BaseComponent
 
 #if UNITY_EDITOR
 
-	public AgentBlackboardSettings Editor_Settings { get { return m_settings; } }
+	public AgentBlackboardConfig Editor_Config { get { return m_config; } }
 
 #endif // UNITY_EDITOR
 

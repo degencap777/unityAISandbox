@@ -4,7 +4,7 @@ public class CollisionComponent : BaseComponent
 {
 
 	[SerializeField]
-	private CollisionSettings m_settings = null;
+	private CollisionConfig m_config = null;
 
 	// --------------------------------------------------------------------------------
 	
@@ -14,9 +14,9 @@ public class CollisionComponent : BaseComponent
 
 	public override void OnAwake() 
 	{
-		if (m_settings == null)
+		if (m_config == null)
 		{
-			m_settings = ScriptableObject.CreateInstance<CollisionSettings>();
+			m_config = ScriptableObject.CreateInstance<CollisionConfig>();
 		}
 
 		m_collider = GetComponent<Collider>();
@@ -49,7 +49,7 @@ public class CollisionComponent : BaseComponent
 
 #if UNITY_EDITOR
 
-	public CollisionSettings Editor_Settings { get { return m_settings; } }
+	public CollisionConfig Editor_Config { get { return m_config; } }
 
 #endif // UNITY_EDITOR
 

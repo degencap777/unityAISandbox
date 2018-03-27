@@ -5,10 +5,10 @@
 public class CollisionComponentEditor : ComponentEditor
 {
 
-	protected override void DrawSettings()
+	protected override void DrawConfig()
 	{
 		CollisionComponent collisionComponent = m_component as CollisionComponent;
-		if (collisionComponent != null && collisionComponent.Editor_Settings != null)
+		if (collisionComponent != null && collisionComponent.Editor_Config != null)
 		{
 			;
 		}

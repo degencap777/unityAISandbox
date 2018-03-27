@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "Allegiance", menuName = "Allegiance", order = 1)]
-public class Allegiance : ScriptableObject
+[CreateAssetMenu(fileName = "AllegianceConfig", menuName = "Component Config/Allegiance", order = 1)]
+public class AllegianceConfig : ScriptableObject
 {
 
 	[SerializeField]
@@ -11,12 +11,5 @@ public class Allegiance : ScriptableObject
 	[SerializeField]
 	private Color m_colour = Color.white;
 	public Color Colour { get { return m_colour; } }
-
-	// --------------------------------------------------------------------------------
-
-	public Allegiance()
-	{
-		;
-	}
 
 }

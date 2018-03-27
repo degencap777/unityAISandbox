@@ -4,7 +4,7 @@ public class DamageableComponent : BaseComponent
 {
 
 	[SerializeField]
-	private DamageableSettings m_settings = null;
+	private DamageableConfig m_config = null;
 
 	// --------------------------------------------------------------------------------
 
@@ -17,12 +17,12 @@ public class DamageableComponent : BaseComponent
 
 	public override void OnAwake()
 	{
-		if (m_settings == null)
+		if (m_config == null)
 		{
-			m_settings = ScriptableObject.CreateInstance<DamageableSettings>();
+			m_config = ScriptableObject.CreateInstance<DamageableConfig>();
 		}
 
-		m_currentHealth = m_settings.MaxHealth;
+		m_currentHealth = m_config.MaxHealth;
 	}
 
 	// --------------------------------------------------------------------------------
@@ -50,9 +50,9 @@ public class DamageableComponent : BaseComponent
 
 	protected virtual void OnValidate()
 	{
-		if (m_currentHealth > m_settings.MaxHealth)
+		if (m_currentHealth > m_config.MaxHealth)
 		{
-			m_currentHealth = m_settings.MaxHealth;
+			m_currentHealth = m_config.MaxHealth;
 		}
 	}
 
@@ -62,7 +62,7 @@ public class DamageableComponent : BaseComponent
 	{
 		if (damage > 0.0f)
 		{
-			AlterHealth(m_settings.DamageScalar * damage);
+			AlterHealth(m_config.DamageScalar * damage);
 		}
 	}
 
@@ -81,7 +81,7 @@ public class DamageableComponent : BaseComponent
 	private void AlterHealth(float amount)
 	{
 		float previousHealth = m_currentHealth;
-		m_currentHealth = Mathf.Clamp(m_currentHealth + amount, 0.0f, m_settings.MaxHealth);
+		m_currentHealth = Mathf.Clamp(m_currentHealth + amount, 0.0f, m_config.MaxHealth);
 
 		if (previousHealth != m_currentHealth && OnHealthChanged != null)
 		{
@@ -94,7 +94,7 @@ public class DamageableComponent : BaseComponent
 
 #if UNITY_EDITOR
 
-	public DamageableSettings Editor_Settings { get { return m_settings; } }
+	public DamageableConfig Editor_Config { get { return m_config; } }
 	
 #endif // UNITY_EDITOR
 

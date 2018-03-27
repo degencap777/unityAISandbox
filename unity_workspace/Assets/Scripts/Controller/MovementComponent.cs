@@ -5,7 +5,7 @@ public class MovementComponent : BaseComponent
 {
 
 	[SerializeField]
-	private MovementSettings m_settings = null;
+	private MovementConfig m_config = null;
 
 	private Vector3 m_movementStep = Vector3.zero;
 	private Vector3 m_lastMovementStep = Vector3.zero;
@@ -37,9 +37,9 @@ public class MovementComponent : BaseComponent
 
 	public override void OnAwake()
 	{
-		if (m_settings == null)
+		if (m_config == null)
 		{
-			m_settings = ScriptableObject.CreateInstance<MovementSettings>();
+			m_config = ScriptableObject.CreateInstance<MovementConfig>();
 		}
 
 		m_transform = GetComponent<Transform>();
@@ -69,7 +69,7 @@ public class MovementComponent : BaseComponent
 			{
 				if (m_movementAcceleration < 1.0f)
 				{
-					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration + dt * m_settings.MovementAccelerationFactor, 0.0f, 1.0f);
+					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration + dt * m_config.MovementAccelerationFactor, 0.0f, 1.0f);
 				}
 				m_appliedMovementStep = m_movementStep * m_movementAcceleration;
 				m_lastMovementStep = m_movementStep;
@@ -79,7 +79,7 @@ public class MovementComponent : BaseComponent
 			{
 				if (m_movementAcceleration > 0.0f)
 				{
-					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration - dt * m_settings.MovementDecelerationFactor, 0.0f, 1.0f);
+					m_movementAcceleration = Mathf.Clamp(m_movementAcceleration - dt * m_config.MovementDecelerationFactor, 0.0f, 1.0f);
 					m_appliedMovementStep = m_lastMovementStep * m_movementAcceleration;
 				}
 			}
@@ -96,7 +96,7 @@ public class MovementComponent : BaseComponent
 			{
 				if (m_rotationAcceleration < 1.0f)
 				{
-					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration + dt * m_settings.RotationAccelerationFactor, 0.0f, 1.0f);
+					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration + dt * m_config.RotationAccelerationFactor, 0.0f, 1.0f);
 				}
 				m_appliedRotationStep = m_rotationStep * m_rotationAcceleration;
 				m_lastRotationStep = m_rotationStep;
@@ -106,7 +106,7 @@ public class MovementComponent : BaseComponent
 			{
 				if (m_rotationAcceleration > 0.0f)
 				{
-					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration - dt * m_settings.RotationDecelerationFactor, 0.0f, 1.0f);
+					m_rotationAcceleration = Mathf.Clamp(m_rotationAcceleration - dt * m_config.RotationDecelerationFactor, 0.0f, 1.0f);
 					m_appliedRotationStep = m_lastRotationStep * m_rotationAcceleration;
 				}
 			}
@@ -134,11 +134,11 @@ public class MovementComponent : BaseComponent
 		float dt = GetScaledDeltaTime();
 		if (value > 0.0f)
 		{
-			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_settings.MoveForwardSpeed * dt;
+			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_config.MoveForwardSpeed * dt;
 		}
 		else
 		{
-			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_settings.MoveBackwardSpeed * dt;
+			m_movementStep += m_transform.forward * Mathf.Clamp(value, -1.0f, 1.0f) * m_config.MoveBackwardSpeed * dt;
 		}
 	}
 
@@ -146,14 +146,14 @@ public class MovementComponent : BaseComponent
 
 	public void MoveSideways(float value)
 	{
-		m_movementStep += m_transform.right * Mathf.Clamp(value, -1.0f, 1.0f) * m_settings.MoveSidewaysSpeed * GetScaledDeltaTime();
+		m_movementStep += m_transform.right * Mathf.Clamp(value, -1.0f, 1.0f) * m_config.MoveSidewaysSpeed * GetScaledDeltaTime();
 	}
 
 	// --------------------------------------------------------------------------------
 
 	public void Rotate(float value)
 	{
-		m_rotationStep += Mathf.Clamp(value, -1.0f, 1.0f) * m_settings.RotationSpeed * GetScaledDeltaTime();
+		m_rotationStep += Mathf.Clamp(value, -1.0f, 1.0f) * m_config.RotationSpeed * GetScaledDeltaTime();
 	}
 
 	// --------------------------------------------------------------------------------
@@ -168,7 +168,7 @@ public class MovementComponent : BaseComponent
 
 #if UNITY_EDITOR
 
-	public MovementSettings Editor_Settings { get { return m_settings; } }
+	public MovementConfig Editor_Config { get { return m_config; } }
 
 	// --------------------------------------------------------------------------------
 
