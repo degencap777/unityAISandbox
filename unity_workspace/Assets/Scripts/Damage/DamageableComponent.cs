@@ -8,10 +8,9 @@ public class DamageableComponent : BaseComponent
 
 	// --------------------------------------------------------------------------------
 
+	// #SteveD	>>> m_currentHealth to use FloatReference. Player uses FloatVariable, Agent uses constant
+	// #SteveD	>>> PlayerHealthUI can then reference PlayerHealth FloatReference
 	private float m_currentHealth = 100.0f;
-
-	public delegate void HealthChanged(float newValue);
-	public event HealthChanged OnHealthChanged;
 
 	// --------------------------------------------------------------------------------
 
@@ -70,13 +69,7 @@ public class DamageableComponent : BaseComponent
 
 	private void AlterHealth(float amount)
 	{
-		float previousHealth = m_currentHealth;
 		m_currentHealth = Mathf.Clamp(m_currentHealth + amount, 0.0f, m_config.MaxHealth);
-
-		if (previousHealth != m_currentHealth && OnHealthChanged != null)
-		{
-			OnHealthChanged(m_currentHealth);
-		}
 	}
 
 	// Editor specific ----------------------------------------------------------------
