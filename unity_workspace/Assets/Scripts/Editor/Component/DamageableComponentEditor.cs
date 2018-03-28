@@ -1,17 +1,17 @@
 ﻿using UnityEditor;
 
-[CustomEditor(typeof(DamageableComponent))]
+[CustomEditor(typeof(HealthComponent))]
 [CanEditMultipleObjects]
-public class DamageableComponentEditor : ComponentEditor
+public class HealthComponentEditor : ComponentEditor
 {
 
 	protected override void DrawConfig()
 	{
-		DamageableComponent damageComponent = m_component as DamageableComponent;
-		if (damageComponent != null && damageComponent.Editor_Config != null)
+		HealthComponent healthComponent = m_component as HealthComponent;
+		if (healthComponent != null && healthComponent.Editor_Config != null)
 		{
-			EditorGUILayout.FloatField("Max health", damageComponent.Editor_Config.MaxHealth);
-			EditorGUILayout.FloatField("Damage scalar", damageComponent.Editor_Config.DamageScalar);
+			EditorGUILayout.FloatField("Max health", healthComponent.Editor_Config.MaxHealth);
+			EditorGUILayout.FloatField("Damage scalar", healthComponent.Editor_Config.DamageScalar);
 		}
 	}
 

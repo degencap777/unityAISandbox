@@ -5,12 +5,10 @@ public class BSP : MonoBehaviour
 {
 
 	[SerializeField]
-	private Vector3 m_minBounds = Vector3.zero;
-	[SerializeField]
-	private Vector3 m_maxBounds = Vector3.zero;
+	private LevelBounds m_levelBounds = null;
 
 	[SerializeField]
-	private int m_maximumDepth = 4;
+	private int m_maximumDepth = 8;
 
 	[SerializeField, Tooltip("The maximum number of agents that can occupy a partition before triggering division")]
 	private int m_partitionSplitLimit = 8;
@@ -51,11 +49,21 @@ public class BSP : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	protected virtual void Awake()
+	{
+		if (m_levelBounds == null)
+		{
+			m_levelBounds = ScriptableObject.CreateInstance<LevelBounds>();
+		}
+	}
+
+	// --------------------------------------------------------------------------------
+
 	protected virtual void Start()
 	{
 		ValidateSplitLimits();
 
-		m_bspTree.Insert(new BSPPartition(m_minBounds, m_maxBounds));
+		m_bspTree.Insert(new BSPPartition(m_levelBounds.MinBounds, m_levelBounds.MaxBounds));
 
 		var agents = FindObjectsOfType<Agent>();
 		for (int i = 0; i < agents.Length; ++i)

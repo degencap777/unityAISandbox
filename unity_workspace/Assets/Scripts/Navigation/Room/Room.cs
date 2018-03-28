@@ -105,7 +105,7 @@ public class Room : MonoBehaviour
 	
 	// --------------------------------------------------------------------------------
 
-	public virtual void DoDrawGizmos()
+	public virtual void OnDrawGizmos()
 	{
 		Color cachedColour = Gizmos.color;
 		Gizmos.color = k_gizmoColour;

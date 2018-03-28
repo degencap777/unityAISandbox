@@ -11,16 +11,34 @@ public class FloatReference
 	// - hide whichever property isn't being used
 
 	[SerializeField]
-	private bool m_useConstant = true;
+	private bool m_useVariable = true;
 
 	[SerializeField]
-	private float m_constant = 0.0f;
+	private float m_variable = 0.0f;
 
 	[SerializeField]
-	private FloatVariable m_variable = null;
+	private FloatScriptable m_scriptable = null;
 
 	// --------------------------------------------------------------------------------
 
-	public float Value { get { return m_useConstant ? m_constant : m_variable.Value; } }
+	public float Value 
+	{ 
+		get 
+		{ 
+			return m_useVariable ? m_variable : m_scriptable.Value; 
+		} 
+
+		set 
+		{
+			if (m_useVariable) 
+			{ 
+				m_variable = value; 
+			}
+			else 
+			{ 
+				m_scriptable.Value = value; 
+			}
+		}
+	}
 
 }

@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 
-public class FloatVariable : ScriptableObject
+[CreateAssetMenu(fileName = "FloatScriptable", menuName = "Scriptable Variable/Float", order = 1)]
+public class FloatScriptable : ScriptableObject
 {
 	
 	[SerializeField]

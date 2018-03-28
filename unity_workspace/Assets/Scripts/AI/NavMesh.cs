@@ -37,14 +37,21 @@ public class NavMesh : MonoBehaviour
 	// --------------------------------------------------------------------------------
 
 	[SerializeField]
-	private Vector3 m_minBounds = new Vector3(-1.0f, 0.0f, -1.0f);
+	private LevelBounds m_levelBounds = null;
 
-	[SerializeField]
-	private Vector3 m_maxBounds = new Vector3(1.0f, 0.0f, 1.0f);
-	
 	// --------------------------------------------------------------------------------
 
 	private Graph<Vector3> m_graph = new Graph<Vector3>();
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual void Awake()
+	{
+		if (m_levelBounds == null)
+		{
+			m_levelBounds = ScriptableObject.CreateInstance<LevelBounds>();
+		}
+	}
 
 	// --------------------------------------------------------------------------------
 
@@ -62,7 +69,6 @@ public class NavMesh : MonoBehaviour
 				nearestDistanceSquared = distanceSquared;
 				nearest = nodeEnumerator.Current;
 			}
-
 		}
 
 		return nearest as NavMeshNode;
@@ -75,13 +81,28 @@ public class NavMesh : MonoBehaviour
 
 	private static readonly Color k_nodeColour = Color.red;
 	private static readonly Color k_edgeColour = Color.blue;
+	private static readonly Color k_boundaryPlaneColour = new Color(0.0f, 1.0f, 0.0f, 0.5f);
 
 	// --------------------------------------------------------------------------------
 
-	protected virtual void OnDrawGizmos()
+	protected virtual void OnDrawGizmosSelected()
 	{
 		Color cachedColour = Gizmos.color;
+		
+		if (m_levelBounds != null)
+		{
+			Gizmos.color = k_boundaryPlaneColour;
+			Matrix4x4 cachedMatrix = Gizmos.matrix;
+			Gizmos.matrix = Matrix4x4.Rotate(transform.rotation);
 
+			Vector3 dimension = m_levelBounds.Dimension;
+			Vector3 position = m_levelBounds.MinBounds + (dimension * 0.5f);
+			dimension.y = dimension.y <= 0.01f ? 0.01f : dimension.y;
+			Gizmos.DrawCube(position, dimension);
+
+			Gizmos.matrix = cachedMatrix;
+		}
+			
 		var nodeEnumerator = m_graph.NodeEnumerator;
 		while (nodeEnumerator.MoveNext())
 		{
@@ -99,13 +120,6 @@ public class NavMesh : MonoBehaviour
 		}
 
 		Gizmos.color = cachedColour;
-	}
-
-	// --------------------------------------------------------------------------------
-
-	protected virtual void OnDrawGizmosSelected()
-	{
-		// #SteveD	>>> draw plane
 	}
 
 	// --------------------------------------------------------------------------------

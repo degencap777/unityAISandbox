@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "DamageableConfig", menuName = "Component Config/Damageable", order = 1)]
-public class DamageableConfig : ScriptableObject
+[CreateAssetMenu(fileName = "HealthConfig", menuName = "Component Config/Health", order = 1)]
+public class HealthConfig : ScriptableObject
 {
 
 	[SerializeField]

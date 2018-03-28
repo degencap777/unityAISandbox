@@ -28,8 +28,12 @@ public class AgentBlackboardComponent : BaseComponent
 
 	public override void OnStart()
 	{
-		m_sharedBlackboard = SharedBlackboard.Instance;
-		Debug.Assert(m_sharedBlackboard != null, "[AgentBlackboardComponent::OnStart] SharedBlackboard is null\n");
+		// #SteveD	>>> requires reference to shared blackboard
+		//m_sharedBlackboard = ...;
+		//Debug.Assert(m_sharedBlackboard != null, "[AgentBlackboardComponent::OnStart] SharedBlackboard is null\n");
+		// ------------
+		// Or should the blackboard be aware of all Agents?
+		// <<<<<<<<<<<<
 
 		m_componentCollection = GetComponentInParent<ComponentCollection>();
 		Debug.Assert(m_componentCollection != null, "[AgentBlackboardComponent::OnStart] GetComponentInParent<ComponentCollection>() failed\n");

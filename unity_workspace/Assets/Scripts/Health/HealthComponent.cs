@@ -1,16 +1,16 @@
 ﻿using UnityEngine;
 
-public class DamageableComponent : BaseComponent
+public class HealthComponent : BaseComponent
 {
 
+	// #SteveD	>>> use FloatReference to enable sharing m_currentHealth
+
 	[SerializeField]
-	private DamageableConfig m_config = null;
+	private HealthConfig m_config = null;
 
 	// --------------------------------------------------------------------------------
 
-	// #SteveD	>>> m_currentHealth to use FloatReference. Player uses FloatVariable, Agent uses constant
-	// #SteveD	>>> PlayerHealthUI can then reference PlayerHealth FloatReference
-	private float m_currentHealth = 100.0f;
+	private float m_currentHealth = 0.0f;
 
 	// --------------------------------------------------------------------------------
 
@@ -18,7 +18,7 @@ public class DamageableComponent : BaseComponent
 	{
 		if (m_config == null)
 		{
-			m_config = ScriptableObject.CreateInstance<DamageableConfig>();
+			m_config = ScriptableObject.CreateInstance<HealthConfig>();
 		}
 
 		m_currentHealth = m_config.MaxHealth;
@@ -77,7 +77,7 @@ public class DamageableComponent : BaseComponent
 
 #if UNITY_EDITOR
 
-	public DamageableConfig Editor_Config { get { return m_config; } }
+	public HealthConfig Editor_Config { get { return m_config; } }
 
 	// --------------------------------------------------------------------------------
 
@@ -85,7 +85,7 @@ public class DamageableComponent : BaseComponent
 	{
 		if (m_config == null)
 		{
-			m_config = ScriptableObject.CreateInstance<DamageableConfig>();
+			m_config = ScriptableObject.CreateInstance<HealthConfig>();
 		}
 
 		if (m_currentHealth > m_config.MaxHealth)
