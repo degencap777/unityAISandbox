@@ -2,6 +2,7 @@
 using UnityEngine;
 
 [CustomPropertyDrawer(typeof(BoundKeyState))]
+[CanEditMultipleObjects]
 public class BoundKeyStatePropertyDrawer : PropertyDrawer
 {
 	public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)

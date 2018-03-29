@@ -1,6 +1,0 @@
-﻿
-
-public static class ExtensionMethods
-{
-	
-}

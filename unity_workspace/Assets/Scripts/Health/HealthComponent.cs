@@ -3,14 +3,13 @@
 public class HealthComponent : BaseComponent
 {
 
-	// #SteveD	>>> use FloatReference to enable sharing m_currentHealth
-
 	[SerializeField]
 	private HealthConfig m_config = null;
 
 	// --------------------------------------------------------------------------------
 
-	private float m_currentHealth = 0.0f;
+	[SerializeField]
+	private FloatReference m_currentHealth = null;
 
 	// --------------------------------------------------------------------------------
 
@@ -21,7 +20,7 @@ public class HealthComponent : BaseComponent
 			m_config = ScriptableObject.CreateInstance<HealthConfig>();
 		}
 
-		m_currentHealth = m_config.MaxHealth;
+		m_currentHealth.Value = m_config.MaxHealth;
 	}
 
 	// --------------------------------------------------------------------------------
@@ -69,7 +68,7 @@ public class HealthComponent : BaseComponent
 
 	private void AlterHealth(float amount)
 	{
-		m_currentHealth = Mathf.Clamp(m_currentHealth + amount, 0.0f, m_config.MaxHealth);
+		m_currentHealth.Value = Mathf.Clamp(m_currentHealth.Value + amount, 0.0f, m_config.MaxHealth);
 	}
 
 	// Editor specific ----------------------------------------------------------------
@@ -88,9 +87,9 @@ public class HealthComponent : BaseComponent
 			m_config = ScriptableObject.CreateInstance<HealthConfig>();
 		}
 
-		if (m_currentHealth > m_config.MaxHealth)
+		if (m_currentHealth.Value > m_config.MaxHealth)
 		{
-			m_currentHealth = m_config.MaxHealth;
+			m_currentHealth.Value = m_config.MaxHealth;
 		}
 	}
 

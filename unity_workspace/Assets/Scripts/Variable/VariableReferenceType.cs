@@ -2,6 +2,6 @@
 
 public enum VariableReferenceType
 {
-	Variable,
-	Reference
+	Value,
+	Variable
 }
