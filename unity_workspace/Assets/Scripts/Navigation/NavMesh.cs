@@ -37,7 +37,7 @@ public class NavMesh : MonoBehaviour
 	// --------------------------------------------------------------------------------
 
 	[SerializeField]
-	private LevelBounds m_levelBounds = null;
+	private Bounds m_levelBounds = null;
 
 	// --------------------------------------------------------------------------------
 
@@ -49,7 +49,7 @@ public class NavMesh : MonoBehaviour
 	{
 		if (m_levelBounds == null)
 		{
-			m_levelBounds = ScriptableObject.CreateInstance<LevelBounds>();
+			m_levelBounds = ScriptableObject.CreateInstance<Bounds>();
 		}
 	}
 
@@ -92,15 +92,11 @@ public class NavMesh : MonoBehaviour
 		if (m_levelBounds != null)
 		{
 			Gizmos.color = k_boundaryPlaneColour;
-			Matrix4x4 cachedMatrix = Gizmos.matrix;
-			Gizmos.matrix = Matrix4x4.Rotate(transform.rotation);
-
+			
 			Vector3 dimension = m_levelBounds.Dimension;
 			Vector3 position = m_levelBounds.MinBounds + (dimension * 0.5f);
 			dimension.y = dimension.y <= 0.01f ? 0.01f : dimension.y;
 			Gizmos.DrawCube(position, dimension);
-
-			Gizmos.matrix = cachedMatrix;
 		}
 			
 		var nodeEnumerator = m_graph.NodeEnumerator;

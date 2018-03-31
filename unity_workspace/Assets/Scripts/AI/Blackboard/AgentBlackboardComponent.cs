@@ -39,20 +39,6 @@ public class AgentBlackboardComponent : BaseComponent
 		Debug.Assert(m_componentCollection != null, "[AgentBlackboardComponent::OnStart] GetComponentInParent<ComponentCollection>() failed\n");
 	}
 
-	// --------------------------------------------------------------------------------
-
-	public override void OnUpdate()
-	{
-		;
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public override void Destroy()
-	{
-		;
-	}
-
 	// Editor specific ----------------------------------------------------------------
 	// --------------------------------------------------------------------------------
 

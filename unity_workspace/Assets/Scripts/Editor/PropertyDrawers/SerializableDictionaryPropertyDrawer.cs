@@ -129,7 +129,7 @@ public abstract class SerializableDictionaryPropertyDrawer<K, V> : PropertyDrawe
 				property.animationCurveValue = default(AnimationCurve);
 				break;
 			case SerializedPropertyType.Bounds:
-				property.boundsValue = default(Bounds);
+				property.boundsValue = default(UnityEngine.Bounds);
 				break;
 			case SerializedPropertyType.Gradient: // Gradient used for animating colours
 				// ??

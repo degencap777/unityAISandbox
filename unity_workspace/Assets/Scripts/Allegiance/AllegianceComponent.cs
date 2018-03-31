@@ -36,21 +36,7 @@ public class AllegianceComponent : BaseComponent
 	{
 		SetAllegianceColour();
 	}
-
-	// --------------------------------------------------------------------------------
-
-	public override void OnUpdate()
-	{
-		;
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public override void Destroy()
-	{
-		;
-	}
-
+	
 	// --------------------------------------------------------------------------------
 
 	private void SetAllegianceColour()

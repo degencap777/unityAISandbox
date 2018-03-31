@@ -51,13 +51,6 @@ public class MovementComponent : BaseComponent
 
 	// --------------------------------------------------------------------------------
 
-	public override void OnStart()
-	{
-		;
-	}
-
-	// --------------------------------------------------------------------------------
-
 	public override void OnUpdate()
 	{
 		if (m_characterController != null)
@@ -118,13 +111,6 @@ public class MovementComponent : BaseComponent
 			}
 			m_rotationStep = 0.0f;
 		}
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public override void Destroy()
-	{
-		;
 	}
 
 	// --------------------------------------------------------------------------------

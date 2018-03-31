@@ -23,27 +23,6 @@ public class CollisionComponent : BaseComponent
 		Debug.Assert(m_collider != null, "[Collisioncomponent::OnAwake] GetComponent<Collider> failed\n");
 	}
 
-	// --------------------------------------------------------------------------------
-	
-	public override void OnStart()
-	{
-		;
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public override void OnUpdate()
-	{
-		;
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public override void Destroy()
-	{
-		;
-	}
-
 	// Editor specific ----------------------------------------------------------------
 	// --------------------------------------------------------------------------------
 

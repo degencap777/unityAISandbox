@@ -23,14 +23,14 @@ public class DistributedUpdater<T> : MonoBehaviour where T : IDistributedUpdatab
 		// update startIndex (inclusive) to endIndex (exclusive)
 		for (int i = startIndex; i < Mathf.Min(endIndex, m_updatables.Count); ++i)
 		{
-			m_updatables[i].DistributedUpdate();
+			m_updatables[i].OnDistributedUpdate();
 		}
 		// handle endIndex overflowing
 		if (endIndex >= m_updatables.Count)
 		{
 			for (int j = 0; j < Mathf.Min(endIndex - m_updatables.Count, startIndex); ++j)
 			{
-				m_updatables[j].DistributedUpdate();
+				m_updatables[j].OnDistributedUpdate();
 			}
 		}
 

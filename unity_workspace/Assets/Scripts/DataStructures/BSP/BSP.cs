@@ -5,7 +5,7 @@ public class BSP : MonoBehaviour
 {
 
 	[SerializeField]
-	private LevelBounds m_levelBounds = null;
+	private Bounds m_levelBounds = null;
 
 	[SerializeField]
 	private int m_maximumDepth = 8;
@@ -20,7 +20,7 @@ public class BSP : MonoBehaviour
 	private Agent m_highlightedAgent = null;
 
 	// --------------------------------------------------------------------------------
-
+	
 	private BTree<BSPPartition> m_bspTree = new BTree<BSPPartition>();
 
 	// worker lists
@@ -41,6 +41,24 @@ public class BSP : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
+	protected virtual void Awake()
+	{
+		if (m_levelBounds == null)
+		{
+			m_levelBounds = ScriptableObject.CreateInstance<Bounds>();
+		}
+		ValidateSplitLimits();
+	}
+
+	// --------------------------------------------------------------------------------
+
+	protected virtual void Start()
+	{
+		Reset();
+	}
+
+	// --------------------------------------------------------------------------------
+
 	private void ValidateSplitLimits()
 	{
 		m_partitionSplitLimit = Mathf.Clamp(m_partitionSplitLimit, 1, int.MaxValue);
@@ -49,20 +67,9 @@ public class BSP : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	protected virtual void Awake()
+	private void Reset()
 	{
-		if (m_levelBounds == null)
-		{
-			m_levelBounds = ScriptableObject.CreateInstance<LevelBounds>();
-		}
-	}
-
-	// --------------------------------------------------------------------------------
-
-	protected virtual void Start()
-	{
-		ValidateSplitLimits();
-
+		m_bspTree.Clear();
 		m_bspTree.Insert(new BSPPartition(m_levelBounds.MinBounds, m_levelBounds.MaxBounds));
 
 		var agents = FindObjectsOfType<Agent>();
@@ -380,10 +387,15 @@ public class BSP : MonoBehaviour
 
 #if UNITY_EDITOR
 
+	private static readonly Color m_borderColour = Color.red;
+	private static readonly Color m_highlightedBorderColour = Color.green;
+
+	// --------------------------------------------------------------------------------
+
 	private void OnDrawGizmosSelected()
 	{
 		Color cachedColour = Gizmos.color;
-		Gizmos.color = Color.red;
+		Gizmos.color = m_borderColour;
 
 		BSPPartition highlightedPartition = null;
 
@@ -406,13 +418,16 @@ public class BSP : MonoBehaviour
 				}
 			}
 
-			Gizmos_DrawPartition(partitionsEnumerator.Current.Data);
+			if (current.IsLeaf)
+			{
+				Gizmos_DrawPartition(partitionsEnumerator.Current.Data);
+			}
 		}
 
 		// draw partition for the agent we are tracking
 		if (highlightedPartition != null)
 		{
-			Gizmos.color = Color.green;
+			Gizmos.color = m_highlightedBorderColour;
 			Gizmos_DrawPartition(highlightedPartition);
 		}
 

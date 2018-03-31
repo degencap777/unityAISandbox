@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 
-[CreateAssetMenu(fileName = "LevelBounds", menuName = "LevelBounds", order = 1)]
-public class LevelBounds : ScriptableObject
+[CreateAssetMenu(fileName = "Bounds", menuName = "Bounds", order = 1)]
+public class Bounds : ScriptableObject
 {
 
 	[SerializeField]

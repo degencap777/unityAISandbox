@@ -2,7 +2,5 @@
 
 public interface IDistributedUpdatable
 {
-
-	void DistributedUpdate();
-
+	void OnDistributedUpdate();
 }

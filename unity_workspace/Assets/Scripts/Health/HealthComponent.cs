@@ -25,32 +25,11 @@ public class HealthComponent : BaseComponent
 
 	// --------------------------------------------------------------------------------
 
-	public override void OnStart()
-	{
-		;
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public override void OnUpdate()
-	{
-		;
-	}
-
-	// --------------------------------------------------------------------------------
-
-	public override void Destroy()
-	{
-		;
-	}
-
-	// --------------------------------------------------------------------------------
-
 	public void Damage(float damage)
 	{
 		if (damage > 0.0f)
 		{
-			AlterHealth(m_config.DamageScalar * damage);
+			AlterHealth(m_config.DamageScalar * -damage);
 		}
 	}
 
