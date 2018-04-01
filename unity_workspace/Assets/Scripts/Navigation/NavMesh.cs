@@ -6,9 +6,13 @@ using UnityEngine;
 //			>>> custom editor - cell dimension and generate grid on single line
 //
 //			>>> create ScriptableObject to store nodes & edges
+//			>>> save to ScriptableObject
+//			>>> load from ScriptableObject
 //			>>> method & button to save graph to ScriptableObject manually (save to member specified in Editor, 
 //					allows different navmesh data to be saved/loaded)
-//			>>> parse from ScriptableObject on Awake (+ExecuteInEditMode)
+//			>>> method to load graph
+//			>>> test with loading different graphs
+//			>>> parse from ScriptableObject on Awake
 //			>>> automoate saving?
 //			>>> load button
 //
@@ -16,8 +20,6 @@ using UnityEngine;
 //
 //			>>> extract method for adding connections between nodes that also includes a raycast to check for architecture
 
-
-[ExecuteInEditMode]
 public class NavMesh : MonoBehaviour
 {
 
@@ -41,6 +43,13 @@ public class NavMesh : MonoBehaviour
 	// --------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------
 
+	public class NavMeshGraph : Graph<Vector3>
+	{
+	}
+
+	// --------------------------------------------------------------------------------
+	// --------------------------------------------------------------------------------
+
 	[SerializeField]
 	private Bounds m_levelBounds = null;
 
@@ -48,7 +57,7 @@ public class NavMesh : MonoBehaviour
 	private float m_cellDimension = 1.0f;
 
 	[SerializeField, HideInInspector]
-	private Graph<Vector3> m_graph = new Graph<Vector3>();
+	private NavMeshGraph m_graph = new NavMeshGraph();
 
 	// --------------------------------------------------------------------------------
 
