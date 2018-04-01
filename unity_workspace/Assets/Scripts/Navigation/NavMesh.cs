@@ -1,23 +1,30 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using UnityEngine;
 
+// #SteveD	
+//			>>> custom editor - cell dimension and generate grid on single line
+//
+//			>>> create ScriptableObject to store nodes & edges
+//			>>> method & button to save graph to ScriptableObject manually (save to member specified in Editor, 
+//					allows different navmesh data to be saved/loaded)
+//			>>> parse from ScriptableObject on Awake (+ExecuteInEditMode)
+//			>>> automoate saving?
+//			>>> load button
+//
+//			>>> specify Gizmo colours in editor (one line)
+//
+//			>>> extract method for adding connections between nodes that also includes a raycast to check for architecture
+
+
+[ExecuteInEditMode]
 public class NavMesh : MonoBehaviour
 {
 
-	public class NavMeshNode : GraphNode<Vector3> 
-	{
-		public NavMeshNode(Vector3 position) 
-			: base(position) 
-		{
-			;
-		}
-	}
-
-	// --------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------
-
+	[Serializable]
 	public class NavMeshEdge : GraphEdge<Vector3>
 	{
-		public NavMeshEdge(NavMeshNode node1, NavMeshNode node2)
+		public NavMeshEdge(GraphNode<Vector3> node1, GraphNode<Vector3> node2)
 			: base(node1, node2)
 		{
 			;
@@ -27,8 +34,6 @@ public class NavMesh : MonoBehaviour
 
 		protected override float CalculateCost()
 		{
-			// #SteveD	>>> squared distance tends towards greed bfs, not true A*
-			// #SteveD	>>> distance will result in true best path, but will result in a lot of sqrt calls
 			return (m_nodes[0].Data - m_nodes[1].Data).magnitude;
 		}
 	}
@@ -39,8 +44,10 @@ public class NavMesh : MonoBehaviour
 	[SerializeField]
 	private Bounds m_levelBounds = null;
 
-	// --------------------------------------------------------------------------------
+	[SerializeField]
+	private float m_cellDimension = 1.0f;
 
+	[SerializeField, HideInInspector]
 	private Graph<Vector3> m_graph = new Graph<Vector3>();
 
 	// --------------------------------------------------------------------------------
@@ -55,7 +62,7 @@ public class NavMesh : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public NavMeshNode FindNearest(Vector3 position)
+	public GraphNode<Vector3> FindNearest(Vector3 position)
 	{
 		GraphNode<Vector3> nearest = null;
 		float nearestDistanceSquared = float.MaxValue;
@@ -71,7 +78,7 @@ public class NavMesh : MonoBehaviour
 			}
 		}
 
-		return nearest as NavMeshNode;
+		return nearest;
 	}
 	
 	// --------------------------------------------------------------------------------
@@ -98,21 +105,23 @@ public class NavMesh : MonoBehaviour
 			dimension.y = dimension.y <= 0.01f ? 0.01f : dimension.y;
 			Gizmos.DrawCube(position, dimension);
 		}
-			
+
+		Gizmos.color = k_edgeColour;
 		var nodeEnumerator = m_graph.NodeEnumerator;
 		while (nodeEnumerator.MoveNext())
 		{
-			var node = nodeEnumerator.Current;
-
-			Gizmos.color = k_nodeColour;
-			Gizmos.DrawSphere(node.Data, 0.2f);
-
-			Gizmos.color = k_edgeColour;
-			var edgeEnumerator = node.EdgeEnumerator;
+			var edgeEnumerator = nodeEnumerator.Current.EdgeEnumerator;
 			while (edgeEnumerator.MoveNext())
 			{
-				Gizmos.DrawLine(edgeEnumerator.Current.Node1.Data, edgeEnumerator.Current.Node1.Data);
+				Gizmos.DrawLine(edgeEnumerator.Current.Node1.Data, edgeEnumerator.Current.Node2.Data);
 			}
+		}
+
+		Gizmos.color = k_nodeColour;
+		nodeEnumerator = m_graph.NodeEnumerator;
+		while (nodeEnumerator.MoveNext())
+		{
+			Gizmos.DrawSphere(nodeEnumerator.Current.Data, 0.2f);
 		}
 
 		Gizmos.color = cachedColour;
@@ -120,9 +129,56 @@ public class NavMesh : MonoBehaviour
 
 	// --------------------------------------------------------------------------------
 
-	public void Editor_GenerateUniformGraph(float cellWidth)
+	public void Editor_GenerateUniformGraph()
 	{
-		// #SteveD	>>> generate grid graph
+		m_graph.Clear();
+
+		int cellsX = (int)(m_levelBounds.Dimension.x / m_cellDimension);
+		int cellsZ = (int)(m_levelBounds.Dimension.z / m_cellDimension);
+
+		float dimensionX = m_levelBounds.Dimension.x / cellsX;
+		float dimensionZ = m_levelBounds.Dimension.z / cellsZ;
+
+		float xStart = m_levelBounds.MinBounds.x + (dimensionX * 0.5f);
+		float zStart = m_levelBounds.MinBounds.z + (dimensionZ * 0.5f);
+		Vector3 position = new Vector3(xStart, m_levelBounds.MinBounds.y, zStart);
+
+		// generate nodes
+		List<List<GraphNode<Vector3>>> nodes = new List<List<GraphNode<Vector3>>>();
+		for (int z = 0; z < cellsZ; ++z)
+		{
+			nodes.Add(new List<GraphNode<Vector3>>());
+			for (int x = 0; x < cellsX; ++x)
+			{
+				nodes[z].Add(new GraphNode<Vector3>(new Vector3(position.x, position.y, position.z)));
+				position.x += dimensionX;
+			}
+			position.z += dimensionZ;
+			position.x = xStart;
+		}
+
+		// generate edges
+		for (int z = 0; z < nodes.Count; ++z)
+		{
+			for (int x = 0; x < nodes[z].Count; ++x)
+			{
+				bool addNorth = z > 0;
+				bool addSouth = z < nodes.Count - 1;
+				bool addWest = x > 0;
+				bool addEast = x < nodes[z].Count - 1;
+
+				if (addNorth) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z - 1][x])); }
+				if (addSouth) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z + 1][x])); }
+				if (addWest) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z][x - 1])); }
+				if (addEast) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z][x + 1])); }
+				if (addNorth && addWest) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z - 1][x - 1])); }
+				if (addNorth && addEast) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z - 1][x + 1])); }
+				if (addSouth && addWest) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z + 1][x - 1])); }
+				if (addSouth && addEast) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z + 1][x + 1])); }
+
+				m_graph.Add(nodes[z][x]);
+			}
+		}
 	}
 
 #endif // UNITY_EDITOR

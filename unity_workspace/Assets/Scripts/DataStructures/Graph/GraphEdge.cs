@@ -14,6 +14,10 @@ public abstract class GraphEdge<T>
 
 	// --------------------------------------------------------------------------------
 
+	protected abstract float CalculateCost();
+
+	// --------------------------------------------------------------------------------
+
 	public GraphEdge(GraphNode<T> node1, GraphNode<T> node2)
 	{
 		m_nodes[0] = node1;
@@ -23,8 +27,19 @@ public abstract class GraphEdge<T>
 
 	// --------------------------------------------------------------------------------
 
-	protected abstract float CalculateCost();
-
+	public GraphNode<T> GetOther(GraphNode<T> original)
+	{
+		if (Node1 == original)
+		{
+			return Node2;
+		}
+		else if (Node2 == original)
+		{
+			return Node1;
+		}
+		return null;
+	}
+	
 	// --------------------------------------------------------------------------------
 
 	public float RecalculateCost()

@@ -18,7 +18,7 @@ public class GraphNode<T>
 
 	// --------------------------------------------------------------------------------
 
-	public void AddNeighbour(GraphEdge<T> edge)
+	public void AddConnection(GraphEdge<T> edge)
 	{
 		if (m_edges.Contains(edge) == false)
 		{

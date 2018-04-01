@@ -5,26 +5,22 @@ public class Graph<T>
 
 	protected List<GraphNode<T>> m_nodes = new List<GraphNode<T>>();
 	public List<GraphNode<T>>.Enumerator NodeEnumerator { get { return m_nodes.GetEnumerator(); } }
-	
+
 	// --------------------------------------------------------------------------------
 
-	public GraphNode<T> FindNode(T data)
+	public void Add(GraphNode<T> node)
 	{
-		for (int i = 0; i < m_nodes.Count; ++i)
+		if (m_nodes.Contains(node) == false)
 		{
-			if (m_nodes[i].Data.Equals(data))
-			{
-				return m_nodes[i];
-			}
+			m_nodes.Add(node);
 		}
-		return null;
 	}
 
 	// --------------------------------------------------------------------------------
-
-	public void Sort()
+	
+	public void Clear()
 	{
-		m_nodes.Sort();
+		m_nodes.Clear();
 	}
 
 }
