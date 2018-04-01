@@ -2,23 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-// #SteveD	
-//			>>> custom editor - cell dimension and generate grid on single line
-//
-//			>>> create ScriptableObject to store nodes & edges
-//			>>> save to ScriptableObject
-//			>>> load from ScriptableObject
-//			>>> method & button to save graph to ScriptableObject manually (save to member specified in Editor, 
-//					allows different navmesh data to be saved/loaded)
-//			>>> method to load graph
-//			>>> test with loading different graphs
-//			>>> parse from ScriptableObject on Awake
-//			>>> automoate saving?
-//			>>> load button
-//
-//			>>> specify Gizmo colours in editor (one line)
-//
-//			>>> extract method for adding connections between nodes that also includes a raycast to check for architecture
+// #SteveD	>>> raycasts in Editor_AddConnectionIfAvailable
+//			>>> NavMeshData custom property drawer (information only)
 
 public class NavMesh : MonoBehaviour
 {
@@ -52,11 +37,15 @@ public class NavMesh : MonoBehaviour
 
 	[SerializeField]
 	private Bounds m_levelBounds = null;
+	
+	[SerializeField]
+	private NavMeshData m_dataContainer = null;
 
 	[SerializeField]
 	private float m_cellDimension = 1.0f;
 
-	[SerializeField, HideInInspector]
+	// --------------------------------------------------------------------------------
+
 	private NavMeshGraph m_graph = new NavMeshGraph();
 
 	// --------------------------------------------------------------------------------
@@ -66,6 +55,11 @@ public class NavMesh : MonoBehaviour
 		if (m_levelBounds == null)
 		{
 			m_levelBounds = ScriptableObject.CreateInstance<Bounds>();
+		}
+
+		if (m_dataContainer != null)
+		{
+			m_dataContainer.LoadGraph(out m_graph);
 		}
 	}
 
@@ -95,9 +89,12 @@ public class NavMesh : MonoBehaviour
 
 #if UNITY_EDITOR
 
-	private static readonly Color k_nodeColour = Color.red;
-	private static readonly Color k_edgeColour = Color.blue;
-	private static readonly Color k_boundaryPlaneColour = new Color(0.0f, 1.0f, 0.0f, 0.5f);
+	[SerializeField] 
+	private Color m_nodeColour = Color.red;
+	[SerializeField] 
+	private Color m_edgeColour = Color.blue;
+	[SerializeField] 
+	private Color m_boundaryPlaneColour = new Color(0.0f, 1.0f, 0.0f, 0.5f);
 
 	// --------------------------------------------------------------------------------
 
@@ -107,7 +104,7 @@ public class NavMesh : MonoBehaviour
 		
 		if (m_levelBounds != null)
 		{
-			Gizmos.color = k_boundaryPlaneColour;
+			Gizmos.color = m_boundaryPlaneColour;
 			
 			Vector3 dimension = m_levelBounds.Dimension;
 			Vector3 position = m_levelBounds.MinBounds + (dimension * 0.5f);
@@ -115,7 +112,7 @@ public class NavMesh : MonoBehaviour
 			Gizmos.DrawCube(position, dimension);
 		}
 
-		Gizmos.color = k_edgeColour;
+		Gizmos.color = m_edgeColour;
 		var nodeEnumerator = m_graph.NodeEnumerator;
 		while (nodeEnumerator.MoveNext())
 		{
@@ -126,7 +123,7 @@ public class NavMesh : MonoBehaviour
 			}
 		}
 
-		Gizmos.color = k_nodeColour;
+		Gizmos.color = m_nodeColour;
 		nodeEnumerator = m_graph.NodeEnumerator;
 		while (nodeEnumerator.MoveNext())
 		{
@@ -176,18 +173,52 @@ public class NavMesh : MonoBehaviour
 				bool addWest = x > 0;
 				bool addEast = x < nodes[z].Count - 1;
 
-				if (addNorth) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z - 1][x])); }
-				if (addSouth) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z + 1][x])); }
-				if (addWest) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z][x - 1])); }
-				if (addEast) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z][x + 1])); }
-				if (addNorth && addWest) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z - 1][x - 1])); }
-				if (addNorth && addEast) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z - 1][x + 1])); }
-				if (addSouth && addWest) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z + 1][x - 1])); }
-				if (addSouth && addEast) { nodes[z][x].AddConnection(new NavMeshEdge(nodes[z][x], nodes[z + 1][x + 1])); }
+				if (addNorth) { Editor_AddConnectionIfAvailable(nodes[z][x], nodes[z - 1][x]); }
+				if (addSouth) { Editor_AddConnectionIfAvailable(nodes[z][x], nodes[z + 1][x]); }
+				if (addWest) { Editor_AddConnectionIfAvailable(nodes[z][x], nodes[z][x - 1]); }
+				if (addEast) { Editor_AddConnectionIfAvailable(nodes[z][x], nodes[z][x + 1]); }
+				if (addNorth && addWest) { Editor_AddConnectionIfAvailable(nodes[z][x], nodes[z - 1][x - 1]); }
+				if (addNorth && addEast) { Editor_AddConnectionIfAvailable(nodes[z][x], nodes[z - 1][x + 1]); }
+				if (addSouth && addWest) { Editor_AddConnectionIfAvailable(nodes[z][x], nodes[z + 1][x - 1]); }
+				if (addSouth && addEast) { Editor_AddConnectionIfAvailable(nodes[z][x], nodes[z + 1][x + 1]); }
 
 				m_graph.Add(nodes[z][x]);
 			}
 		}
+	}
+
+	// --------------------------------------------------------------------------------
+
+	private void Editor_AddConnectionIfAvailable(GraphNode<Vector3> node1, GraphNode<Vector3> node2)
+	{
+		// #SteveD	>>> multiple raycasts between nodes to check for obstacles, offset from centre (could use 0.25f * m_cellDimension?)
+		node1.AddConnection(new NavMeshEdge(node1, node2));
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Editor_WriteToAsset()
+	{
+		if (m_dataContainer == null)
+		{
+			Debug.LogError("[Editor_SaveToScriptableObject] Failed - m_dataContainer is null");
+			return;
+		}
+
+		m_dataContainer.SaveGraph(m_graph);
+	}
+
+	// --------------------------------------------------------------------------------
+
+	public void Editor_ReadFromAsset()
+	{
+		if (m_dataContainer == null)
+		{
+			Debug.LogError("[Editor_LoadFromScriptableObject] Failed - m_dataContainer is null");
+			return;
+		}
+
+		m_dataContainer.LoadGraph(out m_graph);
 	}
 
 #endif // UNITY_EDITOR
