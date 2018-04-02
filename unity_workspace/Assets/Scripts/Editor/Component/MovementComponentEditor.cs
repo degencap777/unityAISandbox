@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using AISandbox.Movement;
+using UnityEditor;
 
 [CustomEditor(typeof(MovementComponent))]
 [CanEditMultipleObjects]

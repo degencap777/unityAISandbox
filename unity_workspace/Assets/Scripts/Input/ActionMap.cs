@@ -2,33 +2,36 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-[Serializable]
-public class ActionMap : MonoBehaviour
+namespace AISandbox.Input
 {
-
 	[Serializable]
-	private class KeyActionMapping : ActionMapping<BoundKeyState> { }
-	[SerializeField]
-	private List<KeyActionMapping> m_keyActionMappings = new List<KeyActionMapping>();
-
-	[Serializable]
-	private class AxisActionMapping : ActionMapping<BoundAxisState> { }
-	[SerializeField]
-	private List<AxisActionMapping> m_axisActionMappings = new List<AxisActionMapping>();
-
-	// -----------------------------------------------------------------------------------
-
-	public void Update()
+	public class ActionMap : MonoBehaviour
 	{
-		for (int i = 0; i < m_keyActionMappings.Count; ++i)
+
+		[Serializable]
+		private class KeyActionMapping : ActionMapping<BoundKeyState> { }
+		[SerializeField]
+		private List<KeyActionMapping> m_keyActionMappings = new List<KeyActionMapping>();
+
+		[Serializable]
+		private class AxisActionMapping : ActionMapping<BoundAxisState> { }
+		[SerializeField]
+		private List<AxisActionMapping> m_axisActionMappings = new List<AxisActionMapping>();
+
+		// -----------------------------------------------------------------------------------
+
+		public void Update()
 		{
-			m_keyActionMappings[i].Update();
+			for (int i = 0; i < m_keyActionMappings.Count; ++i)
+			{
+				m_keyActionMappings[i].Update();
+			}
+
+			for (int i = 0; i < m_axisActionMappings.Count; ++i)
+			{
+				m_axisActionMappings[i].Update();
+			}
 		}
 
-		for (int i = 0; i < m_axisActionMappings.Count; ++i)
-		{
-			m_axisActionMappings[i].Update();
-		}
 	}
-
 }

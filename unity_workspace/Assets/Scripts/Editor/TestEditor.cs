@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using AISandbox.Test;
+using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(Test), true)]

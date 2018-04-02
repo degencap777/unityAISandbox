@@ -1,7 +1,10 @@
 ﻿
 
-public enum VariableReferenceType
+namespace AISandbox.Variable
 {
-	Value,
-	Variable
+	public enum VariableReferenceType
+	{
+		Value,
+		Variable
+	}
 }

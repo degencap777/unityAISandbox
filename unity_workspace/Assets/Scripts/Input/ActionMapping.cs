@@ -1,34 +1,38 @@
-﻿using System;
+﻿using AISandbox.Character;
+using System;
 using UnityEngine;
 
-[Serializable]
-public class ActionMapping<T> where T : BoundInputState
+namespace AISandbox.Input
 {
-
-	[SerializeField]
-	private string m_name = string.Empty;
-	public string Name { get { return m_name; } }
-
-	[SerializeField]
-	private T m_boundInputState = null;
-	
-	[SerializeField]
-	private AgentAction m_action = null;
-	
-	// --------------------------------------------------------------------------------
-
-	public void Update()
+	[Serializable]
+	public class ActionMapping<T> where T : BoundInputState
 	{
-		if (m_boundInputState == null)
+
+		[SerializeField]
+		private string m_name = string.Empty;
+		public string Name { get { return m_name; } }
+
+		[SerializeField]
+		private T m_boundInputState = null;
+
+		[SerializeField]
+		private AgentAction m_action = null;
+
+		// --------------------------------------------------------------------------------
+
+		public void Update()
 		{
-			return;
+			if (m_boundInputState == null)
+			{
+				return;
+			}
+
+			m_boundInputState.Update();
+			if (m_boundInputState.ConditionsMet())
+			{
+				m_action.Execute(m_boundInputState.GetValue());
+			}
 		}
 
-		m_boundInputState.Update();
-		if (m_boundInputState.ConditionsMet())
-		{
-			m_action.Execute(m_boundInputState.GetValue());
-		}
 	}
-
 }

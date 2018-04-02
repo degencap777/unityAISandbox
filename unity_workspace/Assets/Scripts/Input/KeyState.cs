@@ -1,9 +1,12 @@
-﻿using System;
+﻿
 
-public enum KeyState
+namespace AISandbox.Input
 {
-	None = 0,
-	Depressed = 1,
-	Released = 2,
-	Held = 4,
+	public enum KeyState
+	{
+		None = 0,
+		Depressed = 1,
+		Released = 2,
+		Held = 4,
+	}
 }

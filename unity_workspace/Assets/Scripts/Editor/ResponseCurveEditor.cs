@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using AISandbox.Utility;
+using UnityEditor;
 using UnityEngine;
 
 [CustomEditor(typeof(ResponseCurve))]

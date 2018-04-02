@@ -1,78 +1,83 @@
-﻿using UnityEngine;
+﻿using AISandbox.Component;
+using AISandbox.Variable;
+using UnityEngine;
 
-public class HealthComponent : BaseComponent
+
+namespace AISandbox.Health
 {
-
-	[SerializeField]
-	private HealthConfig m_config = null;
-
-	// --------------------------------------------------------------------------------
-
-	[SerializeField]
-	private FloatReference m_currentHealth = null;
-
-	// --------------------------------------------------------------------------------
-
-	public override void OnAwake()
+	public class HealthComponent : BaseComponent
 	{
-		if (m_config == null)
+
+		[SerializeField]
+		private HealthConfig m_config = null;
+
+		// --------------------------------------------------------------------------------
+
+		[SerializeField]
+		private FloatReference m_currentHealth = null;
+
+		// --------------------------------------------------------------------------------
+
+		public override void OnAwake()
 		{
-			m_config = ScriptableObject.CreateInstance<HealthConfig>();
+			if (m_config == null)
+			{
+				m_config = ScriptableObject.CreateInstance<HealthConfig>();
+			}
+
+			m_currentHealth.Value = m_config.MaxHealth;
 		}
 
-		m_currentHealth.Value = m_config.MaxHealth;
-	}
+		// --------------------------------------------------------------------------------
 
-	// --------------------------------------------------------------------------------
-
-	public void Damage(float damage)
-	{
-		if (damage > 0.0f)
+		public void Damage(float damage)
 		{
-			AlterHealth(m_config.DamageScalar * -damage);
+			if (damage > 0.0f)
+			{
+				AlterHealth(m_config.DamageScalar * -damage);
+			}
 		}
-	}
 
-	// --------------------------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
-	public void Heal(float health)
-	{
-		if (health > 0.0f)
+		public void Heal(float health)
 		{
-			AlterHealth(health);
+			if (health > 0.0f)
+			{
+				AlterHealth(health);
+			}
 		}
-	}
 
-	// --------------------------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
-	private void AlterHealth(float amount)
-	{
-		m_currentHealth.Value = Mathf.Clamp(m_currentHealth.Value + amount, 0.0f, m_config.MaxHealth);
-	}
+		private void AlterHealth(float amount)
+		{
+			m_currentHealth.Value = Mathf.Clamp(m_currentHealth.Value + amount, 0.0f, m_config.MaxHealth);
+		}
 
-	// Editor specific ----------------------------------------------------------------
-	// --------------------------------------------------------------------------------
+		// Editor specific ----------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
 
-	public HealthConfig Editor_Config { get { return m_config; } }
+		public HealthConfig Editor_Config { get { return m_config; } }
 
-	// --------------------------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
-	protected virtual void OnValidate()
-	{
-		if (m_config == null)
+		protected virtual void OnValidate()
 		{
-			m_config = ScriptableObject.CreateInstance<HealthConfig>();
-		}
+			if (m_config == null)
+			{
+				m_config = ScriptableObject.CreateInstance<HealthConfig>();
+			}
 
-		if (m_currentHealth.Value > m_config.MaxHealth)
-		{
-			m_currentHealth.Value = m_config.MaxHealth;
+			if (m_currentHealth.Value > m_config.MaxHealth)
+			{
+				m_currentHealth.Value = m_config.MaxHealth;
+			}
 		}
-	}
 
 #endif // UNITY_EDITOR
 
-
+	}
 }

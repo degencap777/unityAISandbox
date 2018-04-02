@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using AISandbox.Input;
+using UnityEditor;
 using UnityEngine;
 
 [CustomPropertyDrawer(typeof(BoundAxisState))]

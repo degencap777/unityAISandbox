@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using UnityEditor;
+using AISandbox.Allegiance;
 
 [CustomEditor(typeof(AllegianceComponent))]
 [CanEditMultipleObjects]

@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using AISandbox.AI;
+using UnityEditor;
 
 [CustomEditor(typeof(AgentBlackboardComponent))]
 [CanEditMultipleObjects]

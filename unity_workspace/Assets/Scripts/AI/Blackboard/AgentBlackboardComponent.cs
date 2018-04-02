@@ -1,51 +1,55 @@
-﻿using UnityEngine;
+﻿using AISandbox.Component;
+using UnityEngine;
 
-public class AgentBlackboardComponent : BaseComponent
+namespace AISandbox.AI
 {
-	
-	[SerializeField]
-	private AgentBlackboardConfig m_config = null;
-
-	// --------------------------------------------------------------------------------
-
-	private SharedBlackboard m_sharedBlackboard = null;
-	public SharedBlackboard SharedBlackboard { get { return m_sharedBlackboard; } }
-
-	private ComponentCollection m_componentCollection = null;
-	public ComponentCollection ComponentCollection { get { return m_componentCollection; } }
-
-	// --------------------------------------------------------------------------------
-
-	public override void OnAwake()
+	public class AgentBlackboardComponent : BaseComponent
 	{
-		if (m_config == null)
+
+		[SerializeField]
+		private AgentBlackboardConfig m_config = null;
+
+		// --------------------------------------------------------------------------------
+
+		private SharedBlackboard m_sharedBlackboard = null;
+		public SharedBlackboard SharedBlackboard { get { return m_sharedBlackboard; } }
+
+		private ComponentCollection m_componentCollection = null;
+		public ComponentCollection ComponentCollection { get { return m_componentCollection; } }
+
+		// --------------------------------------------------------------------------------
+
+		public override void OnAwake()
 		{
-			m_config = ScriptableObject.CreateInstance<AgentBlackboardConfig>();
+			if (m_config == null)
+			{
+				m_config = ScriptableObject.CreateInstance<AgentBlackboardConfig>();
+			}
 		}
-	}
 
-	// --------------------------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
-	public override void OnStart()
-	{
-		// #SteveD	>>> requires reference to shared blackboard
-		//m_sharedBlackboard = ...;
-		//Debug.Assert(m_sharedBlackboard != null, "[AgentBlackboardComponent::OnStart] SharedBlackboard is null\n");
-		// ------------
-		// Or should the blackboard be aware of all Agents?
-		// <<<<<<<<<<<<
+		public override void OnStart()
+		{
+			// #SteveD	>>> requires reference to shared blackboard
+			//m_sharedBlackboard = ...;
+			//Debug.Assert(m_sharedBlackboard != null, "[AgentBlackboardComponent::OnStart] SharedBlackboard is null\n");
+			// ------------
+			// Or should the blackboard be aware of all Agents?
+			// <<<<<<<<<<<<
 
-		m_componentCollection = GetComponentInParent<ComponentCollection>();
-		Debug.Assert(m_componentCollection != null, "[AgentBlackboardComponent::OnStart] GetComponentInParent<ComponentCollection>() failed\n");
-	}
+			m_componentCollection = GetComponentInParent<ComponentCollection>();
+			Debug.Assert(m_componentCollection != null, "[AgentBlackboardComponent::OnStart] GetComponentInParent<ComponentCollection>() failed\n");
+		}
 
-	// Editor specific ----------------------------------------------------------------
-	// --------------------------------------------------------------------------------
+		// Editor specific ----------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
 
-	public AgentBlackboardConfig Editor_Config { get { return m_config; } }
+		public AgentBlackboardConfig Editor_Config { get { return m_config; } }
 
 #endif // UNITY_EDITOR
 
+	}
 }

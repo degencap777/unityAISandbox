@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using AISandbox.Collision;
+using UnityEditor;
 
 [CustomEditor(typeof(CollisionComponent))]
 [CanEditMultipleObjects]

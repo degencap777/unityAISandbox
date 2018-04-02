@@ -1,12 +1,14 @@
 ﻿using UnityEngine;
-using System.Collections;
 
-public class LerpFollowCamera : FollowCamera
+namespace AISandbox.Camera
 {
-
-	protected override Vector3 CalculateMovementStep()
+	public class LerpFollowCamera : FollowCamera
 	{
-		return ((m_target.position + m_offset) - m_transform.position) * 0.1f;
-	}
 
+		protected override Vector3 CalculateMovementStep()
+		{
+			return ((m_target.position + m_offset) - m_transform.position) * 0.1f;
+		}
+
+	}
 }

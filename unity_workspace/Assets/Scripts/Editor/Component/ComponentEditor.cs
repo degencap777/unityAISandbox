@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using AISandbox.Component;
+using UnityEditor;
 
 public abstract class ComponentEditor : Editor
 {

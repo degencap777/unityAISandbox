@@ -2,74 +2,77 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ComponentCollection : MonoBehaviour
+namespace AISandbox.Component
 {
-
-	private Dictionary<Type, BaseComponent> m_components = new Dictionary<Type, BaseComponent>();
-
-	// --------------------------------------------------------------------------------
-
-	protected virtual void Awake()
+	public class ComponentCollection : MonoBehaviour
 	{
-		var components = GetComponentsInChildren<BaseComponent>();
-		for (int i = 0; i < components.Length; ++i)
+
+		private Dictionary<Type, BaseComponent> m_components = new Dictionary<Type, BaseComponent>();
+
+		// --------------------------------------------------------------------------------
+
+		protected virtual void Awake()
 		{
-			if (HasComponentOfType(components[i].GetType()))
+			var components = GetComponentsInChildren<BaseComponent>();
+			for (int i = 0; i < components.Length; ++i)
 			{
-				Debug.LogErrorFormat("[ComponentCollection] Attempting to add multiple components of the same type: {0}", components[i].GetType().ToString());
+				if (HasComponentOfType(components[i].GetType()))
+				{
+					Debug.LogErrorFormat("[ComponentCollection] Attempting to add multiple components of the same type: {0}", components[i].GetType().ToString());
+				}
+				else
+				{
+					m_components.Add(components[i].GetType(), components[i]);
+				}
 			}
-			else
+
+			var componentEnumerator = m_components.Values.GetEnumerator();
+			while (componentEnumerator.MoveNext())
 			{
-				m_components.Add(components[i].GetType(), components[i]);
+				componentEnumerator.Current.OnAwake();
 			}
 		}
 
-		var componentEnumerator = m_components.Values.GetEnumerator();
-		while (componentEnumerator.MoveNext())
+		// --------------------------------------------------------------------------------
+
+		public virtual void Start()
 		{
-			componentEnumerator.Current.OnAwake();
+			var componentEnumerator = m_components.Values.GetEnumerator();
+			while (componentEnumerator.MoveNext())
+			{
+				componentEnumerator.Current.OnStart();
+			}
 		}
-	}
 
-	// --------------------------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
-	public virtual void Start()
-	{
-		var componentEnumerator = m_components.Values.GetEnumerator();
-		while (componentEnumerator.MoveNext())
+		public bool HasComponentOfType(Type type)
 		{
-			componentEnumerator.Current.OnStart();
+			return m_components.ContainsKey(type);
 		}
-	}
 
-	// --------------------------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
-	public bool HasComponentOfType(Type type)
-	{
-		return m_components.ContainsKey(type);
-	}
-
-	// --------------------------------------------------------------------------------
-	
-	public T GetComponentOfType<T>() where T : BaseComponent
-	{
-		BaseComponent baseComponent = null;
-		if (m_components.TryGetValue(typeof(T), out baseComponent) && baseComponent != null)
+		public T GetComponentOfType<T>() where T : BaseComponent
 		{
-			return baseComponent as T;
+			BaseComponent baseComponent = null;
+			if (m_components.TryGetValue(typeof(T), out baseComponent) && baseComponent != null)
+			{
+				return baseComponent as T;
+			}
+			return null;
 		}
-		return null;
-	}
 
-	// --------------------------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
-	public virtual void OnUpdate()
-	{
-		var componentEnumerator = m_components.Values.GetEnumerator();
-		while (componentEnumerator.MoveNext())
+		public virtual void OnUpdate()
 		{
-			componentEnumerator.Current.OnUpdate();
+			var componentEnumerator = m_components.Values.GetEnumerator();
+			while (componentEnumerator.MoveNext())
+			{
+				componentEnumerator.Current.OnUpdate();
+			}
 		}
-	}
 
+	}
 }

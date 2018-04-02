@@ -1,57 +1,61 @@
-﻿using UnityEngine;
+﻿using AISandbox.Component;
+using UnityEngine;
 
-public class AllegianceComponent : BaseComponent
+namespace AISandbox.Allegiance
 {
-
-	private static readonly string k_shaderColourProperty = "_Color";
-
-	// --------------------------------------------------------------------------------
-	
-	[SerializeField]
-	private AllegianceConfig m_config = null;
-
-	// --------------------------------------------------------------------------------
-
-	private Renderer m_renderer = null;
-	private int m_shaderColourId = -1;
-
-	// --------------------------------------------------------------------------------
-
-	public override void OnAwake()
+	public class AllegianceComponent : BaseComponent
 	{
-		if (m_config == null)
+
+		private static readonly string k_shaderColourProperty = "_Color";
+
+		// --------------------------------------------------------------------------------
+
+		[SerializeField]
+		private AllegianceConfig m_config = null;
+
+		// --------------------------------------------------------------------------------
+
+		private Renderer m_renderer = null;
+		private int m_shaderColourId = -1;
+
+		// --------------------------------------------------------------------------------
+
+		public override void OnAwake()
 		{
-			m_config = ScriptableObject.CreateInstance<AllegianceConfig>();
+			if (m_config == null)
+			{
+				m_config = ScriptableObject.CreateInstance<AllegianceConfig>();
+			}
+
+			m_renderer = GetComponentInChildren<MeshRenderer>();
+			Debug.Assert(m_renderer != null, "AllegianceComponent::GetComponentInChildren<MeshRenderer> failed\n");
+
+			m_shaderColourId = Shader.PropertyToID(k_shaderColourProperty);
 		}
 
-		m_renderer = GetComponentInChildren<MeshRenderer>();
-		Debug.Assert(m_renderer != null, "AllegianceComponent::GetComponentInChildren<MeshRenderer> failed\n");
+		// --------------------------------------------------------------------------------
 
-		m_shaderColourId = Shader.PropertyToID(k_shaderColourProperty);
-	}
+		public override void OnStart()
+		{
+			SetAllegianceColour();
+		}
 
-	// --------------------------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
-	public override void OnStart()
-	{
-		SetAllegianceColour();
-	}
-	
-	// --------------------------------------------------------------------------------
+		private void SetAllegianceColour()
+		{
+			Color colour = m_config != null ? m_config.Colour : Color.grey;
+			m_renderer.material.SetColor(m_shaderColourId, colour);
+		}
 
-	private void SetAllegianceColour()
-	{
-		Color colour = m_config != null ? m_config.Colour : Color.grey;
-		m_renderer.material.SetColor(m_shaderColourId, colour);
-	}
-	
-	// Editor specific ----------------------------------------------------------------
-	// --------------------------------------------------------------------------------
+		// Editor specific ----------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
 
-	public AllegianceConfig Editor_Config { get { return m_config; } }
+		public AllegianceConfig Editor_Config { get { return m_config; } }
 
 #endif // UNITY_EDITOR
 
+	}
 }

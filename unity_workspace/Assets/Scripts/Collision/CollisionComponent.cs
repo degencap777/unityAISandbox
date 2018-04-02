@@ -1,35 +1,39 @@
-﻿using UnityEngine;
+﻿using AISandbox.Component;
+using UnityEngine;
 
-public class CollisionComponent : BaseComponent
+namespace AISandbox.Collision
 {
-
-	[SerializeField]
-	private CollisionConfig m_config = null;
-
-	// --------------------------------------------------------------------------------
-	
-	private Collider m_collider = null;
-
-	// --------------------------------------------------------------------------------
-
-	public override void OnAwake() 
+	public class CollisionComponent : BaseComponent
 	{
-		if (m_config == null)
+
+		[SerializeField]
+		private CollisionConfig m_config = null;
+
+		// --------------------------------------------------------------------------------
+
+		private Collider m_collider = null;
+
+		// --------------------------------------------------------------------------------
+
+		public override void OnAwake()
 		{
-			m_config = ScriptableObject.CreateInstance<CollisionConfig>();
+			if (m_config == null)
+			{
+				m_config = ScriptableObject.CreateInstance<CollisionConfig>();
+			}
+
+			m_collider = GetComponent<Collider>();
+			Debug.Assert(m_collider != null, "[Collisioncomponent::OnAwake] GetComponent<Collider> failed\n");
 		}
 
-		m_collider = GetComponent<Collider>();
-		Debug.Assert(m_collider != null, "[Collisioncomponent::OnAwake] GetComponent<Collider> failed\n");
-	}
-
-	// Editor specific ----------------------------------------------------------------
-	// --------------------------------------------------------------------------------
+		// Editor specific ----------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
 
-	public CollisionConfig Editor_Config { get { return m_config; } }
+		public CollisionConfig Editor_Config { get { return m_config; } }
 
 #endif // UNITY_EDITOR
 
+	}
 }

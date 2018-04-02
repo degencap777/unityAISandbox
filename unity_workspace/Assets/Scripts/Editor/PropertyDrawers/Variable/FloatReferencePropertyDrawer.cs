@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using AISandbox.Variable;
+using UnityEditor;
 using UnityEngine;
 
 [CustomPropertyDrawer(typeof(FloatReference))]

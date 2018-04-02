@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using AISandbox.Navigation;
+using UnityEditor;
 
 [CustomEditor(typeof(NavMeshData))]
 public class NavMeshDataEditor : Editor

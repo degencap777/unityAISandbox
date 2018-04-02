@@ -1,4 +1,5 @@
-﻿using UnityEditor;
+﻿using AISandbox.Health;
+using UnityEditor;
 
 [CustomEditor(typeof(HealthComponent))]
 [CanEditMultipleObjects]

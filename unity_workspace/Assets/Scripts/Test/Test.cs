@@ -1,50 +1,53 @@
 ﻿using UnityEngine;
 
-public abstract class Test : MonoBehaviour
+namespace AISandbox.Test
 {
-
-	[SerializeField]
-	private KeyCode m_executeKey = KeyCode.None;
-
-	// --------------------------------------------------------------------------------
-
-	protected abstract void RunTests();
-	protected abstract void ResetTests();
-
-	// --------------------------------------------------------------------------------
-
-	protected virtual void Awake()
+	public abstract class Test : MonoBehaviour
 	{
-		;
-	}
 
-	// --------------------------------------------------------------------------------
+		[SerializeField]
+		private KeyCode m_executeKey = KeyCode.None;
 
-	protected virtual void Update()
-	{
-		if (m_executeKey != KeyCode.None && Input.GetKeyUp(m_executeKey))
+		// --------------------------------------------------------------------------------
+
+		protected abstract void RunTests();
+		protected abstract void ResetTests();
+
+		// --------------------------------------------------------------------------------
+
+		protected virtual void Awake()
 		{
-			RunAndReset();
+			;
 		}
-	}
 
-	// --------------------------------------------------------------------------------
+		// --------------------------------------------------------------------------------
 
-	private void RunAndReset()
-	{
-		RunTests();
-		ResetTests();
-	}
+		protected virtual void Update()
+		{
+			if (m_executeKey != KeyCode.None && UnityEngine.Input.GetKeyUp(m_executeKey))
+			{
+				RunAndReset();
+			}
+		}
 
-	// --------------------------------------------------------------------------------
+		// --------------------------------------------------------------------------------
+
+		private void RunAndReset()
+		{
+			RunTests();
+			ResetTests();
+		}
+
+		// --------------------------------------------------------------------------------
 
 #if UNITY_EDITOR
 
-	public void EditorRunAndReset()
-	{
-		RunAndReset();
-	}
+		public void EditorRunAndReset()
+		{
+			RunAndReset();
+		}
 
 #endif // UNITY_EDITOR
 
+	}
 }
