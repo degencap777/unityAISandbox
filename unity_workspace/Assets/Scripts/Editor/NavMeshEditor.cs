@@ -21,7 +21,7 @@ public class NavMeshEditor : Editor
 	public void OnEnable()
 	{
 		m_navMesh = target as NavMesh;
-		m_boundsProperty = serializedObject.FindProperty("m_levelBounds");
+		m_boundsProperty = serializedObject.FindProperty("m_bounds");
 		m_dataContainerProperty = serializedObject.FindProperty("m_dataContainer");
 		m_cellDimensionProperty = serializedObject.FindProperty("m_cellDimension");
 

@@ -40,7 +40,7 @@ namespace AISandbox.Navigation
 		// --------------------------------------------------------------------------------
 
 		[SerializeField]
-		private AreaBounds m_levelBounds = null;
+		private AreaBounds m_bounds = new AreaBounds(Vector3.zero, Vector3.zero);
 
 		[SerializeField]
 		private NavMeshData m_dataContainer = null;
@@ -56,11 +56,6 @@ namespace AISandbox.Navigation
 
 		protected virtual void Awake()
 		{
-			if (m_levelBounds == null)
-			{
-				m_levelBounds = ScriptableObject.CreateInstance<AreaBounds>();
-			}
-
 			if (m_dataContainer != null)
 			{
 				m_dataContainer.LoadGraph(out m_graph);
@@ -106,12 +101,12 @@ namespace AISandbox.Navigation
 		{
 			Color cachedColour = Gizmos.color;
 
-			if (m_levelBounds != null)
+			if (m_bounds != null)
 			{
 				Gizmos.color = m_boundaryPlaneColour;
 
-				Vector3 dimension = m_levelBounds.Size;
-				Vector3 position = m_levelBounds.MinBounds + (dimension * 0.5f);
+				Vector3 dimension = m_bounds.Size;
+				Vector3 position = m_bounds.MinBounds + (dimension * 0.5f);
 				dimension.y = dimension.y <= 0.01f ? 0.01f : dimension.y;
 				Gizmos.DrawCube(position, dimension);
 			}
@@ -143,15 +138,15 @@ namespace AISandbox.Navigation
 		{
 			m_graph.Clear();
 
-			int cellsX = (int)(m_levelBounds.Size.x / m_cellDimension);
-			int cellsZ = (int)(m_levelBounds.Size.z / m_cellDimension);
+			int cellsX = (int)(m_bounds.Size.x / m_cellDimension);
+			int cellsZ = (int)(m_bounds.Size.z / m_cellDimension);
 
-			float dimensionX = m_levelBounds.Size.x / cellsX;
-			float dimensionZ = m_levelBounds.Size.z / cellsZ;
+			float dimensionX = m_bounds.Size.x / cellsX;
+			float dimensionZ = m_bounds.Size.z / cellsZ;
 
-			float xStart = m_levelBounds.MinBounds.x + (dimensionX * 0.5f);
-			float zStart = m_levelBounds.MinBounds.z + (dimensionZ * 0.5f);
-			Vector3 position = new Vector3(xStart, m_levelBounds.MinBounds.y, zStart);
+			float xStart = m_bounds.MinBounds.x + (dimensionX * 0.5f);
+			float zStart = m_bounds.MinBounds.z + (dimensionZ * 0.5f);
+			Vector3 position = new Vector3(xStart, m_bounds.MinBounds.y, zStart);
 
 			// generate nodes
 			List<List<GraphNode<Vector3>>> nodes = new List<List<GraphNode<Vector3>>>();

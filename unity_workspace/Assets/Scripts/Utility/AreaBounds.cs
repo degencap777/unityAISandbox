@@ -1,9 +1,10 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 namespace AISandbox.Utility
 {
-	[CreateAssetMenu(fileName = "Bounds", menuName = "Bounds", order = 1)]
-	public class AreaBounds : ScriptableObject
+	[Serializable]
+	public class AreaBounds : System.Object
 	{
 
 		[SerializeField]
@@ -17,6 +18,22 @@ namespace AISandbox.Utility
 		// --------------------------------------------------------------------------------
 
 		public Vector3 Size { get { return m_maxBounds - m_minBounds; } }
+
+		// --------------------------------------------------------------------------------
+		
+		public AreaBounds(Vector3 min, Vector3 max)
+		{
+			m_minBounds = min;
+			m_maxBounds = max;
+		}
+
+		// --------------------------------------------------------------------------------
+
+		public bool Contains(Vector3 position)
+		{
+			return position.x >= m_minBounds.x && position.y >= m_minBounds.y && position.z >= m_minBounds.z &&
+				position.x <= m_maxBounds.x && position.y <= m_maxBounds.y && position.z <= m_maxBounds.z;
+		}
 
 	}
 }
