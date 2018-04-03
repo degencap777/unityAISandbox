@@ -144,16 +144,16 @@ namespace AISandbox.Navigation
 			float dimensionX = m_bounds.Size.x / cellsX;
 			float dimensionZ = m_bounds.Size.z / cellsZ;
 
-			float xStart = m_bounds.MinBounds.x + (dimensionX * 0.5f);
-			float zStart = m_bounds.MinBounds.z + (dimensionZ * 0.5f);
+			float xStart = m_bounds.MinBounds.x;
+			float zStart = m_bounds.MinBounds.z;
 			Vector3 position = new Vector3(xStart, m_bounds.MinBounds.y, zStart);
 
 			// generate nodes
 			List<List<GraphNode<Vector3>>> nodes = new List<List<GraphNode<Vector3>>>();
-			for (int z = 0; z < cellsZ; ++z)
+			for (int z = 0; z <= cellsZ; ++z)
 			{
 				nodes.Add(new List<GraphNode<Vector3>>());
-				for (int x = 0; x < cellsX; ++x)
+				for (int x = 0; x <= cellsX; ++x)
 				{
 					nodes[z].Add(new GraphNode<Vector3>(new Vector3(position.x, position.y, position.z)));
 					position.x += dimensionX;
