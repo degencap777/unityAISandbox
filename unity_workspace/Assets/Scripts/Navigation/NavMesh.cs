@@ -88,12 +88,25 @@ namespace AISandbox.Navigation
 
 #if UNITY_EDITOR
 
+		private static readonly string k_architectureTag = "Architecture";
+		private static readonly float k_nodeGizmoRadius = 0.5f;
+		private static readonly Vector3 k_up = Vector3.up;
+		private static readonly Vector3 k_forward = Vector3.forward;
+
+		// --------------------------------------------------------------------------------
+
 		[SerializeField]
 		private Color m_nodeColour = Color.red;
 		[SerializeField]
 		private Color m_edgeColour = Color.blue;
 		[SerializeField]
 		private Color m_boundaryPlaneColour = new Color(0.0f, 1.0f, 0.0f, 0.5f);
+
+		// --------------------------------------------------------------------------------
+
+		// worker variables
+		private RaycastHit[] m_raycastHits = new RaycastHit[2];
+		private int m_architectureLayerMask = -1;
 
 		// --------------------------------------------------------------------------------
 
@@ -105,10 +118,10 @@ namespace AISandbox.Navigation
 			{
 				Gizmos.color = m_boundaryPlaneColour;
 
-				Vector3 dimension = m_bounds.Size;
-				Vector3 position = m_bounds.MinBounds + (dimension * 0.5f);
-				dimension.y = dimension.y <= 0.01f ? 0.01f : dimension.y;
-				Gizmos.DrawCube(position, dimension);
+				Vector3 size = m_bounds.Size;
+				Vector3 position = m_bounds.MinBounds + (size * 0.5f);
+				size.y = size.y <= 0.01f ? 0.01f : size.y;
+				Gizmos.DrawCube(position, size);
 			}
 
 			Gizmos.color = m_edgeColour;
@@ -118,7 +131,14 @@ namespace AISandbox.Navigation
 				var edgeEnumerator = nodeEnumerator.Current.EdgeEnumerator;
 				while (edgeEnumerator.MoveNext())
 				{
-					Gizmos.DrawLine(edgeEnumerator.Current.Node1.Data, edgeEnumerator.Current.Node2.Data);
+					Vector3 p1 = edgeEnumerator.Current.Node1.Data;
+					Vector3 p2 = edgeEnumerator.Current.Node2.Data;
+					Vector3 toNode = (p2 - p1);
+
+					float angle = Vector3.SignedAngle(k_forward, toNode, k_up);
+					Vector3 offset = (Quaternion.AngleAxis(-90, Vector3.up) * toNode).normalized * k_nodeGizmoRadius * 0.5f;
+
+					Gizmos.DrawLine(p1 + offset, p2 + offset);
 				}
 			}
 
@@ -126,7 +146,7 @@ namespace AISandbox.Navigation
 			nodeEnumerator = m_graph.NodeEnumerator;
 			while (nodeEnumerator.MoveNext())
 			{
-				Gizmos.DrawSphere(nodeEnumerator.Current.Data, 0.2f);
+				Gizmos.DrawSphere(nodeEnumerator.Current.Data, k_nodeGizmoRadius);
 			}
 
 			Gizmos.color = cachedColour;
@@ -190,8 +210,17 @@ namespace AISandbox.Navigation
 
 		private void Editor_AddConnectionIfAvailable(GraphNode<Vector3> node1, GraphNode<Vector3> node2)
 		{
-			// #SteveD	>>> multiple raycasts between nodes to check for obstacles, offset from centre (could use 0.25f * m_cellDimension?)
-			node1.AddConnection(new NavMeshEdge(node1, node2));
+			if (m_architectureLayerMask == -1)
+			{
+				m_architectureLayerMask = LayerMask.NameToLayer(k_architectureTag);
+			}
+
+			Vector3 toOther = node2.Data - node1.Data;
+			int hitCount = Physics.RaycastNonAlloc(node1.Data, toOther.normalized, m_raycastHits, toOther.magnitude, m_architectureLayerMask);
+			if (hitCount == 0)
+			{
+				node1.AddConnection(new NavMeshEdge(node1, node2));
+			}
 		}
 
 		// --------------------------------------------------------------------------------
