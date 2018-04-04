@@ -4,9 +4,6 @@ using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-// #SteveD	>>> raycasts in Editor_AddConnectionIfAvailable
-//			>>> NavMeshData custom property drawer (information only)
-
 namespace AISandbox.Navigation
 {
 	public class NavMesh : MonoBehaviour
@@ -89,7 +86,7 @@ namespace AISandbox.Navigation
 #if UNITY_EDITOR
 
 		private static readonly string k_architectureTag = "Architecture";
-		private static readonly float k_nodeGizmoRadius = 0.5f;
+		private static readonly float k_nodeGizmoRadius = 0.25f;
 		private static readonly Vector3 k_up = Vector3.up;
 		private static readonly Vector3 k_forward = Vector3.forward;
 
@@ -157,7 +154,8 @@ namespace AISandbox.Navigation
 		public void Editor_GenerateUniformGraph()
 		{
 			m_graph.Clear();
-
+			m_architectureLayerMask = LayerMask.NameToLayer(k_architectureTag);
+			
 			int cellsX = (int)(m_bounds.Size.x / m_cellDimension);
 			int cellsZ = (int)(m_bounds.Size.z / m_cellDimension);
 
@@ -175,6 +173,7 @@ namespace AISandbox.Navigation
 				nodes.Add(new List<GraphNode<Vector3>>());
 				for (int x = 0; x <= cellsX; ++x)
 				{
+					// #SteveD	>>> only add node if we're not inside a piece of architecture
 					nodes[z].Add(new GraphNode<Vector3>(new Vector3(position.x, position.y, position.z)));
 					position.x += dimensionX;
 				}
@@ -210,13 +209,8 @@ namespace AISandbox.Navigation
 
 		private void Editor_AddConnectionIfAvailable(GraphNode<Vector3> node1, GraphNode<Vector3> node2)
 		{
-			if (m_architectureLayerMask == -1)
-			{
-				m_architectureLayerMask = LayerMask.NameToLayer(k_architectureTag);
-			}
-
 			Vector3 toOther = node2.Data - node1.Data;
-			int hitCount = Physics.RaycastNonAlloc(node1.Data, toOther.normalized, m_raycastHits, toOther.magnitude, m_architectureLayerMask);
+			int hitCount = Physics.RaycastNonAlloc(node1.Data, toOther.normalized, m_raycastHits, toOther.magnitude, ~m_architectureLayerMask);
 			if (hitCount == 0)
 			{
 				node1.AddConnection(new NavMeshEdge(node1, node2));
