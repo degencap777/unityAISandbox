@@ -10,8 +10,8 @@ namespace AISandbox.Container
 		private AreaBounds m_bounds = null;
 		public AreaBounds Bounds { get { return m_bounds; } }
 
-		private List<Transform> m_transforms = new List<Transform>();
-		public List<Transform>.Enumerator TransformEnumerator { get { return m_transforms.GetEnumerator(); } }
+		private List<OctTreeOccupant> m_occupants = new List<OctTreeOccupant>();
+		public List<OctTreeOccupant>.Enumerator OccupantEnumerator { get { return m_occupants.GetEnumerator(); } }
 
 		private List<OctTree> m_children = new List<OctTree>(8);
 		public List<OctTree>.Enumerator ChildEnumerator { get { return m_children.GetEnumerator(); } }
@@ -48,53 +48,50 @@ namespace AISandbox.Container
 
 		// ----------------------------------------------------------------------------
 
-		public bool Insert(Transform transform)
+		public bool Insert(OctTreeOccupant occupant)
 		{
 			if (IsLeaf)
 			{
-				m_transforms.Add(transform);
+				if (m_occupants.Contains(occupant) == false)
+				{
+					m_occupants.Add(occupant);
+				}
+				return true;
 			}
 			else
 			{
+				int inserted = 0;
 				for (int i = 0; i < m_children.Count; ++i)
 				{
-					if (m_children[i].m_bounds.Contains(transform.position))
+					if (m_children[i].m_bounds.Contains(occupant))
 					{
-						m_children[i].Insert(transform);
-						return true;
+						inserted += m_children[i].Insert(occupant) ? 1 : 0;
 					}
 				}
+				return inserted > 0;
 			}
-			return false;
 		}
 
 		// ----------------------------------------------------------------------------
 
-		public bool Remove(Transform transform)
+		public bool Remove(OctTreeOccupant occupant)
 		{
 			if (IsLeaf)
 			{
-				return m_transforms.Remove(transform);
+				return m_occupants.Remove(occupant);
 			}
 			else
 			{
+				int removed = 0;
 				for (int i = 0; i < m_children.Count; ++i)
 				{
-					if (m_children[i].m_bounds.Contains(transform.position))
+					if (m_children[i].m_bounds.Contains(occupant))
 					{
-						m_children[i].Remove(transform);
-						return true;
+						removed += m_children[i].Remove(occupant) ? 1 : 0;
 					}
 				}
+				return removed > 0;
 			}
-			return false;
-		}
-
-		// ----------------------------------------------------------------------------
-
-		public bool Contains(Vector3 position)
-		{
-			return m_bounds.Contains(position);
 		}
 
 		// ----------------------------------------------------------------------------
@@ -122,16 +119,16 @@ namespace AISandbox.Container
 
 			for (int c = 0; c < m_children.Count; ++c)
 			{
-				for (int t = m_transforms.Count - 1; t >= 0; --t)
+				for (int t = m_occupants.Count - 1; t >= 0; --t)
 				{
-					if (m_children[c].m_bounds.Contains(m_transforms[t].position))
+					if (m_children[c].m_bounds.Contains(m_occupants[t]))
 					{
-						m_children[c].Insert(m_transforms[t]);
-						m_transforms.RemoveAt(t);
+						m_children[c].Insert(m_occupants[t]);
+						m_occupants.RemoveAt(t);
 					}
 				}
 			}
-			m_transforms.Clear();
+			m_occupants.Clear();
 		}
 
 		// ----------------------------------------------------------------------------
@@ -141,25 +138,25 @@ namespace AISandbox.Container
 			for (int c = 0; c < m_children.Count; ++c)
 			{
 				m_children[c].Combine();
-				m_transforms.AddRange(m_children[c].m_transforms);
+				m_occupants.AddRange(m_children[c].m_occupants);
 			}
 			m_children.Clear();
 		}
 
 		// ----------------------------------------------------------------------------
 
-		public int GetTransformCount()
+		public int GetOccupantCount()
 		{
 			if (IsLeaf)
 			{
-				return m_transforms.Count;
+				return m_occupants.Count;
 			}
 			else
 			{
 				int count = 0;
 				for (int c = 0; c < m_children.Count; ++c)
 				{
-					count += m_children[c].GetTransformCount();
+					count += m_children[c].GetOccupantCount();
 				}
 				return count;
 			}
@@ -167,16 +164,24 @@ namespace AISandbox.Container
 
 		// ----------------------------------------------------------------------------
 
-		public void CaptureMigrants(List<Transform> migrants)
+		public void CaptureMigrants(List<OctTreeOccupant> migrants)
 		{
 			if (IsLeaf)
 			{
-				for (int t = m_transforms.Count - 1; t >= 0; --t)
+				for (int t = m_occupants.Count - 1; t >= 0; --t)
 				{
-					if (Contains(m_transforms[t].position) == false)
+					if (migrants.Contains(m_occupants[t]))
 					{
-						migrants.Add(m_transforms[t]);
-						m_transforms.RemoveAt(t);
+						continue;
+					}
+					else if (m_bounds.Contains(m_occupants[t]) == false)
+					{
+						migrants.Add(m_occupants[t]);
+						m_occupants.Remove(m_occupants[t]);
+					}
+					else if (m_bounds.Intersects(m_occupants[t]))
+					{
+						migrants.Add(m_occupants[t]);
 					}
 				}
 			}

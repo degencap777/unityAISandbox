@@ -88,7 +88,6 @@ namespace AISandbox.Navigation
 		private static readonly string k_architectureTag = "Architecture";
 		private static readonly float k_nodeGizmoRadius = 0.25f;
 		private static readonly Vector3 k_up = Vector3.up;
-		private static readonly Vector3 k_forward = Vector3.forward;
 
 		// --------------------------------------------------------------------------------
 
@@ -131,9 +130,7 @@ namespace AISandbox.Navigation
 					Vector3 p1 = edgeEnumerator.Current.Node1.Data;
 					Vector3 p2 = edgeEnumerator.Current.Node2.Data;
 					Vector3 toNode = (p2 - p1);
-
-					float angle = Vector3.SignedAngle(k_forward, toNode, k_up);
-					Vector3 offset = (Quaternion.AngleAxis(-90, Vector3.up) * toNode).normalized * k_nodeGizmoRadius * 0.5f;
+					Vector3 offset = (Quaternion.AngleAxis(-90, k_up) * toNode).normalized * k_nodeGizmoRadius * 0.5f;
 
 					Gizmos.DrawLine(p1 + offset, p2 + offset);
 				}
@@ -173,7 +170,7 @@ namespace AISandbox.Navigation
 				nodes.Add(new List<GraphNode<Vector3>>());
 				for (int x = 0; x <= cellsX; ++x)
 				{
-					// #SteveD	>>> only add node if we're not inside a piece of architecture
+					// #SteveD	>>> only add node if we're not inside a piece of architecture (or too close to one?)
 					nodes[z].Add(new GraphNode<Vector3>(new Vector3(position.x, position.y, position.z)));
 					position.x += dimensionX;
 				}

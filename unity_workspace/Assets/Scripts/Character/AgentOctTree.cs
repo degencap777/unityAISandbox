@@ -3,13 +3,6 @@ using AISandbox.Utility;
 using System.Collections.Generic;
 using UnityEngine;
 
-// #SteveD	>>> improvements:
-//			>>> Add an 'InteractionComponent' to Agents with an encompassing SphereCollider
-//			>>> allow agents to be in multiple partitions, driven by interactionComponent's SphereCollider
-//					(replace Transform list with SphereCollider list)
-//			>>> UI reporting (migrants peak, leafnodes peak & current, parentNodes peak & current, current depth, current node count, 
-//					etc.) - Use scriptable object
-
 namespace AISandbox.Container
 {
 	public class AgentOctTree : MonoBehaviour
@@ -27,6 +20,10 @@ namespace AISandbox.Container
 		[SerializeField]
 		private int m_maxDepth = 4;
 
+		[Header("Statistics")]
+		[SerializeField]
+		private OctTreeStatistics m_statistics = null;
+
 		// ----------------------------------------------------------------------------
 
 		private OctTree m_octTree = null;
@@ -34,7 +31,7 @@ namespace AISandbox.Container
 		// ----------------------------------------------------------------------------
 
 		// worker lists
-		private List<Transform> m_migrants = new List<Transform>(32);
+		private List<OctTreeOccupant> m_migrants = new List<OctTreeOccupant>(32);
 		private List<OctTree> m_leafNodes = new List<OctTree>(128);
 		private List<OctTree> m_parentNodes = new List<OctTree>(128);
 		private bool m_nodeListsDirty = true;
@@ -44,6 +41,12 @@ namespace AISandbox.Container
 		protected virtual void Awake()
 		{
 			m_octTree = new OctTree(null, m_bounds);
+
+			if (m_statistics == null)
+			{
+				m_statistics = ScriptableObject.CreateInstance<OctTreeStatistics>();
+			}
+			m_statistics.Reset();
 		}
 
 		// ----------------------------------------------------------------------------
@@ -56,10 +59,10 @@ namespace AISandbox.Container
 				return;
 			}
 			
-			var agents = FindObjectsOfType<Agent>();
-			for (int i = 0; i < agents.Length; ++i)
+			var occupants = FindObjectsOfType<OctTreeOccupant>();
+			for (int i = 0; i < occupants.Length; ++i)
 			{
-				m_octTree.Insert(agents[i].Transform);
+				m_octTree.Insert(occupants[i]);
 			}
 		}
 
@@ -91,11 +94,23 @@ namespace AISandbox.Container
 				return;
 			}
 			
+			// capture migrants
 			m_octTree.CaptureMigrants(m_migrants);
+			
+			// report migrants
+			m_statistics.m_currentMigrants = m_migrants.Count;
+			if (m_statistics.m_currentMigrants > m_statistics.m_peakMigrants)
+			{
+				m_statistics.m_peakMigrants = m_statistics.m_currentMigrants;
+			}
+
+			// redistribute migrants
 			for (int i = 0; i < m_migrants.Count; ++i)
 			{
 				m_octTree.Insert(m_migrants[i]);
 			}
+
+			// clear migrants worker list
 			m_migrants.Clear();
 		}
 
@@ -111,7 +126,7 @@ namespace AISandbox.Container
 			// split
 			for (int i = 0; i < m_leafNodes.Count; ++i)
 			{
-				if (m_leafNodes[i].GetTransformCount() >= m_splitTrigger && m_leafNodes[i].GetDepth() < m_maxDepth)
+				if (m_leafNodes[i].GetOccupantCount() >= m_splitTrigger && m_leafNodes[i].GetDepth() < m_maxDepth)
 				{
 					m_leafNodes[i].Split();
 					m_nodeListsDirty = true;
@@ -121,7 +136,7 @@ namespace AISandbox.Container
 			// combine
 			for (int i = 0; i < m_parentNodes.Count; ++i)
 			{
-				if (m_parentNodes[i].GetTransformCount() <= m_combineTrigger)
+				if (m_parentNodes[i].GetOccupantCount() <= m_combineTrigger)
 				{
 					m_parentNodes[i].Combine();
 					m_nodeListsDirty = true;
@@ -134,6 +149,7 @@ namespace AISandbox.Container
 
 #if UNITY_EDITOR
 
+		[Header("Debug")]
 		[SerializeField]
 		private Color m_gizmoColour = Color.green;
 

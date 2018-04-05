@@ -60,12 +60,7 @@ public class NavMeshEditor : Editor
 			{
 				// manual
 				EditorGUILayout.LabelField("Manual generation", EditorStyles.boldLabel);
-				EditorGUILayout.LabelField("#SteveD  >>> coming soon");
-
-				// #SteveD	>>> select node (left mouse)
-				//			>>> move node (move mouse)
-				//			>>> drop node (right mouse)
-				//			>>> delete node (middle mouse)
+				EditorGUILayout.LabelField("pending");
 			}
 			else
 			{
