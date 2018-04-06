@@ -42,11 +42,10 @@ namespace AISandbox.Container
 		{
 			m_octTree = new OctTree(null, m_bounds);
 
-			if (m_statistics == null)
+			if (m_statistics != null)
 			{
-				m_statistics = ScriptableObject.CreateInstance<OctTreeStatistics>();
+				m_statistics.Reset();
 			}
-			m_statistics.Reset();
 		}
 
 		// ----------------------------------------------------------------------------
@@ -83,6 +82,19 @@ namespace AISandbox.Container
 
 			UpdateMigration();
 			UpdateDivision();
+
+			if (m_statistics != null)
+			{
+				// #SteveD	>>> implement node counting functions
+				int nodes = 0;//m_octTree.CountNodes();
+				int leafNodes = 0;// m_octTree.CountLeafNodes();
+				// <<<<<<<<<<<<
+				
+				m_statistics.m_currentNodes = nodes;
+				m_statistics.m_peakNodes = Mathf.Max(nodes, m_statistics.m_peakNodes);
+				m_statistics.m_currentLeafNodes = leafNodes;
+				m_statistics.m_peakLeafNodes = Mathf.Max(leafNodes, m_statistics.m_peakLeafNodes);
+			}
 		}
 
 		// ----------------------------------------------------------------------------
@@ -96,12 +108,15 @@ namespace AISandbox.Container
 			
 			// capture migrants
 			m_octTree.CaptureMigrants(m_migrants);
-			
-			// report migrants
-			m_statistics.m_currentMigrants = m_migrants.Count;
-			if (m_statistics.m_currentMigrants > m_statistics.m_peakMigrants)
+
+			if (m_statistics != null)
 			{
-				m_statistics.m_peakMigrants = m_statistics.m_currentMigrants;
+				// report migrants
+				m_statistics.m_currentMigrants = m_migrants.Count;
+				if (m_statistics.m_currentMigrants > m_statistics.m_peakMigrants)
+				{
+					m_statistics.m_peakMigrants = m_statistics.m_currentMigrants;
+				}
 			}
 
 			// redistribute migrants
