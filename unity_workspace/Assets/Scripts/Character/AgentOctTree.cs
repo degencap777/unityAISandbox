@@ -85,11 +85,9 @@ namespace AISandbox.Container
 
 			if (m_statistics != null)
 			{
-				// #SteveD	>>> implement node counting functions
-				int nodes = 0;//m_octTree.CountNodes();
-				int leafNodes = 0;// m_octTree.CountLeafNodes();
-				// <<<<<<<<<<<<
-				
+				int nodes = m_octTree.CountNodes(false);
+				int leafNodes = m_octTree.CountNodes(true);
+
 				m_statistics.m_currentNodes = nodes;
 				m_statistics.m_peakNodes = Mathf.Max(nodes, m_statistics.m_peakNodes);
 				m_statistics.m_currentLeafNodes = leafNodes;

@@ -226,6 +226,18 @@ namespace AISandbox.Container
 		}
 
 		// ----------------------------------------------------------------------------
+
+		public int CountNodes(bool leafNodesOnly = false)
+		{
+			int nodes = IsLeaf || leafNodesOnly == false ? 1 : 0;
+			for (int c = 0; c < m_children.Count; ++c)
+			{
+				nodes += m_children[c].CountNodes(leafNodesOnly);
+			}
+			return nodes;
+		}
+
+		// ----------------------------------------------------------------------------
 		// Editor specific ------------------------------------------------------------
 
 #if UNITY_EDITOR
