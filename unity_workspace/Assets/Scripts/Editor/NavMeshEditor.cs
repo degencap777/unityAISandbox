@@ -10,7 +10,8 @@ public class NavMeshEditor : Editor
 	private SerializedProperty m_boundsProperty = null;
 	private SerializedProperty m_dataContainerProperty = null;
 	private SerializedProperty m_cellDimensionProperty = null;
-	private bool m_enableManualPlacement = false;
+	private bool m_enableEdit = false;
+	private SerializedProperty m_editorNodePrototypeProperty = null;
 
 	private SerializedProperty m_nodeColourProperty = null;
 	private SerializedProperty m_edgeColourProperty = null;
@@ -24,6 +25,7 @@ public class NavMeshEditor : Editor
 		m_boundsProperty = serializedObject.FindProperty("m_bounds");
 		m_dataContainerProperty = serializedObject.FindProperty("m_dataContainer");
 		m_cellDimensionProperty = serializedObject.FindProperty("m_cellDimension");
+		m_editorNodePrototypeProperty = serializedObject.FindProperty("m_editorNodePrototype");
 
 		m_nodeColourProperty = serializedObject.FindProperty("m_nodeColour");
 		m_edgeColourProperty = serializedObject.FindProperty("m_edgeColour");
@@ -48,35 +50,36 @@ public class NavMeshEditor : Editor
 				EditorGUILayout.PropertyField(m_dataContainerProperty);
 			}
 
-			// automatic/manual generation
-			GUILayout.Space(6);
-			if (GUILayout.Button("Toggle Automatic/Manual Node Generation"))
+			// manual
+			GUILayout.Space(12);
+			EditorGUILayout.LabelField("Manual generation", EditorStyles.boldLabel);
+			if (GUILayout.Button("Edit Nodes"))
 			{
-				m_enableManualPlacement = !m_enableManualPlacement;
-			}
-			
-			GUILayout.Space(6);
-			if (m_enableManualPlacement)
-			{
-				// manual
-				EditorGUILayout.LabelField("Manual generation", EditorStyles.boldLabel);
-				EditorGUILayout.LabelField("pending");
-			}
-			else
-			{
-				// automatic
-				EditorGUILayout.LabelField("Automatic generation", EditorStyles.boldLabel);
-				GUILayout.BeginHorizontal();
-				m_cellDimensionProperty.floatValue = EditorGUILayout.FloatField("Cell Dimension", m_cellDimensionProperty.floatValue);
-				if (GUILayout.Button("Generate Grid"))
+				m_enableEdit = !m_enableEdit;
+				if (m_enableEdit)
 				{
-					m_navMesh.Editor_GenerateUniformGraph();
+					m_navMesh.Editor_GenerateManualEditNodes();
 				}
-				GUILayout.EndHorizontal();
+				else
+				{
+					m_navMesh.Editor_RemoveManualEditNodes();
+				}
 			}
+			EditorGUILayout.PropertyField(m_editorNodePrototypeProperty);
 
+			// automatic
+			GUILayout.Space(12);
+			EditorGUILayout.LabelField("Automatic generation", EditorStyles.boldLabel);
+			GUILayout.BeginHorizontal();
+			m_cellDimensionProperty.floatValue = EditorGUILayout.FloatField("Cell Dimension", m_cellDimensionProperty.floatValue);
+			if (GUILayout.Button("Generate Grid"))
+			{
+				m_navMesh.Editor_GenerateUniformGraph();
+			}
+			GUILayout.EndHorizontal();
+			
 			// persistence
-			GUILayout.Space(6);
+			GUILayout.Space(12);
 			EditorGUILayout.LabelField("Persistence", EditorStyles.boldLabel);
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button("Save"))
@@ -103,6 +106,7 @@ public class NavMeshEditor : Editor
 			EditorGUIUtility.labelWidth = cachedLabelWidth;
 			GUILayout.EndHorizontal();
 		}
+
 		serializedObject.ApplyModifiedProperties();
 	}
 

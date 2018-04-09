@@ -44,7 +44,7 @@ namespace AISandbox.Container
 
 			if (m_statistics != null)
 			{
-				m_statistics.Reset();
+				m_statistics.Initialise(m_octTree);
 			}
 		}
 
@@ -82,17 +82,6 @@ namespace AISandbox.Container
 
 			UpdateMigration();
 			UpdateDivision();
-
-			if (m_statistics != null)
-			{
-				int nodes = m_octTree.CountNodes(false);
-				int leafNodes = m_octTree.CountNodes(true);
-
-				m_statistics.m_currentNodes = nodes;
-				m_statistics.m_peakNodes = Mathf.Max(nodes, m_statistics.m_peakNodes);
-				m_statistics.m_currentLeafNodes = leafNodes;
-				m_statistics.m_peakLeafNodes = Mathf.Max(leafNodes, m_statistics.m_peakLeafNodes);
-			}
 		}
 
 		// ----------------------------------------------------------------------------
@@ -106,17 +95,7 @@ namespace AISandbox.Container
 			
 			// capture migrants
 			m_octTree.CaptureMigrants(m_migrants);
-
-			if (m_statistics != null)
-			{
-				// report migrants
-				m_statistics.m_currentMigrants = m_migrants.Count;
-				if (m_statistics.m_currentMigrants > m_statistics.m_peakMigrants)
-				{
-					m_statistics.m_peakMigrants = m_statistics.m_currentMigrants;
-				}
-			}
-
+			
 			// redistribute migrants
 			for (int i = 0; i < m_migrants.Count; ++i)
 			{
@@ -125,6 +104,11 @@ namespace AISandbox.Container
 
 			// clear migrants worker list
 			m_migrants.Clear();
+
+			if (m_statistics != null)
+			{
+				m_statistics.UpdateMigrants();
+			}
 		}
 
 		// ----------------------------------------------------------------------------
@@ -154,6 +138,11 @@ namespace AISandbox.Container
 					m_parentNodes[i].Combine();
 					m_nodeListsDirty = true;
 				}
+			}
+
+			if (m_nodeListsDirty && m_statistics != null)
+			{
+				m_statistics.UpdateNodeCounts();
 			}
 		}
 

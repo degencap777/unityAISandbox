@@ -43,6 +43,9 @@ namespace AISandbox.Navigation
 		private NavMeshData m_dataContainer = null;
 
 		[SerializeField]
+		private NavMeshEditorNode m_editorNodePrototype = null;
+
+		[SerializeField]
 		private float m_cellDimension = 1.0f;
 
 		// --------------------------------------------------------------------------------
@@ -98,11 +101,50 @@ namespace AISandbox.Navigation
 		[SerializeField]
 		private Color m_boundaryPlaneColour = new Color(0.0f, 1.0f, 0.0f, 0.5f);
 
+		[SerializeField]
+		private NavMeshEditorNode m_prototypeEditorNode = null;
+
 		// --------------------------------------------------------------------------------
 
 		// worker variables
 		private RaycastHit[] m_raycastHits = new RaycastHit[2];
 		private int m_architectureLayerMask = -1;
+
+		private List<NavMeshEditorNode> m_editorNodes = new List<NavMeshEditorNode>();
+
+		// --------------------------------------------------------------------------------
+
+		public void Editor_GenerateManualEditNodes()
+		{
+			if (m_graph == null)
+			{
+				Debug.LogError("[NavMesh::Editor_GenerateManualEditNodes] m_graph is null");
+				return;
+			}
+
+			if (m_prototypeEditorNode == null)
+			{
+				Debug.LogError("[NavMesh::Editor_GenerateManualEditNodes] m_prototypeEditorNode is null");
+				return;
+			}
+
+			m_editorNodes.Clear();
+
+			var nodeEnumerator = m_graph.NodeEnumerator;
+			while (nodeEnumerator.MoveNext())
+			{
+				NavMeshEditorNode editorNode = GameObject.Instantiate<NavMeshEditorNode>(m_prototypeEditorNode, transform);
+				editorNode.AssociatedNode = nodeEnumerator.Current;
+				m_editorNodes.Add(editorNode);
+			}
+		}
+
+		// --------------------------------------------------------------------------------
+
+		public void Editor_RemoveManualEditNodes()
+		{
+
+		}
 
 		// --------------------------------------------------------------------------------
 

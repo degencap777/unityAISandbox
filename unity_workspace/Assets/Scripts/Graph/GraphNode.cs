@@ -6,7 +6,11 @@ namespace AISandbox.Graph
 	{
 
 		protected T m_data = default(T);
-		public T Data { get { return m_data; } }
+		public T Data
+		{
+			get { return m_data; }
+			set { m_data = value; }
+		}
 
 		protected List<GraphEdge<T>> m_edges = new List<GraphEdge<T>>();
 		public List<GraphEdge<T>>.Enumerator EdgeEnumerator { get { return m_edges.GetEnumerator(); } }
