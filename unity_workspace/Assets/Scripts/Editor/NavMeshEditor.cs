@@ -9,7 +9,7 @@ public class NavMeshEditor : Editor
 	private NavMesh m_navMesh = null;
 	private SerializedProperty m_boundsProperty = null;
 	private SerializedProperty m_dataContainerProperty = null;
-	private SerializedProperty m_cellDimensionProperty = null;
+	//private SerializedProperty m_cellDimensionProperty = null;
 	private bool m_enableEdit = false;
 	private SerializedProperty m_editorNodePrototypeProperty = null;
 
@@ -24,7 +24,7 @@ public class NavMeshEditor : Editor
 		m_navMesh = target as NavMesh;
 		m_boundsProperty = serializedObject.FindProperty("m_bounds");
 		m_dataContainerProperty = serializedObject.FindProperty("m_dataContainer");
-		m_cellDimensionProperty = serializedObject.FindProperty("m_cellDimension");
+		//m_cellDimensionProperty = serializedObject.FindProperty("m_cellDimension");
 		m_editorNodePrototypeProperty = serializedObject.FindProperty("m_editorNodePrototype");
 
 		m_nodeColourProperty = serializedObject.FindProperty("m_nodeColour");
@@ -52,8 +52,7 @@ public class NavMeshEditor : Editor
 
 			// manual
 			GUILayout.Space(12);
-			EditorGUILayout.LabelField("Manual generation", EditorStyles.boldLabel);
-			if (GUILayout.Button("Edit Nodes"))
+			if (GUILayout.Button("Edit"))
 			{
 				m_enableEdit = !m_enableEdit;
 				if (m_enableEdit)
@@ -68,19 +67,18 @@ public class NavMeshEditor : Editor
 			EditorGUILayout.PropertyField(m_editorNodePrototypeProperty);
 
 			// automatic
-			GUILayout.Space(12);
-			EditorGUILayout.LabelField("Automatic generation", EditorStyles.boldLabel);
-			GUILayout.BeginHorizontal();
-			m_cellDimensionProperty.floatValue = EditorGUILayout.FloatField("Cell Dimension", m_cellDimensionProperty.floatValue);
-			if (GUILayout.Button("Generate Grid"))
-			{
-				m_navMesh.Editor_GenerateUniformGraph();
-			}
-			GUILayout.EndHorizontal();
+			//GUILayout.Space(12);
+			//EditorGUILayout.LabelField("Automatic generation", EditorStyles.boldLabel);
+			//GUILayout.BeginHorizontal();
+			//m_cellDimensionProperty.floatValue = EditorGUILayout.FloatField("Cell Dimension", m_cellDimensionProperty.floatValue);
+			//if (GUILayout.Button("Generate Grid"))
+			//{
+			//	m_navMesh.Editor_GenerateUniformGraph();
+			//}
+			//GUILayout.EndHorizontal();
 			
 			// persistence
 			GUILayout.Space(12);
-			EditorGUILayout.LabelField("Persistence", EditorStyles.boldLabel);
 			GUILayout.BeginHorizontal();
 			if (GUILayout.Button("Save"))
 			{
